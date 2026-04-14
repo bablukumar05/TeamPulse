@@ -15,4 +15,8 @@ router.put('/leave-requests/:id/status', protect, authorizeRoles('Admin', 'Manag
 router.get('/join-requests', protect, authorizeRoles('Admin', 'Manager'), adminController.getJoinRequests);
 router.put('/join-requests/:id/approve', protect, authorizeRoles('Admin', 'Manager'), adminController.approveJoinRequest);
 
+router.get('/employees/terminated', protect, authorizeRoles('Admin', 'Manager'), adminController.getTerminatedEmployees);
+router.put('/employees/:id/terminate', protect, authorizeRoles('Admin', 'Manager'), adminController.terminateEmployee);
+router.put('/employees/:id/restore', protect, authorizeRoles('Admin', 'Manager'), adminController.restoreEmployee);
+
 module.exports = router;

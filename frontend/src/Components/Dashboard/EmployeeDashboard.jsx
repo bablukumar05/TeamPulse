@@ -5,6 +5,7 @@ import TaskListNumbers from '../other/TaskListNumbers';
 import TaskList from '../TaskList/TaskList';
 import GamificationBanner from '../other/GamificationBanner';
 import PersonalAnalytics from '../other/PersonalAnalytics';
+import AnnouncementsFeed from '../other/AnnouncementsFeed';
 import CalendarView from './CalendarView';
 import { AuthContext } from "../../Context/AuthProvider";
 
@@ -45,10 +46,11 @@ const EmployeeDashboard = (props) => {
   return (
     <div className='p-8 min-h-screen w-full bg-gradient-to-br from-[#0B0B0B] via-[#151515] to-[#1A1A1A] text-white selection:bg-emerald-500/30 flex flex-col'>
       <div className='max-w-7xl mx-auto w-full flex flex-col gap-4 flex-1'>
-        <Header changeUser={props.changeUser} data={props.data} />
+        <Header changeUser={props.changeUser} data={props.data} changePage={props.changePage} />
         {tasksData && (
           <div className="flex flex-col flex-1 pb-6 mt-4">
             <GamificationBanner xp={tasksData.xp} badges={tasksData.badges} />
+            <AnnouncementsFeed />
             <PersonalAnalytics taskCount={tasksData.taskCount} />
             
             <div className="flex justify-end gap-4 mt-8">

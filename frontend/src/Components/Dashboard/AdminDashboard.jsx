@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import Header from "../other/Header"
 import CreateTask from "../other/CreateTask"
+import CreateAnnouncement from "../other/CreateAnnouncement"
+import AnnouncementsFeed from "../other/AnnouncementsFeed"
+import ManageEmployees from "../other/ManageEmployees"
 import AllTask from "../other/AllTask"
 import KanbanBoard from "./KanbanBoard"
 import AnalyticsDashboard from "./AnalyticsDashboard"
@@ -22,8 +25,11 @@ const AdminDashboard = (props) => {
   return (
     <div className="min-h-screen w-full p-8 bg-gradient-to-br from-[#0B0B0B] via-[#151515] to-[#1A1A1A] text-white selection:bg-emerald-500/30">
       <div className="max-w-7xl mx-auto flex flex-col gap-4">
-        <Header changeUser={props.changeUser} />
+        <Header changeUser={props.changeUser} changePage={props.changePage} />
         <AnalyticsDashboard refreshTrigger={refreshTasks} />
+        <AnnouncementsFeed key={refreshTasks} />
+        <CreateAnnouncement refreshTrigger={() => setRefreshTasks(!refreshTasks)} />
+        <ManageEmployees refreshTrigger={refreshTasks} />
         <JoinRequests refreshTrigger={refreshTasks} />
         <LeaveApprovals refreshTrigger={refreshTasks} />
         <CreateTask onTaskCreated={() => setRefreshTasks(!refreshTasks)} />

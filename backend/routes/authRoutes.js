@@ -5,7 +5,7 @@ const { protect } = require('../middleware/authMiddleware');
 
 const { upload } = require('../middleware/uploadMiddleware');
 
-router.post('/register', authController.register);
+router.post('/register', upload.single('resume'), authController.register);
 router.post('/login', authController.login);
 router.post('/forgotpassword', authController.forgotPassword);
 router.put('/resetpassword/:resettoken', authController.resetPassword);

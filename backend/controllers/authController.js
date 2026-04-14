@@ -13,7 +13,7 @@ const generateToken = (id) => {
 
 exports.register = async (req, res) => {
   try {
-    const { firstName, email, password, inviteCode, skills } = req.body;
+    const { firstName, email, password, inviteCode, skills, tenthMarks, twelfthMarks, graduationDegree, postGraduationDegree } = req.body;
     
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ message: 'User already exists' });
@@ -21,6 +21,19 @@ exports.register = async (req, res) => {
     let isApproved = false;
     if (inviteCode === 'TEAM123' || email.endsWith('@teampulse.com')) {
       isApproved = true;
+    }
+
+    if (!isApproved) {
+      // Validate Eligibility Form for Public Applicants
+      const tenth = parseFloat(tenthMarks) || 0;
+      const twelfth = parseFloat(twelfthMarks) || 0;
+      if (tenth < 60 || twelfth < 60) {
+        return res.status(400).json({ message: 'Eligibility Criteria Not Met: 10th and 12th marks must be at least 60%.' });
+      }
+      
+      if (!req.file) {
+        return res.status(400).json({ message: 'Application rejected: Please upload your resume.' });
+      }
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -41,6 +54,11 @@ exports.register = async (req, res) => {
       await JoinRequest.create({
         userId: user._id,
         skills: skills ? skills.split(',').map(s => s.trim()) : [],
+        tenthMarks: parseFloat(tenthMarks) || 0,
+        twelfthMarks: parseFloat(twelfthMarks) || 0,
+        graduationDegree: graduationDegree || '',
+        postGraduationDegree: postGraduationDegree || '',
+        resumeUrl: req.file ? `/uploads/${req.file.filename}` : '',
         status: 'Pending'
       });
 
@@ -72,6 +90,10 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
+      if (user.employmentStatus === 'Terminated') {
+        return res.status(403).json({ message: 'Account deactivated. Please contact HR.' });
+      }
+
       await AuditLog.create({
         action: 'USER_LOGIN',
         performedBy: user._id,

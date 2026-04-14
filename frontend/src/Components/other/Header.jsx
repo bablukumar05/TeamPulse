@@ -20,6 +20,22 @@ const Header = (props) => {
         Hello <br /> <span className="text-4xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-md"> {props.data?.firstName || "Admin"} 👋</span>
       </h1>
       <div className="flex items-center gap-3">
+        {props.changePage && (
+          <>
+            <button
+              onClick={() => props.changePage('dashboard')}
+              className="group relative inline-flex items-center justify-center px-4 py-2.5 text-base font-bold text-gray-300 transition-all duration-200 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg shadow-lg hover:scale-[1.02]"
+            >
+              Dashboard
+            </button>
+            <button
+              onClick={() => props.changePage('culture')}
+              className="group relative inline-flex items-center justify-center px-4 py-2.5 text-base font-bold text-amber-400 transition-all duration-200 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 rounded-lg shadow-lg hover:scale-[1.02]"
+            >
+              🎉 Culture
+            </button>
+          </>
+        )}
         {isEmployee && (
           <button
             onClick={() => setShowLeavePanel(true)}

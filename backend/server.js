@@ -1,5 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
+
+process.on('uncaughtException', (err) => {
+  console.error('FATAL UNCAUGHT EXCEPTION:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('FATAL UNHANDLED REJECTION:', reason);
+});
+
 const cors = require('cors');
 require('dotenv').config();
 const http = require('http');
@@ -15,7 +24,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: process.env.FRONTEND_URL ? [process.env.FRONTEND_URL, "http://localhost:5173", "http://localhost:5000"] : "*",
+    credentials: true,
   }
 });
 
@@ -62,13 +72,17 @@ io.on('connection', (socket) => {
 app.set('io', io);
 app.set('userSockets', userSockets);
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL ? [process.env.FRONTEND_URL, "http://localhost:5173", "http://localhost:5000"] : "*",
+  credentials: true,
+}));
 app.use(express.json());
 const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const projectRoutes = require('./routes/projectRoutes');
 const timeLogRoutes = require('./routes/timeLogRoutes');
+const cultureRoutes = require('./routes/cultureRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
@@ -76,6 +90,7 @@ app.use('/api/employee', employeeRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/timelogs', timeLogRoutes);
+app.use('/api/culture', cultureRoutes);
 
 const PORT = process.env.PORT || 5001;
 const MONGO_URI = process.env.MONGO_URI;

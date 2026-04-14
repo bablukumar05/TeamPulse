@@ -8,10 +8,12 @@ import { AuthContext } from "./Context/AuthProvider";
 import toast, { Toaster } from "react-hot-toast";
 import { io } from "socket.io-client";
 import TeamChat from "./Components/other/TeamChat";
+import CulturePage from "./Pages/CulturePage";
 
 export let socket;
 
 const App = () => {
+  const [currentPage, setCurrentPage] = React.useState('dashboard');
   const { authUser, setAuthUser, setToken } = useContext(AuthContext);
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -19,7 +21,8 @@ const App = () => {
 
   useEffect(() => {
     if (authUser) {
-      socket = io("http://localhost:5000", {
+      const socketUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      socket = io(socketUrl, {
         transports: ['polling', 'websocket'],
         reconnectionAttempts: 5,
       });
@@ -76,12 +79,13 @@ const App = () => {
     <>
       <Toaster position="top-right" />
       {!authUser && <Login />}
-      {(authUser?.role === "admin" || authUser?.role === "manager") && <AdminDashboard changeUser={handleLogout} />}
-      {authUser?.role === "employee" && (
+      {authUser && currentPage === 'culture' && <CulturePage changeUser={handleLogout} changePage={setCurrentPage} />}
+      {authUser && currentPage === 'dashboard' && (authUser?.role === "admin" || authUser?.role === "manager") && <AdminDashboard changeUser={handleLogout} changePage={setCurrentPage} />}
+      {authUser && currentPage === 'dashboard' && authUser?.role === "employee" && (
         authUser.isApproved === false ? (
           <WaitlistScreen changeUser={handleLogout} />
         ) : (
-          <EmployeeDashboard changeUser={handleLogout} data={authUser.data} />
+          <EmployeeDashboard changeUser={handleLogout} data={authUser.data} changePage={setCurrentPage} />
         )
       )}
       {authUser && authUser.isApproved !== false && <TeamChat />}

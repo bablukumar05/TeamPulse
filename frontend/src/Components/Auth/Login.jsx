@@ -14,6 +14,11 @@ const Login = () => {
   const [firstName, setFirstName] = useState("");
   const [skills, setSkills] = useState("");
   const [inviteCode, setInviteCode] = useState("");
+  const [tenthMarks, setTenthMarks] = useState("");
+  const [twelfthMarks, setTwelfthMarks] = useState("");
+  const [graduationDegree, setGraduationDegree] = useState("");
+  const [postGraduationDegree, setPostGraduationDegree] = useState("");
+  const [resumeFile, setResumeFile] = useState(null);
   
   const { setToken } = useContext(AuthContext);
 
@@ -23,7 +28,21 @@ const Login = () => {
     try {
       let response;
       if (isRegistering) {
-         response = await axios.post("/api/auth/register", { firstName, email, password, skills, inviteCode });
+         const formData = new FormData();
+         formData.append('firstName', firstName);
+         formData.append('email', email);
+         formData.append('password', password);
+         formData.append('skills', skills);
+         formData.append('inviteCode', inviteCode);
+         formData.append('tenthMarks', tenthMarks);
+         formData.append('twelfthMarks', twelfthMarks);
+         formData.append('graduationDegree', graduationDegree);
+         formData.append('postGraduationDegree', postGraduationDegree);
+         if (resumeFile) formData.append('resume', resumeFile);
+
+         response = await axios.post("/api/auth/register", formData, {
+           headers: { "Content-Type": "multipart/form-data" }
+         });
       } else {
          response = await axios.post("/api/auth/login", { email, password });
       }
@@ -147,23 +166,72 @@ const Login = () => {
 
             {isRegistering && (
                 <>
+                <div className="flex gap-4">
+                  <div className="relative w-1/2">
+                    <label className="mb-2 block text-xs font-medium text-[#8a99a8]">10th Marks (%) *</label>
+                    <input
+                      value={tenthMarks}
+                      onChange={(e) => setTenthMarks(e.target.value)}
+                      placeholder="e.g. 75"
+                      className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 focus:bg-white/15 outline-none"
+                      type="number"
+                      required
+                    />
+                  </div>
+                  <div className="relative w-1/2">
+                    <label className="mb-2 block text-xs font-medium text-[#8a99a8]">12th Marks (%) *</label>
+                    <input
+                      value={twelfthMarks}
+                      onChange={(e) => setTwelfthMarks(e.target.value)}
+                      placeholder="e.g. 80"
+                      className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 focus:bg-white/15 outline-none"
+                      type="number"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="relative w-1/2">
+                    <label className="mb-2 block text-xs font-medium text-[#8a99a8]">Graduation Degree Name</label>
+                    <input
+                      value={graduationDegree}
+                      onChange={(e) => setGraduationDegree(e.target.value)}
+                      placeholder="e.g. B.Tech CS"
+                      className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 focus:bg-white/15 outline-none"
+                      type="text"
+                    />
+                  </div>
+                  <div className="relative w-1/2">
+                    <label className="mb-2 block text-xs font-medium text-[#8a99a8]">Post Grad Degree (Optional)</label>
+                    <input
+                      value={postGraduationDegree}
+                      onChange={(e) => setPostGraduationDegree(e.target.value)}
+                      placeholder="e.g. MBA"
+                      className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 focus:bg-white/15 outline-none"
+                      type="text"
+                    />
+                  </div>
+                </div>
+
                 <div className="relative">
-                  <label className="mb-2 block text-xs font-medium text-[#8a99a8]">Skills (comma separated, optional)</label>
+                  <label className="mb-2 block text-xs font-medium text-[#8a99a8]">Upload Resume *</label>
+                  <input
+                    onChange={(e) => setResumeFile(e.target.files[0])}
+                    className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3 text-gray-200 focus:border-white/20 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#7cc5d9]/20 file:text-[#7cc5d9] hover:file:bg-[#7cc5d9]/30"
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    required
+                  />
+                </div>
+
+                <div className="relative">
+                  <label className="mb-2 block text-xs font-medium text-[#8a99a8]">Skills (comma separated)</label>
                   <input
                     value={skills}
                     onChange={(e) => setSkills(e.target.value)}
                     placeholder="React, Node.js..."
-                    className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 shadow-[inset_0_2px_10px_rgba(0,0,0,0.2)] transition-all duration-300 focus:border-white/20 focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-[#7cc5d9]/30"
-                    type="text"
-                  />
-                </div>
-                <div className="relative">
-                  <label className="mb-2 block text-xs font-medium text-[#8a99a8]">Invite Code (optional)</label>
-                  <input
-                    value={inviteCode}
-                    onChange={(e) => setInviteCode(e.target.value)}
-                    placeholder="e.g. TEAM123"
-                    className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 shadow-[inset_0_2px_10px_rgba(0,0,0,0.2)] transition-all duration-300 focus:border-white/20 focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-[#7cc5d9]/30"
+                    className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 outline-none"
                     type="text"
                   />
                 </div>

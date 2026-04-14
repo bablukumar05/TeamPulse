@@ -15,6 +15,18 @@ const joinRequestSchema = new mongoose.Schema({
     type: [String],
     default: []
   },
+  tenthMarks: {
+    type: Number
+  },
+  twelfthMarks: {
+    type: Number
+  },
+  graduationDegree: {
+    type: String
+  },
+  postGraduationDegree: {
+    type: String
+  },
   resumeUrl: {
     type: String
   }

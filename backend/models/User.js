@@ -42,6 +42,15 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true // defaults to true for existing admins, we will set false explicitly on Registration
   },
+  baseSalaryLPA: {
+    type: Number,
+    default: 0
+  },
+  employmentStatus: {
+    type: String,
+    enum: ['Active', 'Terminated'],
+    default: 'Active'
+  },
   inviteCodeUsed: String
 }, { timestamps: true });
 

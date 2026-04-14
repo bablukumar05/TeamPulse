@@ -23,8 +23,15 @@ const JoinRequests = ({ refreshTrigger }) => {
     }, [token, refreshTrigger]);
 
     const handleAction = async (id, action) => {
+        let offerLPA = 0;
+        if (action === 'approve') {
+            const result = window.prompt("Enter Package Offer in LPA (e.g. 12.5):", "0");
+            if (result === null) return toast.error('Approval cancelled');
+            offerLPA = parseFloat(result) || 0;
+        }
+
         try {
-            await axios.put(`/api/admin/join-requests/${id}/approve`, { action }, {
+            await axios.put(`/api/admin/join-requests/${id}/approve`, { action, offerLPA }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             toast.success(`Request ${action}d successfully`);
@@ -44,6 +51,23 @@ const JoinRequests = ({ refreshTrigger }) => {
                     <div key={req._id} className="bg-black/20 border border-white/5 p-4 rounded-xl flex flex-wrap justify-between items-center gap-4 transition-all hover:bg-white/5">
                         <div>
                             <p className="font-bold text-white mb-1">{req.userId?.firstName} <span className="text-gray-500 text-xs font-normal">({req.userId?.email})</span></p>
+                            
+                            {req.tenthMarks !== undefined && (
+                                <div className="text-xs text-gray-400 mt-1 mb-1">
+                                    <span className="font-bold text-gray-300">Academics:</span> 10th ({req.tenthMarks}%), 12th ({req.twelfthMarks}%)
+                                </div>
+                            )}
+                            {req.graduationDegree && (
+                                <div className="text-xs text-gray-400 mb-1">
+                                    <span className="font-bold text-gray-300">Degrees:</span> {req.graduationDegree} {req.postGraduationDegree ? `| ${req.postGraduationDegree}` : ''}
+                                </div>
+                            )}
+                            {req.resumeUrl && (
+                                <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${req.resumeUrl}`} target="_blank" rel="noreferrer" className="text-xs text-emerald-400 hover:text-emerald-300 font-bold tracking-wider hover:underline mb-2 block">
+                                    📄 VIEW RESUME
+                                </a>
+                            )}
+                            
                             {req.skills && req.skills.length > 0 && (
                                 <div className="flex gap-2 flex-wrap">
                                     {req.skills.map((skill, i) => (

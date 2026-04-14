@@ -6,7 +6,7 @@ const { sendTaskAssignedEmail } = require('../utils/emailService');
 
 exports.getEmployees = async (req, res) => {
   try {
-    let query = { role: 'Employee' };
+    let query = { role: 'Employee', employmentStatus: { $ne: 'Terminated' } };
     if (req.user.role === 'Manager') {
       query.team = req.user.team;
     }
@@ -199,6 +199,67 @@ exports.updateEmployee = async (req, res) => {
   }
 };
 
+exports.getTerminatedEmployees = async (req, res) => {
+  try {
+    const list = await User.find({ employmentStatus: 'Terminated', role: 'Employee' }).select('-password');
+    res.status(200).json(list);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.terminateEmployee = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const employee = await User.findById(id);
+    if (!employee) return res.status(404).json({ message: 'Not found' });
+
+    employee.employmentStatus = 'Terminated';
+    employee.isApproved = false; // Block tokens securely
+    await employee.save();
+
+    // Mark all New/Active tasks as Failed so they don't clog up completion metrics
+    await Task.updateMany(
+      { assignedTo: employee._id, status: { $in: ['New', 'Active'] } },
+      { $set: { status: 'Failed' } }
+    );
+
+    await AuditLog.create({
+      action: 'EMPLOYEE_TERMINATED',
+      performedBy: req.user._id,
+      performedByName: req.user.firstName,
+      details: `Admin terminated employee ${employee.firstName}. Active tasks have been cancelled.`
+    });
+
+    res.status(200).json({ message: 'Employee terminated successfully', employee });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.restoreEmployee = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const employee = await User.findById(id);
+    if (!employee) return res.status(404).json({ message: 'Not found' });
+
+    employee.employmentStatus = 'Active';
+    employee.isApproved = true; 
+    await employee.save();
+
+    await AuditLog.create({
+      action: 'EMPLOYEE_RESTORED',
+      performedBy: req.user._id,
+      performedByName: req.user.firstName,
+      details: `Admin officially restored employee ${employee.firstName}.`
+    });
+
+    res.status(200).json({ message: 'Employee restored successfully', employee });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 exports.getAllLeaveRequests = async (req, res) => {
   try {
     const LeaveRequest = require('../models/LeaveRequest');
@@ -263,7 +324,7 @@ exports.getJoinRequests = async (req, res) => {
 exports.approveJoinRequest = async (req, res) => {
   try {
     const { id } = req.params;
-    const { action } = req.body; // 'approve' or 'reject'
+    const { action, offerLPA } = req.body; // 'approve' or 'reject'
 
     const request = await JoinRequest.findById(id).populate('userId');
     if (!request) return res.status(404).json({ message: 'Request not found' });
@@ -271,7 +332,10 @@ exports.approveJoinRequest = async (req, res) => {
     if (action === 'approve') {
       request.status = 'Approved';
       // Update User
-      await User.findByIdAndUpdate(request.userId._id, { isApproved: true });
+      await User.findByIdAndUpdate(request.userId._id, { 
+        isApproved: true,
+        baseSalaryLPA: offerLPA ? Number(offerLPA) : 0
+      });
     } else {
       request.status = 'Rejected';
     }
