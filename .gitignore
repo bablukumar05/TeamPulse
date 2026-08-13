@@ -25,7 +25,3 @@ dist-ssr
 
 # Sensitive Environment Configurations (Prevent uploading secrets to GitHub)
 .env
-.env.*
-*.env
-backend/.env
-frontend/.env
