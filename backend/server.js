@@ -212,6 +212,14 @@ function createServerWithIo(port) {
   });
 }
 
+// URL Rewrite for /TeamPulse prefix
+app.use((req, res, next) => {
+  if (req.url.startsWith('/TeamPulse/api')) {
+    req.url = req.url.replace('/TeamPulse/api', '/api');
+  }
+  next();
+});
+
 // API Routes
 app.use('/api/', apiLimiter);
 app.use('/api/auth',          authLimiter, authRoutes);
@@ -232,6 +240,12 @@ app.use('/api/milestones',    milestoneRoutes);
 app.use('/api/hr',            hrRoutes);
 // Phase 5 — AI & Reports
 app.use('/api/ai',            aiRoutes);
+
+// Catch-all API 404 Handler
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ message: `API endpoint ${req.originalUrl} not found` });
+});
+
 // Serve static frontend assets in production / Render deployment
 const fs = require('fs');
 const frontendDist = path.resolve(__dirname, '../frontend/dist');
