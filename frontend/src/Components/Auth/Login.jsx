@@ -20,10 +20,14 @@ const Login = () => {
   const [postGraduationDegree, setPostGraduationDegree] = useState("");
   const [resumeFile, setResumeFile] = useState(null);
   
-  const { setToken } = useContext(AuthContext);
+  const { setToken, setAuthUser } = useContext(AuthContext);
 
   const submitHandler = async (e) => {
     e.preventDefault();
+    if (!email || !password) {
+      return toast.error("Please enter email and password");
+    }
+
     const loadingToast = toast.loading("Authenticating...");
     try {
       let response;
@@ -41,19 +45,39 @@ const Login = () => {
          if (resumeFile) formData.append('resume', resumeFile);
 
          response = await axios.post("/api/auth/register", formData, {
-           headers: { "Content-Type": "multipart/form-data" }
+           headers: { "Content-Type": "multipart/form-data" },
+           timeout: 10000
          });
       } else {
-         response = await axios.post("/api/auth/login", { email, password });
+         response = await axios.post("/api/auth/login", { email, password }, { timeout: 10000 });
       }
 
+      toast.dismiss(loadingToast);
+
       if (response.data.token) {
+        const userObj = {
+          role: (response.data.role || 'employee').toLowerCase(),
+          data: response.data.user || response.data
+        };
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("authUser", JSON.stringify(userObj));
+        setAuthUser(userObj);
         setToken(response.data.token);
-        toast.success(response.data.message || "Welcome back!", { id: loadingToast });
+        toast.success(response.data.message || "Welcome back!");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Authentication failed.", { id: loadingToast });
+      toast.dismiss(loadingToast);
+      let displayMsg = "Authentication failed.";
+
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout') || error.message?.includes('Network Error')) {
+        displayMsg = "Cannot connect to server. Please verify backend is running on port 5000.";
+      } else if (error.response?.data?.errors?.length > 0) {
+        displayMsg = error.response.data.errors.map(e => e.message).join(', ');
+      } else if (error.response?.data?.message) {
+        displayMsg = error.response.data.message;
+      }
+
+      toast.error(displayMsg, { duration: 5000 });
     }
 
     setEmail("");

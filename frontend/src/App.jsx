@@ -1,16 +1,26 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, lazy, Suspense } from "react";
 import Login from "./Components/Auth/Login";
-import EmployeeDashboard from "./Components/Dashboard/EmployeeDashboard";
-import AdminDashboard from "./Components/Dashboard/AdminDashboard";
-import ResetPassword from "./Components/Auth/ResetPassword";
-import WaitlistScreen from "./Components/Auth/WaitlistScreen";
 import { AuthContext } from "./Context/AuthProvider";
 import toast, { Toaster } from "react-hot-toast";
 import { io } from "socket.io-client";
-import TeamChat from "./Components/other/TeamChat";
-import CulturePage from "./Pages/CulturePage";
+
+// Lazy-loaded routes for ultra-fast initial page load
+const EmployeeDashboard = lazy(() => import("./Components/Dashboard/EmployeeDashboard"));
+const AdminDashboard    = lazy(() => import("./Components/Dashboard/AdminDashboard"));
+const ResetPassword     = lazy(() => import("./Components/Auth/ResetPassword"));
+const WaitlistScreen    = lazy(() => import("./Components/Auth/WaitlistScreen"));
+const CulturePage       = lazy(() => import("./Pages/CulturePage"));
 
 export let socket;
+
+const FastLoader = () => (
+  <div className="flex h-screen w-full items-center justify-center bg-[#11141c]">
+    <div className="flex flex-col items-center gap-3">
+      <div className="w-10 h-10 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+      <span className="text-xs font-bold uppercase tracking-widest text-indigo-400">Loading TeamPulse…</span>
+    </div>
+  </div>
+);
 
 const App = () => {
   const [currentPage, setCurrentPage] = React.useState('dashboard');
@@ -23,8 +33,9 @@ const App = () => {
     if (authUser) {
       const socketUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
       socket = io(socketUrl, {
-        transports: ['polling', 'websocket'],
-        reconnectionAttempts: 5,
+        transports: ['websocket', 'polling'],
+        withCredentials: true,
+        reconnectionAttempts: 10,
       });
 
       if (authUser.role === 'employee') {
@@ -63,6 +74,7 @@ const App = () => {
     setAuthUser(null);
     setToken(null);
     localStorage.removeItem("token");
+    localStorage.removeItem("authUser");
     if (socket) socket.disconnect();
   };
 
@@ -70,7 +82,9 @@ const App = () => {
     return (
       <>
         <Toaster position="top-right" />
-        <ResetPassword token={resetToken} />
+        <Suspense fallback={<FastLoader />}>
+          <ResetPassword token={resetToken} />
+        </Suspense>
       </>
     );
   }
@@ -78,17 +92,18 @@ const App = () => {
   return (
     <>
       <Toaster position="top-right" />
-      {!authUser && <Login />}
-      {authUser && currentPage === 'culture' && <CulturePage changeUser={handleLogout} changePage={setCurrentPage} />}
-      {authUser && currentPage === 'dashboard' && (authUser?.role === "admin" || authUser?.role === "manager") && <AdminDashboard changeUser={handleLogout} changePage={setCurrentPage} />}
-      {authUser && currentPage === 'dashboard' && authUser?.role === "employee" && (
-        authUser.isApproved === false ? (
-          <WaitlistScreen changeUser={handleLogout} />
-        ) : (
-          <EmployeeDashboard changeUser={handleLogout} data={authUser.data} changePage={setCurrentPage} />
-        )
-      )}
-      {authUser && authUser.isApproved !== false && <TeamChat />}
+      <Suspense fallback={<FastLoader />}>
+        {!authUser && <Login />}
+        {authUser && currentPage === 'culture' && <CulturePage changeUser={handleLogout} changePage={setCurrentPage} />}
+        {authUser && currentPage === 'dashboard' && (authUser?.role === "admin" || authUser?.role === "manager") && <AdminDashboard changeUser={handleLogout} changePage={setCurrentPage} />}
+        {authUser && currentPage === 'dashboard' && authUser?.role === "employee" && (
+          authUser.isApproved === false ? (
+            <WaitlistScreen changeUser={handleLogout} />
+          ) : (
+            <EmployeeDashboard changeUser={handleLogout} data={authUser.data} changePage={setCurrentPage} />
+          )
+        )}
+      </Suspense>
     </>
   );
 };

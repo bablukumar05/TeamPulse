@@ -21,4 +21,4 @@ const upload = multer({
   limits: { fileSize: 50 * 1024 * 1024 } // 50MB limit
 });
 
-module.exports = { upload };
+module.exports = { upload, uploadMiddleware: upload };

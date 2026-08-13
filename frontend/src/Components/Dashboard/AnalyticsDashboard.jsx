@@ -212,8 +212,8 @@ const AnalyticsDashboard = ({ refreshTrigger }) => {
         {/* Leaderboard Chart */}
         <div className="bg-white/5 border border-white/10 rounded-xl p-6">
           <h3 className="text-xl font-semibold mb-6 text-gray-200">Top Performers Leaderboard</h3>
-          <div className="w-full h-64">
-            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={256}>
+          <div className="w-full h-64 min-h-[256px]">
+            <ResponsiveContainer width="100%" height={256}>
               <BarChart data={employeesData.slice(0, 5)} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ffffff1a" vertical={false} />
                 <XAxis dataKey="name" stroke="#9CA3AF" tick={{fill: '#9CA3AF'}} />
@@ -234,9 +234,9 @@ const AnalyticsDashboard = ({ refreshTrigger }) => {
         {/* Global Distribution Chart */}
         <div className="bg-white/5 border border-white/10 rounded-xl p-6">
           <h3 className="text-xl font-semibold mb-6 text-gray-200">Global Task Distribution</h3>
-          <div className="w-full h-64">
+          <div className="w-full h-64 min-h-[256px]">
             {globalStats.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={256}>
+              <ResponsiveContainer width="100%" height={256}>
                 <PieChart>
                   <Pie
                     data={globalStats}

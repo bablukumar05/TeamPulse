@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import ProfileSettings from "./ProfileSettings";
 import LeaveRequestPanel from "./LeaveRequestPanel";
+import NotificationCenter from "../notifications/NotificationCenter";
 import { AuthContext } from "../../Context/AuthProvider";
 
 const Header = (props) => {
@@ -45,6 +46,7 @@ const Header = (props) => {
             Time Off
           </button>
         )}
+        <NotificationCenter />
         <button
           onClick={() => setShowProfile(true)}
           className="group relative inline-flex items-center justify-center px-6 py-2.5 text-base font-semibold text-white transition-all duration-200 bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg shadow-lg hover:scale-[1.02]"

@@ -38,9 +38,14 @@ const userSchema = new mongoose.Schema({
   },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
-  isApproved: {
-    type: Boolean,
-    default: true // defaults to true for existing admins, we will set false explicitly on Registration
+  status: {
+    type: String,
+    enum: ['Pending', 'Approved', 'Rejected', 'Suspended', 'Deleted'],
+    default: 'Approved' // defaults to Approved for backward compatibility
+  },
+  department: {
+    type: String,
+    default: 'General'
   },
   baseSalaryLPA: {
     type: Number,
@@ -51,8 +56,58 @@ const userSchema = new mongoose.Schema({
     enum: ['Active', 'Terminated'],
     default: 'Active'
   },
-  inviteCodeUsed: String
+  inviteCodeUsed: String,
+  isApproved: {
+    type: Boolean,
+    default: true
+  },
+
+  // ── Phase 1 Enterprise Profile Fields ─────────────────────────
+  lastName:    { type: String, default: '' },
+  employeeId:  { type: String, unique: true, sparse: true }, // auto-gen: EMP-XXXX
+  phone:       { type: String, default: '' },
+  bio:         { type: String, default: '' },
+  dateOfBirth: { type: Date },
+  joinDate:    { type: Date },
+  timezone:    { type: String, default: 'Asia/Kolkata' },
+
+  // Org hierarchy
+  workspace:    { type: mongoose.Schema.Types.ObjectId, ref: 'Workspace' },
+  departmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Department' },
+  teamId:       { type: mongoose.Schema.Types.ObjectId, ref: 'Team' },
+  managerId:    { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+
+  // Professional
+  skills:     [String],
+  experience: [{
+    title:   String,
+    company: String,
+    years:   Number,
+    _id: false
+  }],
+
+  // HR Documents
+  documents: [{
+    name:       String,
+    url:        String,
+    type:       { type: String, default: 'Document' },
+    uploadedAt: { type: Date, default: Date.now },
+    _id: false
+  }],
+
+  // Presence
+  lastSeen:  { type: Date },
+  isOnline:  { type: Boolean, default: false },
+
+  // Termination & Exit Records
+  terminationReason:  { type: String, default: '' },
+  terminationDetails: { type: String, default: '' },
+  severanceNotice:    { type: String, default: '' },
+  terminatedAt:       { type: Date },
+  terminatedBy:       { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+
 }, { timestamps: true });
+
 
 userSchema.methods.getResetPasswordToken = function() {
   const resetToken = crypto.randomBytes(20).toString('hex');

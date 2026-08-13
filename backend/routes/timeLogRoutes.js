@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const TimeLog = require('../models/TimeLog');
+const { protect } = require('../middleware/authMiddleware');
 
 // Start timer for a task
-router.post('/start', async (req, res) => {
+router.post('/start', protect, async (req, res) => {
   try {
     const { taskId, userId } = req.body;
     
@@ -27,7 +28,7 @@ router.post('/start', async (req, res) => {
 });
 
 // Stop timer for a task
-router.put('/stop/:id', async (req, res) => {
+router.put('/stop/:id', protect, async (req, res) => {
   try {
     const timeLog = await TimeLog.findById(req.params.id);
     if (!timeLog) return res.status(404).json({ message: 'Time log not found' });
@@ -44,7 +45,7 @@ router.put('/stop/:id', async (req, res) => {
 });
 
 // Get total time logged for a specific task
-router.get('/task/:taskId', async (req, res) => {
+router.get('/task/:taskId', protect, async (req, res) => {
   try {
     const logs = await TimeLog.find({ task: req.params.taskId });
     

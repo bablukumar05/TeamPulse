@@ -3,7 +3,9 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const User = require('../models/User');
 const AuditLog = require('../models/AuditLog');
+const Invite = require('../models/Invite');
 const { sendPasswordResetEmail } = require('../utils/emailService');
+const logger = require('../utils/logger');
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -18,21 +20,42 @@ exports.register = async (req, res) => {
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ message: 'User already exists' });
 
-    let isApproved = false;
-    if (inviteCode === 'TEAM123' || email.endsWith('@teampulse.com')) {
-      isApproved = true;
+    let status = 'Pending';
+    let assignedRole = 'Employee';
+    let assignedDepartment = 'General';
+    let validInvite = null;
+
+    if (inviteCode) {
+      // Find valid invite
+      validInvite = await Invite.findOne({
+        token: inviteCode,
+        isActive: true,
+        expiresAt: { $gt: new Date() }
+      });
+
+      if (validInvite && validInvite.usedCount < validInvite.usageLimit) {
+        if (!validInvite.email || validInvite.email === email) {
+            status = 'Approved';
+            assignedRole = validInvite.role;
+            assignedDepartment = validInvite.department || 'General';
+        } else {
+            validInvite = null; // Email mismatch
+        }
+      } else {
+          validInvite = null;
+      }
+    }
+    
+    // Auto-approve generic email domains or standard registrations
+    if (!validInvite) {
+      status = 'Approved'; // Allow direct signup for instant employee access
     }
 
-    if (!isApproved) {
-      // Validate Eligibility Form for Public Applicants
+    if (tenthMarks || twelfthMarks) {
       const tenth = parseFloat(tenthMarks) || 0;
       const twelfth = parseFloat(twelfthMarks) || 0;
-      if (tenth < 60 || twelfth < 60) {
+      if ((tenth > 0 && tenth < 60) || (twelfth > 0 && twelfth < 60)) {
         return res.status(400).json({ message: 'Eligibility Criteria Not Met: 10th and 12th marks must be at least 60%.' });
-      }
-      
-      if (!req.file) {
-        return res.status(400).json({ message: 'Application rejected: Please upload your resume.' });
       }
     }
 
@@ -43,13 +66,22 @@ exports.register = async (req, res) => {
       firstName,
       email,
       password: hashedPassword,
-      role: 'Employee',
-      isApproved,
-      inviteCodeUsed: inviteCode
+      role: assignedRole,
+      department: assignedDepartment,
+      status: status,
+      inviteCodeUsed: validInvite ? validInvite.token : null
     });
 
+    if (validInvite) {
+      validInvite.usedCount += 1;
+      if (validInvite.usedCount >= validInvite.usageLimit) {
+        validInvite.isActive = false;
+      }
+      await validInvite.save();
+    }
+
     // Create JoinRequest if not auto-approved
-    if (!isApproved) {
+    if (status === 'Pending') {
       const JoinRequest = require('../models/JoinRequest');
       await JoinRequest.create({
         userId: user._id,
@@ -73,12 +105,14 @@ exports.register = async (req, res) => {
       _id: user.id,
       firstName: user.firstName,
       email: user.email,
-      isApproved: user.isApproved,
+      role: user.role,
+      status: user.status,
+      user,
       token: generateToken(user._id),
-      message: isApproved ? 'Registration successful and approved' : 'Registration successful, pending admin approval'
+      message: status === 'Approved' ? 'Registration successful and approved' : 'Registration successful, pending admin approval'
     });
   } catch (error) {
-    console.error('Register Error:', error);
+    logger.error('Register Error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -106,13 +140,14 @@ exports.login = async (req, res) => {
         firstName: user.firstName,
         email: user.email,
         role: user.role,
+        user,
         token: generateToken(user._id),
       });
     } else {
       res.status(401).json({ message: 'Invalid credentials' });
     }
   } catch (error) {
-    console.error('Login Error:', error);
+    logger.error('Login Error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -122,6 +157,7 @@ exports.getMe = async (req, res) => {
     const user = await User.findById(req.user.id).select('-password');
     res.status(200).json(user);
   } catch (error) {
+    logger.error('GetMe Error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -158,6 +194,7 @@ exports.updateProfile = async (req, res) => {
       avatar: updatedUser.avatar,
     });
   } catch (error) {
+    logger.error('UpdateProfile Error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -176,7 +213,7 @@ exports.forgotPassword = async (req, res) => {
     await sendPasswordResetEmail(user.email, resetUrl);
     res.status(200).json({ message: 'Password reset email sent' });
   } catch (error) {
-    console.error(error);
+    logger.error('ForgotPassword Error:', error);
     res.status(500).json({ message: 'Email could not be sent' });
   }
 };
