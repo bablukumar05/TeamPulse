@@ -231,9 +231,20 @@ app.use('/api/milestones',    milestoneRoutes);
 app.use('/api/hr',            hrRoutes);
 // Phase 5 — AI & Reports
 app.use('/api/ai',            aiRoutes);
-app.use('/api/reports',       reportRoutes);
+// Serve static frontend assets in production / Render deployment
+const fs = require('fs');
+const frontendDist = path.join(__dirname, '../frontend/dist');
 
-const PORT = process.env.PORT || 5001;
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  app.use('/TeamPulse', express.static(frontendDist));
+  app.get('*', (req, res, next) => {
+    if (req.originalUrl.startsWith('/api')) return next();
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
+
+const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
 mongoose.connect(MONGO_URI)
