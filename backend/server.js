@@ -100,15 +100,15 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: isDev ? 100 : 15, // more permissive in development
+  max: 500, // Allow 500 auth requests per 15 mins to prevent 429 rejections
   standardHeaders: true,
   legacyHeaders: false,
-  message: { message: 'Too many requests from this IP, please try again later.' }
+  message: { message: 'Too many auth requests from this IP, please try again later.' }
 });
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: isDev ? 1000 : 100, // more permissive in development
+  max: 5000, // Allow 5000 API requests per 15 mins for smooth real-time polling
   standardHeaders: true,
   legacyHeaders: false,
 });
