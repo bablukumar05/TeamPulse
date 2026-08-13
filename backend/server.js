@@ -240,6 +240,7 @@ app.use('/api/milestones',    milestoneRoutes);
 app.use('/api/hr',            hrRoutes);
 // Phase 5 — AI & Reports
 app.use('/api/ai',            aiRoutes);
+app.use('/api/reports',       reportRoutes);
 
 // Catch-all API 404 Handler
 app.use('/api/*', (req, res) => {
