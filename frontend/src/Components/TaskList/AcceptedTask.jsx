@@ -13,7 +13,7 @@ const AcceptedTask = ({ data, onTaskUpdate }) => {
   useEffect(() => {
     const fetchTimeLogs = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/timelogs/task/${data._id}`);
+        const res = await axios.get(`/api/timelogs/task/${data._id}`);
         setTimeSpent(res.data.totalSeconds || 0);
         setIsRunning(res.data.isRunning);
         setCurrentLogId(res.data.currentLogId);
@@ -39,7 +39,7 @@ const AcceptedTask = ({ data, onTaskUpdate }) => {
   const toggleTimer = async () => {
     if (!isRunning) {
       try {
-        const res = await axios.post('http://localhost:5000/api/timelogs/start', { taskId: data._id, userId: authUser.data._id });
+        const res = await axios.post('/api/timelogs/start', { taskId: data._id, userId: authUser.data._id });
         setIsRunning(true);
         setCurrentLogId(res.data._id);
         toast.success("Timer started!");
@@ -49,7 +49,7 @@ const AcceptedTask = ({ data, onTaskUpdate }) => {
     } else {
       if (!currentLogId) return;
       try {
-        await axios.put(`http://localhost:5000/api/timelogs/stop/${currentLogId}`);
+        await axios.put(`/api/timelogs/stop/${currentLogId}`);
         setIsRunning(false);
         setCurrentLogId(null);
         toast.success("Timer stopped!");

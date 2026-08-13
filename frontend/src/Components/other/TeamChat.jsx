@@ -44,7 +44,8 @@ const TeamChat = () => {
   // Socket.IO Connection & Room Event Handlers
   useEffect(() => {
     if (!token) return;
-    const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
+    const socketUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname !== 'localhost' ? window.location.origin : 'http://localhost:5000');
+    const socket = io(socketUrl);
     socketRef.current = socket;
 
     socket.emit('authenticate', currentUserId);

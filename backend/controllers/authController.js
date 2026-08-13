@@ -207,8 +207,8 @@ exports.forgotPassword = async (req, res) => {
     const resetToken = user.getResetPasswordToken();
     await user.save({ validateBeforeSave: false });
 
-    // Try to grab origin to dynamically build link
-    const resetUrl = `${req.headers.origin || 'http://localhost:5173'}/?resetToken=${resetToken}`;
+    const frontendBase = req.headers.origin || process.env.FRONTEND_URL || 'https://teampulse-afkh.onrender.com';
+    const resetUrl = `${frontendBase}/?resetToken=${resetToken}`;
 
     await sendPasswordResetEmail(user.email, resetUrl);
     res.status(200).json({ message: 'Password reset email sent' });

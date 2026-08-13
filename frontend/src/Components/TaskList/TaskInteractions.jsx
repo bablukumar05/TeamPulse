@@ -65,7 +65,7 @@ const TaskInteractions = ({ task, onUpdate }) => {
             {task.attachments.map((file, idx) => (
               <a 
                 key={idx} 
-                href={`http://localhost:5000${file.url}`} 
+                href={file.url.startsWith('http') ? file.url : `${import.meta.env.VITE_API_URL || ''}${file.url}`} 
                 target="_blank" 
                 rel="noreferrer"
                 className="text-xs text-blue-400 hover:text-blue-300 truncate transition-colors flex items-center gap-1 bg-blue-500/10 w-max px-2 py-1 rounded"

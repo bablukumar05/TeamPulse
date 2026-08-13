@@ -50,7 +50,7 @@ const ProfileSettings = ({ onClose }) => {
            <div className="flex justify-center mb-6">
               <div className="relative group cursor-pointer w-24 h-24 rounded-full overflow-hidden border-4 border-white/10 hover:border-emerald-500/50 transition-all shadow-lg">
                   {authUser?.data?.avatar ? (
-                     <img src={`http://localhost:5000${authUser.data.avatar}`} alt="Avatar" className="w-full h-full object-cover" />
+                      <img src={authUser.data.avatar.startsWith('http') ? authUser.data.avatar : `${import.meta.env.VITE_API_URL || ''}${authUser.data.avatar}`} alt="Avatar" className="w-full h-full object-cover" />
                   ) : (
                      <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-3xl font-bold text-white">
                         {authUser?.data?.firstName?.charAt(0) || 'U'}

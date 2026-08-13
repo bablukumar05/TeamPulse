@@ -5,7 +5,15 @@ import App from "./App.jsx";
 import AuthProvider from "./Context/AuthProvider";
 import axios from "axios";
 
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const getApiBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    return window.location.origin;
+  }
+  return 'http://localhost:5000';
+};
+
+axios.defaults.baseURL = getApiBaseUrl();
 
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
