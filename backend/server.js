@@ -11,7 +11,8 @@ const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
 const compression = require('compression');
-require('dotenv').config();
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const logger = require('./utils/logger');
 
@@ -238,7 +239,7 @@ const frontendDist = path.resolve(__dirname, '../frontend/dist');
 app.use(express.static(frontendDist));
 app.use('/TeamPulse', express.static(frontendDist));
 
-app.get('*', (req, res, next) => {
+app.use((req, res, next) => {
   if (req.originalUrl.startsWith('/api') || req.originalUrl.startsWith('/socket.io')) {
     return next();
   }
