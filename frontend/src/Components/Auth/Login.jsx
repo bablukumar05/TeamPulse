@@ -69,15 +69,17 @@ const Login = () => {
       toast.dismiss(loadingToast);
       let displayMsg = "Authentication failed.";
 
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout') || error.message?.includes('Network Error')) {
-        displayMsg = "Server is starting up. Please click SIGN IN again in 5 seconds.";
+      if (error.response?.data?.message) {
+        displayMsg = error.response.data.message;
       } else if (error.response?.data?.errors?.length > 0) {
         displayMsg = error.response.data.errors.map(e => e.message).join(', ');
-      } else if (error.response?.data?.message) {
-        displayMsg = error.response.data.message;
+      } else if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        displayMsg = "Connection timed out. Please try again.";
+      } else if (error.message?.includes('Network Error')) {
+        displayMsg = "Unable to connect to server. Please check backend server status.";
       }
 
-      toast.error(displayMsg, { duration: 6000 });
+      toast.error(displayMsg, { duration: 5000 });
     }
 
     setEmail("");
