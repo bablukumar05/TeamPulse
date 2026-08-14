@@ -31,7 +31,7 @@ const App = () => {
 
   useEffect(() => {
     if (authUser) {
-      const socketUrl = import.meta.env.VITE_API_URL || (['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.hostname.startsWith('192.168.') ? "http://localhost:5000" : window.location.origin);
+      const socketUrl = import.meta.env.VITE_API_URL || (window.location.hostname.includes('vercel.app') ? "https://teampulse-gx6p.onrender.com" : (['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.hostname.startsWith('192.168.') ? "http://localhost:5000" : window.location.origin));
       socket = io(socketUrl, {
         transports: ['polling', 'websocket'],
         withCredentials: true,

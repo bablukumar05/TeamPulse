@@ -12,6 +12,9 @@ const getApiBaseUrl = () => {
     if (host === 'localhost' || host === '127.0.0.1' || host.startsWith('192.168.') || host.startsWith('10.')) {
       return 'http://localhost:5000';
     }
+    if (host.includes('vercel.app')) {
+      return 'https://teampulse-gx6p.onrender.com';
+    }
     return window.location.origin;
   }
   return 'http://localhost:5000';
