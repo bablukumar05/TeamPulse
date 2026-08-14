@@ -1,4 +1,4 @@
-# TeamPulse — MERN Frontend
+# TeamPulse —
 
 Enterprise Team & Employee Management Platform Frontend built with React, Vite, Tailwind CSS, Recharts, and Socket.IO.
 
