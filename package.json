@@ -10,6 +10,9 @@
     "dev:backend": "npm run dev --prefix backend",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
   },
+  "overrides": {
+    "glob": "^11.0.0"
+  },
   "dependencies": {
     "concurrently": "^8.2.2"
   }
