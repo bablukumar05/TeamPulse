@@ -272,7 +272,8 @@ app.use((req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI;
+const DEFAULT_MONGO_URI = 'mongodb+srv://kumarbablu74824_db_user:wMooohJWCuUW8Qko@cluster0.gffjvwp.mongodb.net/TeamPulse?retryWrites=true&w=majority&appName=Cluster0';
+const MONGO_URI = process.env.MONGO_URI || DEFAULT_MONGO_URI;
 
 mongoose.connect(MONGO_URI)
   .then(async () => {
