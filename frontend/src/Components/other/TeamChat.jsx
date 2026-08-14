@@ -44,7 +44,7 @@ const TeamChat = () => {
   // Socket.IO Connection & Room Event Handlers
   useEffect(() => {
     if (!token) return;
-    const socketUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app') ? 'https://teampulse-afkh.onrender.com' : (typeof window !== 'undefined' && window.location.hostname !== 'localhost' ? window.location.origin : 'http://localhost:5000'));
+    const socketUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname !== 'localhost' ? window.location.origin : 'http://localhost:5000');
     const socket = io(socketUrl, { transports: ['polling', 'websocket'], withCredentials: true });
     socketRef.current = socket;
 

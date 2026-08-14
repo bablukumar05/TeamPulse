@@ -7,13 +7,8 @@ import axios from "axios";
 
 const getApiBaseUrl = () => {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
-  if (typeof window !== 'undefined') {
-    if (window.location.hostname.includes('vercel.app')) {
-      return "https://teampulse-afkh.onrender.com";
-    }
-    if (window.location.hostname !== 'localhost') {
-      return window.location.origin;
-    }
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    return window.location.origin;
   }
   return 'http://localhost:5000';
 };

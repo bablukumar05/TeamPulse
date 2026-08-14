@@ -31,7 +31,7 @@ const App = () => {
 
   useEffect(() => {
     if (authUser) {
-      const socketUrl = import.meta.env.VITE_API_URL || (window.location.hostname.includes('vercel.app') ? "https://teampulse-afkh.onrender.com" : (window.location.hostname !== 'localhost' ? window.location.origin : "http://localhost:5000"));
+      const socketUrl = import.meta.env.VITE_API_URL || (window.location.hostname !== 'localhost' ? window.location.origin : "http://localhost:5000");
       socket = io(socketUrl, {
         transports: ['polling', 'websocket'],
         withCredentials: true,
