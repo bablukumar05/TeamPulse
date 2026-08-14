@@ -5,7 +5,7 @@ const employeeController = require('../controllers/employeeController');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 const { upload } = require('../middleware/uploadMiddleware');
 
-router.get('/employees', protect, authorizeRoles('Admin', 'Manager'), adminController.getEmployees);
+router.get('/employees', protect, adminController.getEmployees);
 router.post('/tasks', protect, authorizeRoles('Admin', 'Manager'), adminController.createTask);
 router.get('/tasks/all', protect, authorizeRoles('Admin', 'Manager'), adminController.getAllTasks);
 router.put('/tasks/:taskId/status', protect, authorizeRoles('Admin', 'Manager'), adminController.updateTaskStatusAdmin);
