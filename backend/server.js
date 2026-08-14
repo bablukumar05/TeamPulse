@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
-const xss = require('xss-clean');
 const xssLib = require('xss-clean/lib/xss');
 const rateLimit = require('express-rate-limit');
 const morgan = require('morgan');
@@ -34,27 +33,21 @@ const cultureRoutes     = require('./routes/cultureRoutes');
 const workspaceRoutes   = require('./routes/workspaceRoutes');
 const notificationRoutes= require('./routes/notificationRoutes');
 const attendanceRoutes  = require('./routes/attendanceRoutes');
-// Phase 2
 const sprintRoutes      = require('./routes/sprintRoutes');
 const milestoneRoutes   = require('./routes/milestoneRoutes');
-// Phase 3
 const hrRoutes          = require('./routes/hrRoutes');
-// Phase 5
 const aiRoutes          = require('./routes/aiRoutes');
 const reportRoutes      = require('./routes/reportRoutes');
 const Message = require('./models/Message');
 
 const app = express();
 
-// Security HTTP Headers
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' }
 }));
 
-// GZip Response Compression for ultra-fast API payloads
 app.use(compression());
 
-// CORS Configuration
 app.use(cors({
   origin: true,
   credentials: true,
@@ -63,20 +56,15 @@ app.use(cors({
 }));
 app.options('*', cors());
 
-// HTTP Request Logging via Morgan & Winston
 app.use(morgan('combined', { stream: logger.stream }));
 
-// Body Parser with size limits
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Data Sanitization against NoSQL Query Injection
-// Sanitize only body, params, and headers to avoid reassigning req.query (read-only in some Node/Express versions)
 app.use((req, res, next) => {
   try {
     ['body', 'params', 'headers'].forEach((key) => {
       if (req[key]) {
-        // use the library's sanitize function to avoid replacing req.query directly
         req[key] = mongoSanitize.sanitize(req[key], { replaceWith: '_', allowDots: true });
       }
     });
@@ -86,8 +74,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Data Sanitization against XSS
-// Sanitize body and params only to avoid assigning to read-only req.query
 app.use((req, res, next) => {
   try {
     if (req.body) req.body = xssLib.clean(req.body);
@@ -98,28 +84,25 @@ app.use((req, res, next) => {
   next();
 });
 
-// Rate Limiting
 const isDev = process.env.NODE_ENV !== 'production';
 
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 500, // Allow 500 auth requests per 15 mins to prevent 429 rejections
+  windowMs: 15 * 60 * 1000,
+  max: 500,
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: 'Too many auth requests from this IP, please try again later.' }
 });
 
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5000, // Allow 5000 API requests per 15 mins for smooth real-time polling
+  windowMs: 15 * 60 * 1000,
+  max: 5000,
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-// Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Socket.IO Setup
 const userSockets = new Map();
 
 function attachIoHandlers(io) {
@@ -150,7 +133,6 @@ function attachIoHandlers(io) {
       }
     });
 
-    // ── Phase 4 Multi-Room Socket Events ──────────────────────────
     socket.on('joinRoom', (roomId) => {
       socket.join(roomId);
       logger.info(`Socket ${socket.id} joined room ${roomId}`);
@@ -162,7 +144,6 @@ function attachIoHandlers(io) {
     });
 
     socket.on('sendRoomMessage', (data) => {
-      // Broadcast to all users in the room including sender
       io.to(data.roomId).emit('newRoomMessage', data.message);
     });
 
@@ -215,7 +196,6 @@ function createServerWithIo(port) {
   });
 }
 
-// URL Rewrite for /TeamPulse prefix
 app.use((req, res, next) => {
   if (req.url.startsWith('/TeamPulse/api')) {
     req.url = req.url.replace('/TeamPulse/api', '/api');
@@ -223,7 +203,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// API Routes
 app.use('/api/', apiLimiter);
 app.use('/api/auth',          authLimiter, authRoutes);
 app.use('/api/admin',         adminRoutes);
@@ -232,20 +211,15 @@ app.use('/api/chat',          chatRoutes);
 app.use('/api/projects',      projectRoutes);
 app.use('/api/timelogs',      timeLogRoutes);
 app.use('/api/culture',       cultureRoutes);
-// Phase 1 — Enterprise Routes
 app.use('/api/workspace',     workspaceRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/attendance',    attendanceRoutes);
-// Phase 2 — Project Module
 app.use('/api/sprints',       sprintRoutes);
 app.use('/api/milestones',    milestoneRoutes);
-// Phase 3 — People & HR
 app.use('/api/hr',            hrRoutes);
-// Phase 5 — AI & Reports
 app.use('/api/ai',            aiRoutes);
 app.use('/api/reports',       reportRoutes);
 
-// Catch-all API 404 Handler
 app.use((req, res, next) => {
   if (req.originalUrl.startsWith('/api/') || req.originalUrl.startsWith('/TeamPulse/api/')) {
     return res.status(404).json({ message: `API endpoint ${req.originalUrl} not found` });
@@ -253,7 +227,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve static frontend assets in production / Render deployment
 const fs = require('fs');
 const frontendDist = path.resolve(__dirname, '../frontend/dist');
 
