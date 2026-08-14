@@ -246,8 +246,11 @@ app.use('/api/ai',            aiRoutes);
 app.use('/api/reports',       reportRoutes);
 
 // Catch-all API 404 Handler
-app.use('/api/*', (req, res) => {
-  res.status(404).json({ message: `API endpoint ${req.originalUrl} not found` });
+app.use((req, res, next) => {
+  if (req.originalUrl.startsWith('/api/') || req.originalUrl.startsWith('/TeamPulse/api/')) {
+    return res.status(404).json({ message: `API endpoint ${req.originalUrl} not found` });
+  }
+  next();
 });
 
 // Serve static frontend assets in production / Render deployment
