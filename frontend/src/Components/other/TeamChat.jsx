@@ -44,7 +44,7 @@ const TeamChat = () => {
   // Socket.IO Connection & Room Event Handlers
   useEffect(() => {
     if (!token) return;
-    const socketUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname !== 'localhost' ? window.location.origin : 'http://localhost:5000');
+    const socketUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && (['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.hostname.startsWith('192.168.')) ? 'http://localhost:5000' : window.location.origin);
     const socket = io(socketUrl, { transports: ['polling', 'websocket'], withCredentials: true });
     socketRef.current = socket;
 
