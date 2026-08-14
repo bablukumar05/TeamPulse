@@ -54,7 +54,6 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
-app.options('*', cors());
 
 app.use(morgan('combined', { stream: logger.stream }));
 
