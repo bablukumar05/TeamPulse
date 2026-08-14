@@ -28,7 +28,13 @@ const protect = async (req, res, next) => {
 
 const authorizeRoles = (...roles) => {
   return (req, res, next) => {
-    if (req.user && roles.includes(req.user.role)) {
+    if (!req.user || !req.user.role) {
+      return res.status(403).json({ message: 'Forbidden: User role not defined' });
+    }
+    const userRoleLower = req.user.role.toString().trim().toLowerCase();
+    const allowedRolesLower = roles.map(r => r.toString().trim().toLowerCase());
+
+    if (allowedRolesLower.includes(userRoleLower)) {
       return next();
     } else {
       return res.status(403).json({ message: `Forbidden: Requires one of [${roles.join(', ')}] roles` });
