@@ -25,3 +25,5 @@ dist-ssr
 
 # Sensitive Environment Configurations (Prevent uploading secrets to GitHub)
 .env
+
+.vercel
