@@ -58,7 +58,10 @@ app.use(compression());
 app.use(cors({
   origin: true,
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
+app.options('*', cors());
 
 // HTTP Request Logging via Morgan & Winston
 app.use(morgan('combined', { stream: logger.stream }));

@@ -46,10 +46,10 @@ const Login = () => {
 
          response = await axios.post("/api/auth/register", formData, {
            headers: { "Content-Type": "multipart/form-data" },
-           timeout: 10000
+           timeout: 45000
          });
       } else {
-         response = await axios.post("/api/auth/login", { email, password }, { timeout: 10000 });
+         response = await axios.post("/api/auth/login", { email, password }, { timeout: 45000 });
       }
 
       toast.dismiss(loadingToast);
@@ -70,14 +70,14 @@ const Login = () => {
       let displayMsg = "Authentication failed.";
 
       if (error.code === 'ECONNABORTED' || error.message?.includes('timeout') || error.message?.includes('Network Error')) {
-        displayMsg = "Cannot connect to server. Please verify backend is running on port 5000.";
+        displayMsg = "Server is starting up. Please click SIGN IN again in 5 seconds.";
       } else if (error.response?.data?.errors?.length > 0) {
         displayMsg = error.response.data.errors.map(e => e.message).join(', ');
       } else if (error.response?.data?.message) {
         displayMsg = error.response.data.message;
       }
 
-      toast.error(displayMsg, { duration: 5000 });
+      toast.error(displayMsg, { duration: 6000 });
     }
 
     setEmail("");
