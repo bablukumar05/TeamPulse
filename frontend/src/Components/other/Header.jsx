@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import ProfileSettings from "./ProfileSettings";
 import LeaveRequestPanel from "./LeaveRequestPanel";
-import NotificationCenter from "../Notifications/NotificationCenter";
+import NotificationCenter from "../notifications/NotificationCenter";
 import { AuthContext } from "../../Context/AuthProvider";
 
 const Header = (props) => {
