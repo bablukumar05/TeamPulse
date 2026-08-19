@@ -5,7 +5,6 @@ const User = require('../models/User');
 const AuditLog = require('../models/AuditLog');
 const Invite = require('../models/Invite');
 const { sendPasswordResetEmail } = require('../utils/emailService');
-const logger = require('../utils/logger');
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -26,7 +25,6 @@ exports.register = async (req, res) => {
     let validInvite = null;
 
     if (inviteCode) {
-      // Find valid invite
       validInvite = await Invite.findOne({
         token: inviteCode,
         isActive: true,
@@ -39,16 +37,15 @@ exports.register = async (req, res) => {
             assignedRole = validInvite.role;
             assignedDepartment = validInvite.department || 'General';
         } else {
-            validInvite = null; // Email mismatch
+            validInvite = null;
         }
       } else {
           validInvite = null;
       }
     }
     
-    // Auto-approve generic email domains or standard registrations
     if (!validInvite) {
-      status = 'Approved'; // Allow direct signup for instant employee access
+      status = 'Approved';
     }
 
     if (tenthMarks || twelfthMarks) {
@@ -80,7 +77,6 @@ exports.register = async (req, res) => {
       await validInvite.save();
     }
 
-    // Create JoinRequest if not auto-approved
     if (status === 'Pending') {
       const JoinRequest = require('../models/JoinRequest');
       await JoinRequest.create({
@@ -94,7 +90,6 @@ exports.register = async (req, res) => {
         status: 'Pending'
       });
 
-      // Notify Admins
       const io = req.app.get('io');
       if (io) {
         io.to('admins').emit('adminTaskNotification', { message: `New join request from ${firstName}`, status: 'Pending' });
@@ -112,7 +107,7 @@ exports.register = async (req, res) => {
       message: status === 'Approved' ? 'Registration successful and approved' : 'Registration successful, pending admin approval'
     });
   } catch (error) {
-    logger.error('Register Error:', error);
+    console.error('Register Error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -147,7 +142,7 @@ exports.login = async (req, res) => {
       res.status(401).json({ message: 'Invalid credentials' });
     }
   } catch (error) {
-    logger.error('Login Error:', error);
+    console.error('Login Error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -157,7 +152,7 @@ exports.getMe = async (req, res) => {
     const user = await User.findById(req.user.id).select('-password');
     res.status(200).json(user);
   } catch (error) {
-    logger.error('GetMe Error:', error);
+    console.error('GetMe Error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -194,7 +189,7 @@ exports.updateProfile = async (req, res) => {
       avatar: updatedUser.avatar,
     });
   } catch (error) {
-    logger.error('UpdateProfile Error:', error);
+    console.error('UpdateProfile Error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -213,7 +208,7 @@ exports.forgotPassword = async (req, res) => {
     await sendPasswordResetEmail(user.email, resetUrl);
     res.status(200).json({ message: 'Password reset email sent' });
   } catch (error) {
-    logger.error('ForgotPassword Error:', error);
+    console.error('ForgotPassword Error:', error);
     res.status(500).json({ message: 'Email could not be sent' });
   }
 };

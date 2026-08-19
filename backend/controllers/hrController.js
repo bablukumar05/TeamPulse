@@ -2,7 +2,6 @@ const User         = require('../models/User');
 const Task         = require('../models/Task');
 const LeaveRequest = require('../models/LeaveRequest');
 const Attendance   = require('../models/Attendance');
-const logger       = require('../utils/logger');
 const path         = require('path');
 const multer       = require('multer');
 
@@ -21,7 +20,7 @@ exports.getEmployees = async (req, res) => {
       .sort({ firstName: 1 });
     res.json(employees);
   } catch (err) {
-    logger.error('HR getEmployees:', err);
+    console.error('HR getEmployees:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -45,7 +44,7 @@ exports.getEmployeeProfile = async (req, res) => {
 
     res.json({ ...user.toObject(), stats: { totalTasks, completedTasks, overdueTasks } });
   } catch (err) {
-    logger.error('HR getEmployeeProfile:', err);
+    console.error('HR getEmployeeProfile:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -59,7 +58,7 @@ exports.updateEmployee = async (req, res) => {
 
     const user = await User.findByIdAndUpdate(req.params.id, updates, { new: true }).select('-password');
     if (!user) return res.status(404).json({ message: 'User not found' });
-    logger.info(`HR updated employee: ${user.firstName}`);
+    console.log(`HR updated employee: ${user.firstName}`);
     res.json(user);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -84,10 +83,10 @@ exports.uploadDocument = async (req, res) => {
       { new: true }
     ).select('firstName lastName documents');
 
-    logger.info(`Document uploaded for ${user.firstName}: ${docEntry.name}`);
+    console.log(`Document uploaded for ${user.firstName}: ${docEntry.name}`);
     res.json({ message: 'Document uploaded', documents: user.documents });
   } catch (err) {
-    logger.error('HR uploadDocument:', err);
+    console.error('HR uploadDocument:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
@@ -149,7 +148,7 @@ exports.updateLeaveStatus = async (req, res) => {
       }
     }
 
-    logger.info(`Leave request ${lr._id} ${status} by ${req.user.firstName}`);
+    console.log(`Leave request ${lr._id} ${status} by ${req.user.firstName}`);
     res.json(lr);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });

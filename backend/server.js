@@ -13,14 +13,12 @@ const compression = require('compression');
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
-const logger = require('./utils/logger');
-
 process.on('uncaughtException', (err) => {
-  logger.error('FATAL UNCAUGHT EXCEPTION:', err);
+  console.error('FATAL UNCAUGHT EXCEPTION:', err);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  logger.error('FATAL UNHANDLED REJECTION:', reason);
+  console.error('FATAL UNHANDLED REJECTION:', reason);
 });
 
 const authRoutes        = require('./routes/authRoutes');
@@ -70,10 +68,14 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(morgan('combined', { stream: logger.stream }));
+app.use(morgan('dev'));
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+app.get(['/healthz', '/api/health', '/api/ping'], (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 app.use((req, res, next) => {
   try {
@@ -83,7 +85,7 @@ app.use((req, res, next) => {
       }
     });
   } catch (err) {
-    logger.error('Error during request sanitization:', err);
+    console.error('Error during request sanitization:', err);
   }
   next();
 });
@@ -93,12 +95,10 @@ app.use((req, res, next) => {
     if (req.body) req.body = xssLib.clean(req.body);
     if (req.params) req.params = xssLib.clean(req.params);
   } catch (err) {
-    logger.error('Error during XSS sanitization:', err);
+    console.error('Error during XSS sanitization:', err);
   }
   next();
 });
-
-const isDev = process.env.NODE_ENV !== 'production';
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -115,22 +115,22 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), { maxAge: '1d' }));
 
 const userSockets = new Map();
 
 function attachIoHandlers(io) {
   io.on('connection', (socket) => {
-    logger.info(`A user connected: ${socket.id}`);
+    console.log(`A user connected: ${socket.id}`);
 
     socket.on('authenticate', (userId) => {
       userSockets.set(userId, socket.id);
-      logger.info(`User ${userId} authenticated with socket ${socket.id}`);
+      console.log(`User ${userId} authenticated with socket ${socket.id}`);
     });
 
     socket.on('adminConnect', () => {
       socket.join('admins');
-      logger.info(`Admin joined admins room with socket ${socket.id}`);
+      console.log(`Admin joined admins room with socket ${socket.id}`);
     });
 
     socket.on('sendGlobalMessage', async (data) => {
@@ -143,18 +143,18 @@ function attachIoHandlers(io) {
         });
         io.emit('receiveGlobalMessage', newMessage);
       } catch (err) {
-        logger.error('Message error', err);
+        console.error('Message error', err);
       }
     });
 
     socket.on('joinRoom', (roomId) => {
       socket.join(roomId);
-      logger.info(`Socket ${socket.id} joined room ${roomId}`);
+      console.log(`Socket ${socket.id} joined room ${roomId}`);
     });
 
     socket.on('leaveRoom', (roomId) => {
       socket.leave(roomId);
-      logger.info(`Socket ${socket.id} left room ${roomId}`);
+      console.log(`Socket ${socket.id} left room ${roomId}`);
     });
 
     socket.on('sendRoomMessage', (data) => {
@@ -180,7 +180,7 @@ function attachIoHandlers(io) {
           break;
         }
       }
-      logger.info(`A user disconnected: ${socket.id}`);
+      console.log(`A user disconnected: ${socket.id}`);
     });
   });
 }
@@ -262,9 +262,15 @@ const PORT = process.env.PORT || 5000;
 const DEFAULT_MONGO_URI = 'mongodb+srv://kumarbablu74824_db_user:wMooohJWCuUW8Qko@cluster0.gffjvwp.mongodb.net/TeamPulse?retryWrites=true&w=majority&appName=Cluster0';
 const MONGO_URI = process.env.MONGO_URI || DEFAULT_MONGO_URI;
 
-mongoose.connect(MONGO_URI)
+const mongooseOptions = {
+  maxPoolSize: 10,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+};
+
+mongoose.connect(MONGO_URI, mongooseOptions)
   .then(async () => {
-    logger.info('Connected to MongoDB');
+    console.log('Connected to MongoDB Atlas with connection pooling enabled');
 
     let port = Number(PORT) || 0;
     const maxAttempts = 10;
@@ -272,23 +278,36 @@ mongoose.connect(MONGO_URI)
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
         const result = await createServerWithIo(port);
-        logger.info(`Server running on port ${result.port}`);
+        console.log(`Server running on port ${result.port}`);
+
+        const keepAliveUrl = process.env.FRONTEND_URL || 'https://teampulse-gx6p.onrender.com';
+        if (keepAliveUrl && keepAliveUrl.includes('onrender.com')) {
+          setInterval(() => {
+            const https = require('https');
+            https.get(`${keepAliveUrl}/api/health`, (res) => {
+              console.log(`Self keep-alive ping status: ${res.statusCode}`);
+            }).on('error', (e) => {
+              console.warn('Keep-alive ping error:', e.message);
+            });
+          }, 10 * 60 * 1000);
+        }
+
         return;
       } catch (err) {
         if (err && err.code === 'EADDRINUSE') {
-          logger.warn(`Port ${port} is in use. Trying port ${port + 1}...`);
+          console.warn(`Port ${port} is in use. Trying port ${port + 1}...`);
           port = port + 1;
           continue;
         }
-        logger.error('Failed to start server:', err);
+        console.error('Failed to start server:', err);
         process.exit(1);
       }
     }
 
-    logger.error(`Unable to bind to a port after ${maxAttempts} attempts. Exiting.`);
+    console.error(`Unable to bind to a port after ${maxAttempts} attempts. Exiting.`);
     process.exit(1);
   })
   .catch(err => {
-    logger.error('MongoDB connection error:', err);
+    console.error('MongoDB connection error:', err);
     process.exit(1);
   });

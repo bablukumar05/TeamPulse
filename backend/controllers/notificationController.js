@@ -1,5 +1,4 @@
 const Notification = require('../models/Notification');
-const logger = require('../utils/logger');
 
 // Create a notification (internal utility — used by other controllers)
 exports.createNotification = async ({ recipient, type, title, body, link, metadata }) => {
@@ -7,7 +6,7 @@ exports.createNotification = async ({ recipient, type, title, body, link, metada
     const notif = await Notification.create({ recipient, type, title, body: body || '', link: link || '', metadata: metadata || {} });
     return notif;
   } catch (err) {
-    logger.error('createNotification error:', err);
+    console.error('createNotification error:', err);
   }
 };
 
@@ -28,7 +27,7 @@ exports.getNotifications = async (req, res) => {
 
     res.json({ notifications, unreadCount, page, limit });
   } catch (err) {
-    logger.error('getNotifications error:', err);
+    console.error('getNotifications error:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };

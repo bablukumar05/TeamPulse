@@ -1,7 +1,6 @@
 const Task       = require('../models/Task');
 const Project    = require('../models/Project');
 const Attendance = require('../models/Attendance');
-const logger     = require('../utils/logger');
 
 // POST /api/ai/summarize-tasks — Summarize user's tasks
 exports.summarizeTasks = async (req, res) => {
@@ -44,7 +43,7 @@ exports.summarizeTasks = async (req, res) => {
 
     res.json(summary);
   } catch (err) {
-    logger.error('summarizeTasks error:', err);
+    console.error('summarizeTasks error:', err);
     res.status(500).json({ message: 'Failed to summarize tasks', error: err.message });
   }
 };
@@ -78,7 +77,7 @@ exports.suggestPriority = async (req, res) => {
       confidence: '92%'
     });
   } catch (err) {
-    logger.error('suggestPriority error:', err);
+    console.error('suggestPriority error:', err);
     res.status(500).json({ message: 'Failed to suggest priority', error: err.message });
   }
 };
@@ -135,7 +134,7 @@ exports.chat = async (req, res) => {
       timestamp: new Date()
     });
   } catch (err) {
-    logger.error('ai chat error:', err);
+    console.error('ai chat error:', err);
     res.status(500).json({ message: 'AI chat error', error: err.message });
   }
 };
@@ -181,7 +180,7 @@ exports.generateReport = async (req, res) => {
 
     res.json(report);
   } catch (err) {
-    logger.error('generateReport error:', err);
+    console.error('generateReport error:', err);
     res.status(500).json({ message: 'Report generation failed', error: err.message });
   }
 };

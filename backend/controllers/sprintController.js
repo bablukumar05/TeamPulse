@@ -1,6 +1,5 @@
 const Sprint  = require('../models/Sprint');
 const Task    = require('../models/Task');
-const logger  = require('../utils/logger');
 
 // POST /api/sprints
 exports.createSprint = async (req, res) => {
@@ -14,10 +13,10 @@ exports.createSprint = async (req, res) => {
       endDate:   endDate   || undefined,
       createdBy: req.user._id,
     });
-    logger.info(`Sprint created: ${name} in project ${projectId}`);
+    console.log(`Sprint created: ${name} in project ${projectId}`);
     res.status(201).json(sprint);
   } catch (err) {
-    logger.error('createSprint:', err);
+    console.error('createSprint:', err);
     res.status(500).json({ message: 'Failed to create sprint', error: err.message });
   }
 };
@@ -51,7 +50,7 @@ exports.getSprints = async (req, res) => {
 
     res.json(enriched);
   } catch (err) {
-    logger.error('getSprints:', err);
+    console.error('getSprints:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -80,7 +79,7 @@ exports.startSprint = async (req, res) => {
     sprint.startDate = sprint.startDate || new Date();
     await sprint.save();
 
-    logger.info(`Sprint started: ${sprint.name}`);
+    console.log(`Sprint started: ${sprint.name}`);
     res.json({ message: 'Sprint started', sprint });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -100,7 +99,7 @@ exports.completeSprint = async (req, res) => {
     sprint.completedAt  = new Date();
     await sprint.save();
 
-    logger.info(`Sprint completed: ${sprint.name} — velocity: ${sprint.velocity}`);
+    console.log(`Sprint completed: ${sprint.name} — velocity: ${sprint.velocity}`);
     res.json({ message: 'Sprint completed', sprint });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });

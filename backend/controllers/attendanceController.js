@@ -1,5 +1,4 @@
 const Attendance = require('../models/Attendance');
-const logger = require('../utils/logger');
 
 // Helper: get today's date at midnight UTC+5:30
 const todayIST = () => {
@@ -38,10 +37,10 @@ exports.checkIn = async (req, res) => {
       { upsert: true, new: true }
     );
 
-    logger.info(`Check-in: ${req.user.firstName} at ${now.toISOString()} isLate=${isLate}`);
+    console.log(`Check-in: ${req.user.firstName} at ${now.toISOString()} isLate=${isLate}`);
     res.json({ message: `Checked in${isLate ? ' (Late)' : ''}`, record });
   } catch (err) {
-    logger.error('checkIn error:', err);
+    console.error('checkIn error:', err);
     res.status(500).json({ message: 'Failed to check in', error: err.message });
   }
 };
@@ -70,7 +69,7 @@ exports.handleBreak = async (req, res) => {
     await record.save();
     res.json({ message: action === 'start' ? 'Break started' : 'Break ended', record });
   } catch (err) {
-    logger.error('handleBreak error:', err);
+    console.error('handleBreak error:', err);
     res.status(500).json({ message: 'Failed to update break', error: err.message });
   }
 };
@@ -102,10 +101,10 @@ exports.checkOut = async (req, res) => {
     record.isOvertime = record.totalWorkMinutes > 540;
 
     await record.save();
-    logger.info(`Check-out: ${req.user.firstName} — ${record.totalWorkMinutes}min worked`);
+    console.log(`Check-out: ${req.user.firstName} — ${record.totalWorkMinutes}min worked`);
     res.json({ message: 'Checked out successfully', record });
   } catch (err) {
-    logger.error('checkOut error:', err);
+    console.error('checkOut error:', err);
     res.status(500).json({ message: 'Failed to check out', error: err.message });
   }
 };

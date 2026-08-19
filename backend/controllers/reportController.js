@@ -3,7 +3,6 @@ const User       = require('../models/User');
 const Attendance = require('../models/Attendance');
 const Sprint     = require('../models/Sprint');
 const LeaveRequest = require('../models/LeaveRequest');
-const logger     = require('../utils/logger');
 
 // GET /api/reports/productivity
 exports.getProductivityReport = async (req, res) => {
@@ -54,7 +53,7 @@ exports.getProductivityReport = async (req, res) => {
 
     res.json(report);
   } catch (err) {
-    logger.error('getProductivityReport error:', err);
+    console.error('getProductivityReport error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
@@ -88,7 +87,7 @@ exports.getAttendanceReport = async (req, res) => {
 
     res.json({ records, summary });
   } catch (err) {
-    logger.error('getAttendanceReport error:', err);
+    console.error('getAttendanceReport error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
@@ -124,7 +123,7 @@ exports.getSprintReport = async (req, res) => {
 
     res.json(report);
   } catch (err) {
-    logger.error('getSprintReport error:', err);
+    console.error('getSprintReport error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
@@ -161,7 +160,7 @@ exports.getLeaveReport = async (req, res) => {
 
     res.json(report);
   } catch (err) {
-    logger.error('getLeaveReport error:', err);
+    console.error('getLeaveReport error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };

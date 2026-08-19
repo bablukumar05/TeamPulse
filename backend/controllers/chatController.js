@@ -2,7 +2,6 @@ const ChatRoom     = require('../models/ChatRoom');
 const Message      = require('../models/Message');
 const User         = require('../models/User');
 const Notification = require('../models/Notification');
-const logger       = require('../utils/logger');
 
 // ── Rooms ──────────────────────────────────────────────────────────────────
 
@@ -20,7 +19,7 @@ exports.getMyRooms = async (req, res) => {
 
     res.json(rooms);
   } catch (err) {
-    logger.error('getMyRooms error:', err);
+    console.error('getMyRooms error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
@@ -51,10 +50,10 @@ exports.createRoom = async (req, res) => {
       .populate('project', 'name color')
       .populate('department', 'name color');
 
-    logger.info(`Chat room created: ${room.name} (${type})`);
+    console.log(`Chat room created: ${room.name} (${type})`);
     res.status(201).json(populated);
   } catch (err) {
-    logger.error('createRoom error:', err);
+    console.error('createRoom error:', err);
     res.status(500).json({ message: 'Failed to create room', error: err.message });
   }
 };
@@ -88,7 +87,7 @@ exports.getOrCreateDMRoom = async (req, res) => {
 
     res.json(room);
   } catch (err) {
-    logger.error('getOrCreateDMRoom error:', err);
+    console.error('getOrCreateDMRoom error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
@@ -113,7 +112,7 @@ exports.getRoomMessages = async (req, res) => {
 
     res.json(messages.reverse());
   } catch (err) {
-    logger.error('getRoomMessages error:', err);
+    console.error('getRoomMessages error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
@@ -173,14 +172,14 @@ exports.sendMessage = async (req, res) => {
             title: `Mentioned by ${req.user.firstName}`,
             body: text.substring(0, 100),
             link: `/chat?roomId=${roomId}`,
-          }).catch(e => logger.error('Mention notification fail:', e));
+          }).catch(e => console.error('Mention notification fail:', e));
         }
       }
     }
 
     res.status(201).json(populated);
   } catch (err) {
-    logger.error('sendMessage error:', err);
+    console.error('sendMessage error:', err);
     res.status(500).json({ message: 'Failed to send message', error: err.message });
   }
 };

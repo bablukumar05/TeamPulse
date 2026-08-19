@@ -3,7 +3,6 @@ const Task = require('../models/Task');
 const AuditLog = require('../models/AuditLog');
 const JoinRequest = require('../models/JoinRequest');
 const { sendTaskAssignedEmail } = require('../utils/emailService');
-const logger = require('../utils/logger');
 
 
 exports.getEmployees = async (req, res) => {
@@ -39,7 +38,7 @@ exports.getEmployees = async (req, res) => {
 
     res.status(200).json(employeesWithTasks);
   } catch (error) {
-    logger.error('getEmployees error:', error);
+    console.error('getEmployees error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -105,7 +104,7 @@ exports.createTask = async (req, res) => {
 
     res.status(201).json({ message: 'Task created successfully', task });
   } catch (error) {
-    logger.error('CreateTask Admin Error:', error);
+    console.error('CreateTask Admin Error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -123,7 +122,7 @@ exports.getAllTasks = async (req, res) => {
     
     res.status(200).json(tasks);
   } catch (error) {
-    logger.error('GetAllTasks Admin Error:', error);
+    console.error('GetAllTasks Admin Error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -208,7 +207,7 @@ exports.updateTaskStatusAdmin = async (req, res) => {
 
     res.status(200).json({ message: 'Task status updated', task });
   } catch (error) {
-    logger.error('UpdateTaskStatusAdmin Error:', error);
+    console.error('UpdateTaskStatusAdmin Error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -278,7 +277,7 @@ exports.updateTaskDetailsAdmin = async (req, res) => {
     await task.save();
     res.status(200).json({ message: 'Task details updated successfully', task });
   } catch (error) {
-    logger.error('UpdateTaskDetailsAdmin Error:', error);
+    console.error('UpdateTaskDetailsAdmin Error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -377,7 +376,7 @@ exports.terminateEmployee = async (req, res) => {
       title: '⚠️ Official Notice: Employment Status Terminated',
       body: `Reason: ${finalReason}. Details: ${finalDetails.substring(0, 120)}… You can access your Termination Letter in your Document Vault.`,
       link: '/profile'
-    }).catch(e => logger.error('Notification create error:', e));
+    }).catch(e => console.error('Notification create error:', e));
 
     await AuditLog.create({
       action: 'EMPLOYEE_TERMINATED',
@@ -391,7 +390,7 @@ exports.terminateEmployee = async (req, res) => {
       employee
     });
   } catch (error) {
-    logger.error('terminateEmployee error:', error);
+    console.error('terminateEmployee error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

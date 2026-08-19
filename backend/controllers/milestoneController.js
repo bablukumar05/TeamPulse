@@ -1,6 +1,5 @@
 const Milestone = require('../models/Milestone');
 const Task      = require('../models/Task');
-const logger    = require('../utils/logger');
 
 // POST /api/milestones
 exports.createMilestone = async (req, res) => {
@@ -14,10 +13,10 @@ exports.createMilestone = async (req, res) => {
       color: color || '#f59e0b',
       createdBy: req.user._id,
     });
-    logger.info(`Milestone created: ${name}`);
+    console.log(`Milestone created: ${name}`);
     res.status(201).json(milestone);
   } catch (err) {
-    logger.error('createMilestone:', err);
+    console.error('createMilestone:', err);
     res.status(500).json({ message: 'Failed to create milestone', error: err.message });
   }
 };
@@ -58,7 +57,7 @@ exports.getMilestones = async (req, res) => {
 
     res.json(enriched);
   } catch (err) {
-    logger.error('getMilestones:', err);
+    console.error('getMilestones:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };

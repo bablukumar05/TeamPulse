@@ -1,21 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import Header from '../other/Header';
-import TaskListNumbers from '../other/TaskListNumbers';
+import Header from '../Other/Header';
+import TaskListNumbers from '../Other/TaskListNumbers';
 import TaskList from '../TaskList/TaskList';
-import GamificationBanner from '../other/GamificationBanner';
-import PersonalAnalytics from '../other/PersonalAnalytics';
-import AnnouncementsFeed from '../other/AnnouncementsFeed';
-import MyProjects from '../other/MyProjects';
-import FocusMode from '../other/FocusMode';
+import GamificationBanner from '../Other/GamificationBanner';
+import PersonalAnalytics from '../Other/PersonalAnalytics';
+import AnnouncementsFeed from '../Other/AnnouncementsFeed';
+import MyProjects from '../Other/MyProjects';
+import FocusMode from '../Other/FocusMode';
 import CalendarView from './CalendarView';
 import KanbanBoard from './KanbanBoard';
 import AttendanceTracker from './AttendanceTracker';
 import AttendanceCalendar from './AttendanceCalendar';
-import LeaveRequestPanel from '../other/LeaveRequestPanel';
-import TeamChat from '../other/TeamChat';
+import LeaveRequestPanel from '../Other/LeaveRequestPanel';
+import TeamChat from '../Other/TeamChat';
 import ReportsPage from '../../Pages/ReportsPage';
-import AIAssistant from '../ai/AIAssistant';
+import AIAssistant from '../AI/AIAssistant';
 import { AuthContext } from "../../Context/AuthProvider";
 
 const EMP_NAV = [

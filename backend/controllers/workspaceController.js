@@ -2,7 +2,6 @@ const Workspace  = require('../models/Workspace');
 const Department = require('../models/Department');
 const Team       = require('../models/Team');
 const User       = require('../models/User');
-const logger     = require('../utils/logger');
 
 // ── Workspace ──────────────────────────────────────────────────────────────
 
@@ -19,10 +18,10 @@ exports.createWorkspace = async (req, res) => {
     // Assign workspace to creating user
     await User.findByIdAndUpdate(req.user._id, { workspace: workspace._id });
 
-    logger.info(`Workspace created: ${name} by ${req.user.firstName}`);
+    console.log(`Workspace created: ${name} by ${req.user.firstName}`);
     res.status(201).json({ workspace });
   } catch (err) {
-    logger.error('createWorkspace error:', err);
+    console.error('createWorkspace error:', err);
     res.status(500).json({ message: 'Failed to create workspace', error: err.message });
   }
 };
@@ -67,10 +66,10 @@ exports.createDepartment = async (req, res) => {
       head: headId || null,
       workspace: req.body.workspaceId || null,
     });
-    logger.info(`Department created: ${name}`);
+    console.log(`Department created: ${name}`);
     res.status(201).json(dept);
   } catch (err) {
-    logger.error('createDepartment error:', err);
+    console.error('createDepartment error:', err);
     res.status(500).json({ message: 'Failed to create department', error: err.message });
   }
 };
@@ -131,10 +130,10 @@ exports.createTeam = async (req, res) => {
       manager:    managerId || null,
       workspace:  req.body.workspaceId || null,
     });
-    logger.info(`Team created: ${name}`);
+    console.log(`Team created: ${name}`);
     res.status(201).json(team);
   } catch (err) {
-    logger.error('createTeam error:', err);
+    console.error('createTeam error:', err);
     res.status(500).json({ message: 'Failed to create team', error: err.message });
   }
 };

@@ -1,5 +1,3 @@
-const logger = require('../utils/logger');
-
 const validateBody = (schema) => {
   return (req, res, next) => {
     const result = schema.safeParse(req.body);
@@ -10,7 +8,7 @@ const validateBody = (schema) => {
         message: err.message,
       }));
       
-      logger.warn(`Validation failed for ${req.originalUrl}: ${JSON.stringify(formattedErrors)}`);
+      console.warn(`Validation failed for ${req.originalUrl}: ${JSON.stringify(formattedErrors)}`);
       
       return res.status(400).json({
         message: 'Validation failed',
