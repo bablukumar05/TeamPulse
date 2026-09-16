@@ -14,14 +14,14 @@ const generateToken = (id) => {
 
 exports.register = async (req, res) => {
   try {
-    const { firstName, email, password, inviteCode, skills, tenthMarks, twelfthMarks, graduationDegree, postGraduationDegree } = req.body;
+    const { firstName, email, password, inviteCode, department } = req.body;
     
     const userExists = await User.findOne({ email });
-    if (userExists) return res.status(400).json({ message: 'User already exists' });
+    if (userExists) return res.status(400).json({ message: 'User already exists with this email address' });
 
-    let status = 'Pending';
+    let status = 'Approved';
     let assignedRole = 'Employee';
-    let assignedDepartment = 'General';
+    let assignedDepartment = department || 'General';
     let validInvite = null;
 
     if (inviteCode) {
@@ -34,25 +34,13 @@ exports.register = async (req, res) => {
       if (validInvite && validInvite.usedCount < validInvite.usageLimit) {
         if (!validInvite.email || validInvite.email === email) {
             status = 'Approved';
-            assignedRole = validInvite.role;
-            assignedDepartment = validInvite.department || 'General';
+            assignedRole = validInvite.role || 'Employee';
+            assignedDepartment = validInvite.department || department || 'General';
         } else {
             validInvite = null;
         }
       } else {
           validInvite = null;
-      }
-    }
-    
-    if (!validInvite) {
-      status = 'Approved';
-    }
-
-    if (tenthMarks || twelfthMarks) {
-      const tenth = parseFloat(tenthMarks) || 0;
-      const twelfth = parseFloat(twelfthMarks) || 0;
-      if ((tenth > 0 && tenth < 60) || (twelfth > 0 && twelfth < 60)) {
-        return res.status(400).json({ message: 'Eligibility Criteria Not Met: 10th and 12th marks must be at least 60%.' });
       }
     }
 
@@ -81,12 +69,6 @@ exports.register = async (req, res) => {
       const JoinRequest = require('../models/JoinRequest');
       await JoinRequest.create({
         userId: user._id,
-        skills: skills ? skills.split(',').map(s => s.trim()) : [],
-        tenthMarks: parseFloat(tenthMarks) || 0,
-        twelfthMarks: parseFloat(twelfthMarks) || 0,
-        graduationDegree: graduationDegree || '',
-        postGraduationDegree: postGraduationDegree || '',
-        resumeUrl: req.file ? `/uploads/${req.file.filename}` : '',
         status: 'Pending'
       });
 

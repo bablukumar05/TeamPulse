@@ -8,7 +8,15 @@ const { validateBody } = require('../middleware/validationMiddleware');
 const { registerSchema, loginSchema } = require('../schemas/authSchemas');
 
 
-router.post('/register', upload.single('resume'), validateBody(registerSchema), authController.register);
+const handleRegisterUpload = (req, res, next) => {
+  const contentType = req.headers['content-type'] || '';
+  if (contentType.includes('multipart/form-data')) {
+    return upload.none()(req, res, next);
+  }
+  next();
+};
+
+router.post('/register', handleRegisterUpload, validateBody(registerSchema), authController.register);
 router.post('/login', validateBody(loginSchema), authController.login);
 router.post('/forgotpassword', authController.forgotPassword);
 router.put('/resetpassword/:resettoken', authController.resetPassword);
