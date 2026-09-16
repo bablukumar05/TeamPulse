@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ['Pending', 'Approved', 'Rejected', 'Suspended', 'Deleted'],
-    default: 'Approved' // defaults to Approved for backward compatibility
+    default: 'Approved'
   },
   department: {
     type: String,

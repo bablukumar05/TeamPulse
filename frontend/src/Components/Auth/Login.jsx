@@ -24,6 +24,25 @@ const Login = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
+    if (isForgotPassword) {
+      if (!email) return toast.error("Please enter your registered email address");
+      setIsSubmittingForgot(true);
+      const loadingToast = toast.loading("Sending reset link...");
+      try {
+        await axios.post("/api/auth/forgotpassword", { email });
+        toast.dismiss(loadingToast);
+        toast.success("Password reset instructions sent to your email!");
+        setIsForgotPassword(false);
+      } catch (err) {
+        toast.dismiss(loadingToast);
+        toast.error(err.response?.data?.message || "Failed to send reset email");
+      } finally {
+        setIsSubmittingForgot(false);
+      }
+      return;
+    }
+
     if (!email || !password) {
       return toast.error("Please enter email and password");
     }
@@ -59,121 +78,90 @@ const Login = () => {
           role: (response.data.role || 'employee').toLowerCase(),
           data: response.data.user || response.data
         };
+
         localStorage.setItem("token", response.data.token);
-        localStorage.setItem("authUser", JSON.stringify(userObj));
-        setAuthUser(userObj);
         setToken(response.data.token);
-        toast.success(response.data.message || "Welcome back!");
+        setAuthUser(userObj);
+
+        toast.success(response.data.message || (isRegistering ? "Registration successful!" : "Welcome back!"));
       }
     } catch (error) {
       toast.dismiss(loadingToast);
-      let displayMsg = "Authentication failed.";
-
-      if (error.response?.data?.message) {
-        displayMsg = error.response.data.message;
-      } else if (error.response?.data?.errors?.length > 0) {
-        displayMsg = error.response.data.errors.map(e => e.message).join(', ');
-      } else if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        displayMsg = "Connection timed out. Please try again.";
-      } else if (error.message?.includes('Network Error')) {
-        displayMsg = "Unable to connect to server. Please check backend server status.";
-      }
-
-      toast.error(displayMsg, { duration: 5000 });
-    }
-
-    setEmail("");
-    setPassword("");
-  };
-
-  const forgotPasswordHandler = async (e) => {
-    e.preventDefault();
-    if (!email) return toast.error("Please enter your email");
-    setIsSubmittingForgot(true);
-    const loadingToast = toast.loading("Sending reset link...");
-    try {
-      await axios.post("/api/auth/forgotpassword", { email });
-      toast.success("Password reset link sent to your email! (Check backend console for preview link)", { id: loadingToast, duration: 5000 });
-      setIsForgotPassword(false);
-    } catch (error) {
-       toast.error(error.response?.data?.message || "Failed to send reset link.", { id: loadingToast });
-    } finally {
-       setIsSubmittingForgot(false);
+      const errMsg = error.response?.data?.message || (isRegistering ? "Registration failed" : "Invalid email or password");
+      toast.error(errMsg);
     }
   };
 
   return (
-    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#11141c] font-sans">
-      
-      {/* 3D Floating White Spheres Background */}
-      <div 
-        className="absolute top-[8%] left-[28%] w-[160px] h-[160px] rounded-full bg-gradient-to-br from-[#ffffff] to-[#b0b8c4]"
-        style={{ boxShadow: "inset -15px -15px 30px rgba(0,0,0,0.2), inset 10px 10px 30px rgba(255,255,255,1), 0 20px 40px rgba(0,0,0,0.4)" }}
-      />
-      <div 
-        className="absolute top-[35%] left-[8%] w-[260px] h-[260px] rounded-full bg-gradient-to-br from-[#ffffff] to-[#b0b8c4]"
-        style={{ boxShadow: "inset -20px -20px 40px rgba(0,0,0,0.2), inset 15px 15px 40px rgba(255,255,255,1), 0 20px 50px rgba(0,0,0,0.4)" }}
-      />
-      <div 
-        className="absolute bottom-[15%] right-[10%] w-[320px] h-[320px] rounded-full bg-gradient-to-br from-[#ffffff] to-[#b0b8c4]"
-        style={{ boxShadow: "inset -30px -30px 60px rgba(0,0,0,0.2), inset 20px 20px 60px rgba(255,255,255,1), 0 30px 60px rgba(0,0,0,0.4)" }}
-      />
+    <div className="relative flex min-h-screen w-full items-center justify-center bg-[#181a1b] p-4 sm:p-6 overflow-hidden">
+      {/* Background Decorative Rings */}
+      <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-indigo-500/10 blur-3xl" />
+      <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl" />
 
-      <div className="relative z-10 w-full max-w-[900px] px-6 py-10">
-        {/* Dark Glassmorphism Card */}
-        <div className="rounded-[40px] border border-white/10 bg-[#161a23]/40 px-10 py-20 shadow-[0_20px_60px_0_rgba(0,0,0,0.6)] backdrop-blur-[24px]">
-          <div className="mb-10 text-center">
-            <h1 className="text-3xl font-medium tracking-[0.2em] text-[#7cc5d9]">
-              {isForgotPassword ? "RESET" : (isRegistering ? "REGISTER" : "LOGIN")}
-            </h1>
-            {isForgotPassword && <p className="mt-3 text-[#8a99a8] text-xs">Enter your email to receive a reset link</p>}
-            {isRegistering && <p className="mt-3 text-[#8a99a8] text-xs">Join our platform today</p>}
+      <div className="relative z-10 w-full max-w-md overflow-hidden rounded-[2rem] border border-white/5 bg-[#25282a] p-8 sm:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        
+        {/* Subdued Glow effect */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#7cc5d9]/40 via-[#9bb5c9]/40 to-[#7a8c9e]/40"></div>
+
+        <div className="flex flex-col items-center">
+          
+          {/* Logo & Subtitle */}
+          <div className="mb-6 flex flex-col items-center text-center">
+             <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#2c3033] to-[#3a3f44] border border-white/10 shadow-lg">
+                <span className="text-2xl font-black tracking-widest text-[#7cc5d9]">TP</span>
+             </div>
+             <h1 className="text-xl font-bold tracking-wider text-gray-200">
+               {isForgotPassword ? 'PASSWORD RECOVERY' : (isRegistering ? 'JOIN TEAMPULSE' : 'TEAMPULSE LOGIN')}
+             </h1>
+             <p className="text-xs text-[#8a99a8] mt-1">
+               {isForgotPassword ? 'Enter your email to receive recovery instructions' : (isRegistering ? 'Fill details to submit join request' : 'Sign in to access your workspace dashboard')}
+             </p>
           </div>
 
-          <form onSubmit={isForgotPassword ? forgotPasswordHandler : submitHandler} className="mx-auto flex max-w-[420px] flex-col gap-6">
-            {isRegistering && (
-                <div className="relative">
-                  <label className="mb-2 block text-xs font-medium text-[#8a99a8]">Full Name</label>
-                  <input
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    required
-                    className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 shadow-[inset_0_2px_10px_rgba(0,0,0,0.2)] transition-all duration-300 focus:border-white/20 focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-[#7cc5d9]/30"
-                    type="text"
-                  />
-                </div>
-            )}
+          <form onSubmit={submitHandler} className="w-full space-y-4">
             
+            {isRegistering && (
+              <div className="relative">
+                <label className="mb-2 block text-xs font-medium text-[#8a99a8]">Full Name *</label>
+                <input
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="Enter full name"
+                  className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 focus:bg-white/15 outline-none text-sm"
+                  type="text"
+                  required
+                />
+              </div>
+            )}
+
             <div className="relative">
-              <label className="mb-2 block text-xs font-medium text-[#8a99a8]">
-                Email address
-              </label>
+              <label className="mb-2 block text-xs font-medium text-[#8a99a8]">Email Address *</label>
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 shadow-[inset_0_2px_10px_rgba(0,0,0,0.2)] transition-all duration-300 focus:border-white/20 focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-[#7cc5d9]/30"
+                placeholder="name@company.com"
+                className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 focus:bg-white/15 outline-none text-sm"
                 type="email"
+                required
               />
             </div>
 
             {!isForgotPassword && (
             <div className="relative">
-              <label className="mb-2 block text-xs font-medium text-[#8a99a8]">
-                Password
-              </label>
-              <div className="relative">
+              <label className="mb-2 block text-xs font-medium text-[#8a99a8]">Password *</label>
+              <div className="relative flex items-center">
                 <input
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 pr-12 text-gray-200 shadow-[inset_0_2px_10px_rgba(0,0,0,0.2)] transition-all duration-300 focus:border-white/20 focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-[#7cc5d9]/30"
+                  placeholder="••••••••"
+                  className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 focus:bg-white/15 outline-none text-sm pr-12"
                   type={showPassword ? "text" : "password"}
+                  required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7cc5d9] hover:text-[#a5dfff] transition-colors"
+                  className="absolute right-4 text-[#8a99a8] hover:text-white transition-colors"
                 >
                   {showPassword ? (
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-[18px] w-[18px]">
@@ -199,7 +187,7 @@ const Login = () => {
                       value={tenthMarks}
                       onChange={(e) => setTenthMarks(e.target.value)}
                       placeholder="e.g. 75"
-                      className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 focus:bg-white/15 outline-none"
+                      className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 focus:bg-white/15 outline-none text-sm"
                       type="number"
                       required
                     />
@@ -210,7 +198,7 @@ const Login = () => {
                       value={twelfthMarks}
                       onChange={(e) => setTwelfthMarks(e.target.value)}
                       placeholder="e.g. 80"
-                      className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 focus:bg-white/15 outline-none"
+                      className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 focus:bg-white/15 outline-none text-sm"
                       type="number"
                       required
                     />
@@ -219,22 +207,22 @@ const Login = () => {
 
                 <div className="flex gap-4">
                   <div className="relative w-1/2">
-                    <label className="mb-2 block text-xs font-medium text-[#8a99a8]">Graduation Degree Name</label>
+                    <label className="mb-2 block text-xs font-medium text-[#8a99a8]">Graduation Degree</label>
                     <input
                       value={graduationDegree}
                       onChange={(e) => setGraduationDegree(e.target.value)}
                       placeholder="e.g. B.Tech CS"
-                      className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 focus:bg-white/15 outline-none"
+                      className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 focus:bg-white/15 outline-none text-sm"
                       type="text"
                     />
                   </div>
                   <div className="relative w-1/2">
-                    <label className="mb-2 block text-xs font-medium text-[#8a99a8]">Post Grad Degree (Optional)</label>
+                    <label className="mb-2 block text-xs font-medium text-[#8a99a8]">Invite Code</label>
                     <input
-                      value={postGraduationDegree}
-                      onChange={(e) => setPostGraduationDegree(e.target.value)}
-                      placeholder="e.g. MBA"
-                      className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 focus:bg-white/15 outline-none"
+                      value={inviteCode}
+                      onChange={(e) => setInviteCode(e.target.value)}
+                      placeholder="Optional Code"
+                      className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 focus:bg-white/15 outline-none text-sm"
                       type="text"
                     />
                   </div>
@@ -244,7 +232,7 @@ const Login = () => {
                   <label className="mb-2 block text-xs font-medium text-[#8a99a8]">Upload Resume *</label>
                   <input
                     onChange={(e) => setResumeFile(e.target.files[0])}
-                    className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3 text-gray-200 focus:border-white/20 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#7cc5d9]/20 file:text-[#7cc5d9] hover:file:bg-[#7cc5d9]/30"
+                    className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-2 text-gray-200 text-xs focus:border-white/20 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#7cc5d9]/20 file:text-[#7cc5d9] hover:file:bg-[#7cc5d9]/30"
                     type="file"
                     accept=".pdf,.doc,.docx"
                     required
@@ -257,7 +245,7 @@ const Login = () => {
                     value={skills}
                     onChange={(e) => setSkills(e.target.value)}
                     placeholder="React, Node.js..."
-                    className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 outline-none"
+                    className="w-full rounded-full border border-white/5 bg-white/10 px-6 py-3.5 text-gray-200 focus:border-white/20 outline-none text-sm"
                     type="text"
                   />
                 </div>
@@ -265,7 +253,7 @@ const Login = () => {
             )}
 
             <div className="flex items-center justify-between mt-1 text-xs text-[#8a99a8]">
-              { !isForgotPassword && !isRegistering && (
+              {!isForgotPassword && !isRegistering && (
                 <label className="flex cursor-pointer items-center gap-2 group">
                   <div className="relative flex items-center justify-center">
                     <input type="checkbox" className="peer h-3.5 w-3.5 appearance-none rounded-[3px] border border-[#8a99a8] bg-transparent checked:bg-transparent checked:border-[#7cc5d9] transition-all" />
@@ -284,7 +272,7 @@ const Login = () => {
 
             <button
               disabled={isSubmittingForgot}
-              className="mt-6 mx-auto w-2/3 rounded-full bg-[#7a8c9e] py-3.5 text-[13px] font-semibold tracking-widest text-[#a8dff5] shadow-[0_8px_20px_rgba(0,0,0,0.3)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#8e9eb0] active:translate-y-0 disabled:opacity-50"
+              className="mt-6 mx-auto w-2/3 rounded-full bg-[#7a8c9e] py-3.5 text-[13px] font-semibold tracking-widest text-[#a8dff5] shadow-[0_8px_20px_rgba(0,0,0,0.3)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#8e9eb0] active:translate-y-0 disabled:opacity-50 flex items-center justify-center cursor-pointer"
               type="submit"
             >
               {isForgotPassword ? (isSubmittingForgot ? 'SENDING...' : 'SEND LINK') : (isRegistering ? 'REGISTER' : 'SIGN IN')}
@@ -309,4 +297,3 @@ const Login = () => {
 };
 
 export default Login;
-
