@@ -77,17 +77,14 @@ const ProjectWorkspace = ({ project, onBack }) => {
 
   return (
     <div className="min-h-screen bg-[#0a0c11] text-white">
-      {/* ── Header ── */}
       <div className="border-b border-white/10 bg-[#111318]/95 backdrop-blur-md sticky top-0 z-30">
         <div className="px-6 py-4">
-          {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
             <button onClick={onBack} className="hover:text-white transition-colors">← Dashboard</button>
             <span>/</span>
             <span className="text-white font-semibold">{project.name}</span>
           </div>
 
-          {/* Project info row */}
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold"
@@ -112,7 +109,6 @@ const ProjectWorkspace = ({ project, onBack }) => {
               </div>
             </div>
 
-            {/* Stats chips */}
             <div className="flex gap-3 flex-wrap">
               {[
                 { label: 'Tasks',      value: tasks.length,                   color: 'text-blue-400' },
@@ -129,7 +125,6 @@ const ProjectWorkspace = ({ project, onBack }) => {
           </div>
         </div>
 
-        {/* Tab nav */}
         <div className="flex px-6 border-t border-white/[0.06] overflow-x-auto">
           {TABS.map(tab => (
             <button
@@ -147,7 +142,6 @@ const ProjectWorkspace = ({ project, onBack }) => {
         </div>
       </div>
 
-      {/* ── Body ── */}
       {loading ? (
         <div className="flex items-center justify-center h-96">
           <div className="flex flex-col items-center gap-3">
@@ -157,7 +151,6 @@ const ProjectWorkspace = ({ project, onBack }) => {
         </div>
       ) : (
         <div className="p-6">
-          {/* ── BOARD TAB ── */}
           {activeTab === 'Board' && (
             <SprintBoard
               project={project}
@@ -170,7 +163,6 @@ const ProjectWorkspace = ({ project, onBack }) => {
             />
           )}
 
-          {/* ── BACKLOG TAB ── */}
           {activeTab === 'Backlog' && (
             <div className="space-y-4 max-w-4xl mx-auto">
               <div className="flex items-center justify-between gap-3 flex-wrap">
@@ -204,7 +196,6 @@ const ProjectWorkspace = ({ project, onBack }) => {
             </div>
           )}
 
-          {/* ── SPRINTS TAB ── */}
           {activeTab === 'Sprints' && (
             <SprintPlanner
               project={project}
@@ -215,7 +206,6 @@ const ProjectWorkspace = ({ project, onBack }) => {
             />
           )}
 
-          {/* ── MILESTONES TAB ── */}
           {activeTab === 'Milestones' && (
             <MilestoneTimeline
               project={project}
@@ -226,7 +216,6 @@ const ProjectWorkspace = ({ project, onBack }) => {
             />
           )}
 
-          {/* ── MEMBERS TAB ── */}
           {activeTab === 'Members' && (
             <div className="max-w-3xl mx-auto">
               <h2 className="text-lg font-bold text-white mb-4">Project Team</h2>
@@ -263,7 +252,6 @@ const ProjectWorkspace = ({ project, onBack }) => {
   );
 };
 
-// ── Backlog Row component ──────────────────────────────────────────────────
 
 const PRIORITY_DOT = { Critical: '🔴', High: '🟠', Medium: '🟡', Low: '🟢' };
 
@@ -307,7 +295,6 @@ const BacklogRow = ({ task, sprints, onMove, token }) => {
           {task.assignedTo.firstName?.charAt(0)}
         </div>
       )}
-      {/* Move to sprint dropdown */}
       {sprints.length > 0 && (
         <select
           onChange={e => handleMove(e.target.value || null)}

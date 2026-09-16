@@ -56,10 +56,8 @@ const CulturePage = (props) => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-10">
           
-          {/* Main Feed */}
           <div className="lg:col-span-2 space-y-6">
             
-            {/* Send Kudo Form */}
             <div className="p-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-4 opacity-10 font-bold text-6xl text-emerald-500 pointer-events-none">✨</div>
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">Send a Shoutout</h2>
@@ -95,7 +93,6 @@ const CulturePage = (props) => {
               </form>
             </div>
 
-            {/* Kudos Feed */}
             <div className="space-y-4">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2 mt-4 text-emerald-400">👏 Recent Kudos</h2>
               {loading ? (
@@ -128,7 +125,6 @@ const CulturePage = (props) => {
 
           </div>
 
-          {/* Leaderboard Sidebar */}
           <div className="space-y-6">
             <div className="p-6 bg-gradient-to-br from-indigo-900/40 to-purple-900/40 border border-purple-500/20 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
               <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-purple-300">

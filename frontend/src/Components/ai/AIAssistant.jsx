@@ -84,7 +84,6 @@ const AIAssistant = () => {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 select-none">
-      {/* Floating Toggle Button */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
@@ -95,10 +94,8 @@ const AIAssistant = () => {
         </button>
       )}
 
-      {/* Floating Chat Drawer Window */}
       {isOpen && (
         <div className="w-80 sm:w-96 h-[500px] bg-[#12141c] border border-white/10 rounded-3xl shadow-2xl flex flex-col overflow-hidden backdrop-blur-2xl animate-in fade-in zoom-in duration-200">
-          {/* Header */}
           <div className="p-4 bg-gradient-to-r from-indigo-600/30 to-purple-600/30 border-b border-white/[0.08] flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-base">
@@ -117,7 +114,6 @@ const AIAssistant = () => {
             </button>
           </div>
 
-          {/* Quick Action Chips */}
           <div className="p-2 border-b border-white/[0.04] bg-white/[0.02] flex gap-1.5 overflow-x-auto">
             {QUICK_ACTIONS.map(qa => (
               <button
@@ -130,7 +126,6 @@ const AIAssistant = () => {
             ))}
           </div>
 
-          {/* Messages Scroll View */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {messages.map((msg, idx) => (
               <div
@@ -165,7 +160,6 @@ const AIAssistant = () => {
             <div ref={chatEndRef} />
           </div>
 
-          {/* Chat Input */}
           <form
             onSubmit={(e) => { e.preventDefault(); sendQuery(input); }}
             className="p-3 border-t border-white/[0.08] bg-[#0c0e14] flex items-center gap-2"

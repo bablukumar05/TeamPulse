@@ -17,7 +17,6 @@ const projectSchema = new mongoose.Schema({
   },
   members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 
-  // ── Phase 1 Enterprise Fields ──────────────────────────────
   workspace:  { type: mongoose.Schema.Types.ObjectId, ref: 'Workspace' },
   department: { type: mongoose.Schema.Types.ObjectId, ref: 'Department' },
   team:       { type: mongoose.Schema.Types.ObjectId, ref: 'Team' },

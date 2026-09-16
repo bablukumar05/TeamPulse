@@ -14,7 +14,6 @@ const ThreadPanel = ({ parentMessage, onClose, onSendReply, currentUserId }) => 
 
   return (
     <div className="w-80 bg-[#12141c] border-l border-white/[0.08] flex flex-col h-full z-30 select-none">
-      {/* Header */}
       <div className="p-4 border-b border-white/[0.08] flex items-center justify-between">
         <div>
           <h3 className="font-bold text-sm text-white">Thread</h3>
@@ -28,7 +27,6 @@ const ThreadPanel = ({ parentMessage, onClose, onSendReply, currentUserId }) => 
         </button>
       </div>
 
-      {/* Parent Message Card */}
       <div className="p-4 bg-white/[0.02] border-b border-white/[0.04]">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center text-[10px] font-bold text-white">
@@ -41,7 +39,6 @@ const ThreadPanel = ({ parentMessage, onClose, onSendReply, currentUserId }) => 
         </p>
       </div>
 
-      {/* Replies Placeholder / Info */}
       <div className="flex-1 p-4 overflow-y-auto space-y-3">
         <p className="text-[11px] text-gray-500 font-semibold uppercase tracking-widest text-center">
           Thread Replies
@@ -51,7 +48,6 @@ const ThreadPanel = ({ parentMessage, onClose, onSendReply, currentUserId }) => 
         </p>
       </div>
 
-      {/* Reply Input Box */}
       <form onSubmit={handleSubmit} className="p-3 border-t border-white/[0.08] bg-[#0c0e14]">
         <div className="flex items-center gap-2">
           <input

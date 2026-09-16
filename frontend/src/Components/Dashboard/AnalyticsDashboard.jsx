@@ -209,7 +209,6 @@ const AnalyticsDashboard = ({ refreshTrigger }) => {
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-[350px]">
-        {/* Leaderboard Chart */}
         <div className="bg-white/5 border border-white/10 rounded-xl p-6">
           <h3 className="text-xl font-semibold mb-6 text-gray-200">Top Performers Leaderboard</h3>
           <div className="w-full h-64 min-h-[256px]">
@@ -231,7 +230,6 @@ const AnalyticsDashboard = ({ refreshTrigger }) => {
           </div>
         </div>
 
-        {/* Global Distribution Chart */}
         <div className="bg-white/5 border border-white/10 rounded-xl p-6">
           <h3 className="text-xl font-semibold mb-6 text-gray-200">Global Task Distribution</h3>
           <div className="w-full h-64 min-h-[256px]">

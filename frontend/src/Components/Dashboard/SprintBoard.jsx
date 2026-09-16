@@ -56,7 +56,6 @@ const SprintBoard = ({ project, tasks, sprints, activeSprint, setActiveSprint, o
 
   return (
     <div className="space-y-4">
-      {/* Sprint selector */}
       {sprints.length > 0 && (
         <div className="flex items-center gap-3 flex-wrap">
           <span className="text-xs text-gray-500 uppercase font-bold tracking-widest">Sprint:</span>
@@ -85,7 +84,6 @@ const SprintBoard = ({ project, tasks, sprints, activeSprint, setActiveSprint, o
         </div>
       )}
 
-      {/* Sprint progress bar */}
       {activeSprint && (
         <div className="bg-white/[0.03] border border-white/[0.07] rounded-xl px-4 py-3 flex items-center gap-4">
           <div className="flex-1">
@@ -108,14 +106,12 @@ const SprintBoard = ({ project, tasks, sprints, activeSprint, setActiveSprint, o
         </div>
       )}
 
-      {/* Kanban Board */}
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="flex gap-3 overflow-x-auto pb-4 min-h-[500px]" style={{ scrollbarWidth: 'thin' }}>
           {COLUMNS.map(col => {
             const colTasks = grouped[col.id] || [];
             return (
               <div key={col.id} className="flex-shrink-0 w-64 flex flex-col">
-                {/* Column header */}
                 <div className="flex items-center gap-2 px-3 py-2.5 mb-2 rounded-xl bg-white/[0.03] border border-white/[0.06]"
                   style={{ borderTopColor: col.color, borderTopWidth: 2 }}>
                   <span className="text-sm">{col.emoji}</span>
@@ -141,7 +137,6 @@ const SprintBoard = ({ project, tasks, sprints, activeSprint, setActiveSprint, o
                                 snap.isDragging ? 'shadow-2xl scale-105 border-indigo-500/50' : `border-white/[0.08] hover:border-white/[0.15] ${PRIORITY_RING[task.priority] || ''}`
                               }`}
                             >
-                              {/* Priority + Labels */}
                               <div className="flex items-center gap-1 mb-2 flex-wrap">
                                 <span className="text-[10px]">{PRIORITY_DOT[task.priority] || '⚪'}</span>
                                 {task.labels?.slice(0, 2).map(l => (
@@ -152,10 +147,8 @@ const SprintBoard = ({ project, tasks, sprints, activeSprint, setActiveSprint, o
                                 )}
                               </div>
 
-                              {/* Title */}
                               <p className="text-xs font-semibold text-white leading-snug mb-2 line-clamp-2">{task.title}</p>
 
-                              {/* Footer */}
                               <div className="flex items-center justify-between">
                                 {task.assignedTo && (
                                   <div className="flex items-center gap-1.5">

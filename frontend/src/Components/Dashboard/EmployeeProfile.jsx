@@ -97,13 +97,11 @@ const EmployeeProfile = ({ userId, onBack }) => {
 
   return (
     <div className="min-h-screen bg-[#0a0c11] text-white">
-      {/* Profile Hero */}
       <div className="bg-gradient-to-b from-indigo-900/20 to-[#0a0c11] border-b border-white/[0.07] px-6 py-8">
         <button onClick={onBack} className="text-xs text-gray-500 hover:text-white mb-6 flex items-center gap-1 transition-colors">
           ← Back
         </button>
         <div className="flex items-start gap-5 flex-wrap max-w-4xl">
-          {/* Avatar */}
           <div className="relative flex-shrink-0">
             {profile.avatar ? (
               <img src={profile.avatar} alt={profile.firstName} className="w-20 h-20 rounded-2xl object-cover border-2 border-indigo-500/40" />
@@ -115,7 +113,6 @@ const EmployeeProfile = ({ userId, onBack }) => {
             <div className={`absolute -bottom-1.5 -right-1.5 w-4 h-4 rounded-full border-2 border-[#0a0c11] ${profile.isOnline ? 'bg-green-400' : 'bg-gray-600'}`} />
           </div>
 
-          {/* Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-1">
               <h1 className="text-2xl font-black text-white">{profile.firstName} {profile.lastName}</h1>
@@ -132,7 +129,6 @@ const EmployeeProfile = ({ userId, onBack }) => {
 
             {profile.bio && <p className="text-sm text-gray-500 max-w-xl mb-3">{profile.bio}</p>}
 
-            {/* Manager */}
             {profile.managerId && (
               <div className="flex items-center gap-2 text-xs text-gray-500">
                 <span>Reports to:</span>
@@ -146,7 +142,6 @@ const EmployeeProfile = ({ userId, onBack }) => {
             )}
           </div>
 
-          {/* XP / Badge */}
           <div className="flex-shrink-0 text-right">
             <div className="text-2xl font-black text-white mb-0.5">{profile.xp || 0} <span className="text-sm text-gray-500 font-normal">XP</span></div>
             {profile.badges?.slice(-1).map(b => (
@@ -155,7 +150,6 @@ const EmployeeProfile = ({ userId, onBack }) => {
           </div>
         </div>
 
-        {/* Tab nav */}
         <div className="flex gap-0 mt-6 overflow-x-auto border-t border-white/[0.06] -mx-6 px-6">
           {TABS.map(t => (
             <button key={t} onClick={() => setTab(t)}
@@ -168,13 +162,10 @@ const EmployeeProfile = ({ userId, onBack }) => {
         </div>
       </div>
 
-      {/* Tab Body */}
       <div className="px-6 py-6 max-w-4xl">
 
-        {/* ── OVERVIEW ── */}
         {tab === 'Overview' && (
           <div className="space-y-6">
-            {/* Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
                 { label: 'Total Tasks',    value: tasks.length,     color: 'text-blue-400',    icon: '📋' },
@@ -190,7 +181,6 @@ const EmployeeProfile = ({ userId, onBack }) => {
               ))}
             </div>
 
-            {/* Skills */}
             {profile.skills?.length > 0 && (
               <div>
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">Skills</h3>
@@ -202,7 +192,6 @@ const EmployeeProfile = ({ userId, onBack }) => {
               </div>
             )}
 
-            {/* Experience */}
             {profile.experience?.length > 0 && (
               <div>
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">Experience</h3>
@@ -220,7 +209,6 @@ const EmployeeProfile = ({ userId, onBack }) => {
               </div>
             )}
 
-            {/* Personal Info */}
             <div>
               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">Details</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -242,7 +230,6 @@ const EmployeeProfile = ({ userId, onBack }) => {
           </div>
         )}
 
-        {/* ── TASKS ── */}
         {tab === 'Tasks' && (
           <div className="space-y-2">
             <div className="flex justify-between items-center mb-3">
@@ -270,12 +257,10 @@ const EmployeeProfile = ({ userId, onBack }) => {
           </div>
         )}
 
-        {/* ── ATTENDANCE ── */}
         {tab === 'Attendance' && (
           <AttendanceCalendar userId={userId} />
         )}
 
-        {/* ── PERFORMANCE ── */}
         {tab === 'Performance' && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -293,7 +278,6 @@ const EmployeeProfile = ({ userId, onBack }) => {
               ))}
             </div>
 
-            {/* Badge history */}
             {profile.badges?.length > 0 && (
               <div>
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">Badge History</h3>
@@ -305,7 +289,6 @@ const EmployeeProfile = ({ userId, onBack }) => {
               </div>
             )}
 
-            {/* XP Progress bar to next badge */}
             {(() => {
               const xp = profile.xp || 0;
               const tiers = [
@@ -335,7 +318,6 @@ const EmployeeProfile = ({ userId, onBack }) => {
           </div>
         )}
 
-        {/* ── DOCUMENTS ── */}
         {tab === 'Documents' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">

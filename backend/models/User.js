@@ -62,7 +62,6 @@ const userSchema = new mongoose.Schema({
     default: true
   },
 
-  // ── Phase 1 Enterprise Profile Fields ─────────────────────────
   lastName:    { type: String, default: '' },
   employeeId:  { type: String, unique: true, sparse: true }, // auto-gen: EMP-XXXX
   phone:       { type: String, default: '' },

@@ -25,7 +25,6 @@ body {
     display: none;
 }
 
-/* ─── Ultra Smooth Custom Scrollbar ───────────────────────────── */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -58,7 +57,6 @@ body {
     background: rgba(255, 255, 255, 0.25);
 }
 
-/* ─── Hardware Accelerated Animations ────────────────────────── */
 @keyframes slideInFromRight {
     from {
         transform: translateX(100%);
@@ -120,14 +118,12 @@ body {
     animation-name: fadeIn;
 }
 
-/* ─── Kanban Board Column Color Accents ────────────────────────── */
 .kanban-col-backlog       { border-top: 2px solid #6366f1; }
 .kanban-col-todo          { border-top: 2px solid #3b82f6; }
 .kanban-col-in-progress   { border-top: 2px solid #f59e0b; }
 .kanban-col-in-review     { border-top: 2px solid #a855f7; }
 .kanban-col-completed     { border-top: 2px solid #10b981; }
 
-/* ─── Glassmorphism Cards ──────────────────────────────────────── */
 .glass-panel {
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(12px);

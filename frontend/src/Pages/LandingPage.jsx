@@ -95,7 +95,6 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-[#0c0d0e] text-zinc-100 flex flex-col font-sans selection:bg-zinc-800 selection:text-white">
       
-      {/* Top Header */}
       <header className="sticky top-0 z-40 bg-[#0c0d0e]/90 backdrop-blur-md border-b border-zinc-800/80 px-6 lg:px-12 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700/80 flex items-center justify-center font-bold text-xs text-zinc-200">
@@ -111,7 +110,6 @@ const LandingPage = () => {
           </div>
         </div>
 
-        {/* Navigation Links */}
         <nav className="hidden md:flex items-center gap-7 text-xs font-medium text-zinc-400">
           <a href="#overview" className="hover:text-zinc-100 transition-colors">Overview</a>
           <a href="#principles" className="hover:text-zinc-100 transition-colors">Principles</a>
@@ -119,7 +117,6 @@ const LandingPage = () => {
           <a href="#roles" className="hover:text-zinc-100 transition-colors">Workflows</a>
         </nav>
 
-        {/* Action Controls */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowAuthModal(true)}
@@ -136,26 +133,20 @@ const LandingPage = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
       <section id="overview" className="px-6 lg:px-12 pt-20 pb-16 max-w-5xl mx-auto text-center flex flex-col items-center">
-        
-        {/* Subtle Pill */}
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-xs font-medium mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
           <span>Internal engineering and operations workspace</span>
         </div>
 
-        {/* Headline */}
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight max-w-4xl leading-[1.15] mb-6 text-zinc-100">
           A calm workspace for teams who take execution seriously.
         </h1>
 
-        {/* Grounded narrative */}
         <p className="text-base sm:text-lg text-zinc-400 max-w-2xl leading-relaxed mb-10">
           When projects grow, context fractures across different chat tools, issue trackers, and spreadsheets. TeamPulse keeps the thread intact: sprint planning, daily execution, team availability, and direct communication in one coherent system.
         </p>
 
-        {/* Primary CTA */}
         <div className="flex flex-col sm:flex-row items-center gap-3 mb-16 w-full sm:w-auto">
           <button
             onClick={() => setShowAuthModal(true)}
@@ -171,7 +162,6 @@ const LandingPage = () => {
           </a>
         </div>
 
-        {/* Operational Overview Grid */}
         <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 p-3 rounded-xl bg-zinc-900/40 border border-zinc-800/80 text-left">
           {METRICS.map((m, idx) => (
             <div key={idx} className="p-4 rounded-lg bg-zinc-900/60 border border-zinc-800/60">
@@ -183,7 +173,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Core Principles Section */}
       <section id="principles" className="px-6 lg:px-12 py-16 border-t border-zinc-800/80 bg-zinc-950/40">
         <div className="max-w-5xl mx-auto">
           <div className="mb-12">
@@ -221,7 +210,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Capabilities Section */}
       <section id="capabilities" className="px-6 lg:px-12 py-16 border-t border-zinc-800/80">
         <div className="max-w-5xl mx-auto">
           <div className="mb-12">
@@ -259,7 +247,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Role Workflows Section */}
       <section id="roles" className="px-6 lg:px-12 py-16 border-t border-zinc-800/80 bg-zinc-950/40">
         <div className="max-w-5xl mx-auto">
           <div className="mb-12">
@@ -312,7 +299,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Quote / Thought Section */}
       <section className="px-6 lg:px-12 py-16 border-t border-zinc-800/80 text-center">
         <div className="max-w-2xl mx-auto">
           <p className="text-lg sm:text-xl text-zinc-300 italic font-serif leading-relaxed mb-4">
@@ -332,7 +318,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Quiet Footer */}
       <footer className="px-6 lg:px-12 py-8 border-t border-zinc-800/80 text-xs text-zinc-500 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-5xl mx-auto w-full">
         <div>
           <span>TeamPulse Workspace</span>
@@ -344,7 +329,6 @@ const LandingPage = () => {
         </div>
       </footer>
 
-      {/* Auth Modal Backdrop */}
       {showAuthModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="relative w-full max-w-md">

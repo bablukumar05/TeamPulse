@@ -66,7 +66,6 @@ const HRDashboard = ({ onBack }) => {
 
   return (
     <div className="min-h-screen bg-[#0a0c11] text-white">
-      {/* Header */}
       <div className="border-b border-white/[0.07] bg-[#111318]/95 sticky top-0 z-20 px-6 py-4">
         <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
           <button onClick={onBack} className="hover:text-white transition-colors">← Dashboard</button>
@@ -90,10 +89,8 @@ const HRDashboard = ({ onBack }) => {
 
       <div className="p-6 max-w-6xl mx-auto space-y-6">
 
-        {/* ── OVERVIEW ── */}
         {tab === 'Overview' && (
           <>
-            {/* Stats cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
                 { label: 'Employees',       value: stats?.totalEmployees ?? '…', icon: '👥', color: 'from-blue-500/20 to-blue-600/10 border-blue-500/20 text-blue-400'   },
@@ -109,7 +106,6 @@ const HRDashboard = ({ onBack }) => {
               ))}
             </div>
 
-            {/* Quick actions */}
             <div>
               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">Quick Actions</h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -129,7 +125,6 @@ const HRDashboard = ({ onBack }) => {
           </>
         )}
 
-        {/* ── LEAVE APPROVALS ── */}
         {tab === 'Leave Approvals' && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
@@ -194,7 +189,6 @@ const HRDashboard = ({ onBack }) => {
           </div>
         )}
 
-        {/* ── EMPLOYEES ── */}
         {tab === 'Employees' && (
           <div className="space-y-4">
             <h2 className="text-lg font-bold text-white">Employee Directory</h2>
@@ -224,14 +218,12 @@ const HRDashboard = ({ onBack }) => {
           </div>
         )}
 
-        {/* ── ATTENDANCE REPORT ── */}
         {tab === 'Attendance' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold text-white">Attendance Report — {MONTH_NAMES[now.getMonth()]} {now.getFullYear()}</h2>
             </div>
 
-            {/* Summary */}
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
               {[
                 { label: 'Records',  value: attendanceReport.summary?.total    || 0, color: 'text-white'      },
@@ -248,7 +240,6 @@ const HRDashboard = ({ onBack }) => {
               ))}
             </div>
 
-            {/* Records table */}
             {loading ? (
               <div className="space-y-2">{[1,2,3].map(i => <div key={i} className="h-12 bg-white/5 rounded-xl animate-pulse" />)}</div>
             ) : attendanceReport.records.length === 0 ? (

@@ -101,7 +101,6 @@ const taskSchema = new mongoose.Schema({
     timestamp: { type: Date, default: Date.now }
   }],
 
-  // ── Phase 1 Enterprise Fields ──────────────────────────────
   sprint:      { type: mongoose.Schema.Types.ObjectId, ref: 'Sprint' },
   milestone:   { type: mongoose.Schema.Types.ObjectId, ref: 'Milestone' },
   parentTask:  { type: mongoose.Schema.Types.ObjectId, ref: 'Task' },
@@ -113,7 +112,6 @@ const taskSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-// ── Performance Indexes ────────────────────────────────────
 taskSchema.index({ assignedTo: 1, status: 1 });
 taskSchema.index({ project: 1, sprint: 1 });
 taskSchema.index({ milestone: 1 });

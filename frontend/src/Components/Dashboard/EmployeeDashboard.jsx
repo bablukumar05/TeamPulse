@@ -60,7 +60,6 @@ const EmployeeDashboard = (props) => {
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#0B0B0B] via-[#151515] to-[#1A1A1A] text-white selection:bg-emerald-500/30">
       <div className="flex">
-        {/* Left Sidebar */}
         <aside className="hidden lg:flex flex-col w-52 min-h-screen border-r border-white/[0.06] bg-[#0d0f14] py-6 px-3 gap-1 flex-shrink-0">
           <div className="px-3 mb-6">
             <span className="text-base font-semibold text-zinc-100 tracking-tight">TeamPulse</span>
@@ -78,12 +77,10 @@ const EmployeeDashboard = (props) => {
           ))}
         </aside>
 
-        {/* Main */}
         <main className="flex-1 overflow-auto p-6">
           <div className="max-w-7xl mx-auto flex flex-col gap-5">
             <Header changeUser={props.changeUser} data={props.data} changePage={props.changePage} />
 
-            {/* Mobile nav strip */}
             <div className="flex lg:hidden gap-2 overflow-x-auto pb-1">
               {EMP_NAV.map(item => (
                 <button key={item.id} onClick={() => setActiveNav(item.id)}
@@ -93,10 +90,8 @@ const EmployeeDashboard = (props) => {
               ))}
             </div>
 
-            {/* Attendance Tracker — always visible at top */}
             <AttendanceTracker onUpdate={onTaskUpdate} />
 
-            {/* ── DASHBOARD ── */}
             {activeNav === 'dashboard' && tasksData && (
               <div className="flex flex-col gap-5">
                 <GamificationBanner xp={tasksData.xp} badges={tasksData.badges} />
@@ -107,10 +102,8 @@ const EmployeeDashboard = (props) => {
               </div>
             )}
 
-            {/* ── KANBAN ── */}
             {activeNav === 'kanban' && <KanbanBoard refreshTrigger={refreshTrigger} />}
 
-            {/* ── TASKS (list) ── */}
             {activeNav === 'tasks' && tasksData && (
               <>
                 <TaskListNumbers taskCount={tasksData.taskCount} />
@@ -118,15 +111,12 @@ const EmployeeDashboard = (props) => {
               </>
             )}
 
-            {/* ── CALENDAR ── */}
             {activeNav === 'calendar' && tasksData && (
               <CalendarView embeddedTasks={tasksData.tasks} />
             )}
 
-            {/* ── CHAT ── */}
             {activeNav === 'chat' && <TeamChat />}
 
-            {/* ── ATTENDANCE ── */}
             {activeNav === 'attendance' && (
               <div className="space-y-4">
                 <h2 className="text-lg font-bold text-white">My Attendance</h2>
@@ -134,7 +124,6 @@ const EmployeeDashboard = (props) => {
               </div>
             )}
 
-            {/* ── LEAVE ── */}
             {activeNav === 'leave' && (
               <div className="space-y-4">
                 <h2 className="text-lg font-bold text-white">Leave Management</h2>
@@ -142,7 +131,6 @@ const EmployeeDashboard = (props) => {
               </div>
             )}
 
-            {/* ── REPORTS ── */}
             {activeNav === 'reports' && (
               <ReportsPage onBack={() => setActiveNav('dashboard')} />
             )}

@@ -3,7 +3,6 @@ const Message      = require('../models/Message');
 const User         = require('../models/User');
 const Notification = require('../models/Notification');
 
-// ── Rooms ──────────────────────────────────────────────────────────────────
 
 // GET /api/chat/rooms — List my rooms
 exports.getMyRooms = async (req, res) => {
@@ -92,7 +91,6 @@ exports.getOrCreateDMRoom = async (req, res) => {
   }
 };
 
-// ── Messages ──────────────────────────────────────────────────────────────
 
 // GET /api/chat/rooms/:roomId/messages — Paginated messages
 exports.getRoomMessages = async (req, res) => {

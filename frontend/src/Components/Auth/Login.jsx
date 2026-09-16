@@ -96,8 +96,6 @@ const Login = () => {
     <div className="relative flex min-h-screen w-full items-center justify-center bg-[#0c0d0e] p-4 sm:p-6">
       <div className="relative z-10 w-full max-w-md rounded-2xl border border-zinc-800/90 bg-[#131418] p-8 sm:p-9 shadow-2xl">
         <div className="flex flex-col items-center">
-          
-          {/* Logo & Subtitle */}
           <div className="mb-7 flex flex-col items-center text-center">
              <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-zinc-800/80 border border-zinc-700/80 shadow-sm">
                 <span className="text-sm font-bold tracking-wider text-zinc-100">TP</span>

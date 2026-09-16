@@ -19,7 +19,6 @@ const messageSchema = new mongoose.Schema({
   senderRole: { type: String, required: true },
   text:       { type: String, required: true },
 
-  // ── Phase 1 Multi-Room Chat Fields ──────────────────────────
   room:          { type: mongoose.Schema.Types.ObjectId, ref: 'ChatRoom' },
   parentMessage: { type: mongoose.Schema.Types.ObjectId, ref: 'Message' },
   attachments:   [attachmentSchema],

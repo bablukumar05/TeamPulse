@@ -65,9 +65,7 @@ const AdminDashboard = (props) => {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#0B0B0B] via-[#151515] to-[#1A1A1A] text-white selection:bg-emerald-500/30">
-      {/* Sidebar nav strip */}
       <div className="flex">
-        {/* Left sidebar */}
         <aside className="hidden lg:flex flex-col w-52 min-h-screen border-r border-white/[0.06] bg-[#0d0f14] py-6 px-3 gap-1 flex-shrink-0">
           <div className="px-3 mb-6">
             <span className="text-base font-semibold text-zinc-100 tracking-tight">TeamPulse</span>
@@ -88,12 +86,10 @@ const AdminDashboard = (props) => {
           ))}
         </aside>
 
-        {/* Main content */}
         <main className="flex-1 overflow-auto">
           <div className="max-w-7xl mx-auto p-6 flex flex-col gap-6">
             <Header changeUser={props.changeUser} changePage={props.changePage} />
 
-            {/* Mobile nav */}
             <div className="flex lg:hidden gap-2 overflow-x-auto pb-1">
               {NAV_ITEMS.map(item => (
                 <button
@@ -108,7 +104,6 @@ const AdminDashboard = (props) => {
               ))}
             </div>
 
-            {/* ── DASHBOARD ── */}
             {activeNav === 'dashboard' && (
               <>
                 <AnalyticsDashboard refreshTrigger={refreshTasks} />
@@ -122,7 +117,6 @@ const AdminDashboard = (props) => {
               </>
             )}
 
-            {/* ── PROJECTS ── */}
             {activeNav === 'projects' && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-zinc-800/80">
@@ -189,27 +183,14 @@ const AdminDashboard = (props) => {
               </div>
             )}
 
-            {/* ── KANBAN ── */}
             {activeNav === 'kanban' && <KanbanBoard refreshTrigger={refreshTasks} />}
-
-            {/* ── CALENDAR ── */}
             {activeNav === 'calendar' && <CalendarView key={refreshTasks} />}
-
-            {/* ── ALL TASKS ── */}
             {activeNav === 'tasks' && <AllTask refreshTrigger={refreshTasks} />}
-
-            {/* ── CHAT ── */}
             {activeNav === 'chat' && <TeamChat />}
-
-            {/* ── AUDIT ── */}
             {activeNav === 'audit' && <AuditTimeline refreshTrigger={refreshTasks} />}
-
-            {/* ── HR ── */}
             {activeNav === 'hr' && (
               <HRDashboard onBack={() => setActiveNav('dashboard')} />
             )}
-
-            {/* ── REPORTS ── */}
             {activeNav === 'reports' && (
               <ReportsPage onBack={() => setActiveNav('dashboard')} />
             )}

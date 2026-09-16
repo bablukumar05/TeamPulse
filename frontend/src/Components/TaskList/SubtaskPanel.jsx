@@ -56,7 +56,6 @@ const SubtaskPanel = ({ task, token, onUpdate, isAdmin }) => {
 
   return (
     <div className="space-y-3">
-      {/* Subtask list */}
       {subtasks.length === 0 ? (
         <div className="text-center py-8">
           <div className="text-3xl mb-2">↳</div>
@@ -84,7 +83,6 @@ const SubtaskPanel = ({ task, token, onUpdate, isAdmin }) => {
         </div>
       )}
 
-      {/* Add subtask form */}
       <form onSubmit={handleAddSubtask} className="flex gap-2 pt-2 border-t border-white/[0.06]">
         <input
           value={newTitle}
@@ -101,7 +99,6 @@ const SubtaskPanel = ({ task, token, onUpdate, isAdmin }) => {
         </button>
       </form>
 
-      {/* Story Points display */}
       {task.storyPoints > 0 && (
         <div className="flex items-center gap-2 bg-purple-500/10 border border-purple-500/20 rounded-xl px-3 py-2">
           <span className="text-purple-400 text-sm">⚡</span>

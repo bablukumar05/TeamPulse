@@ -66,7 +66,6 @@ const SprintPlanner = ({ project, sprints, onRefresh, token, isAdmin }) => {
         )}
       </div>
 
-      {/* Create form */}
       {showForm && (
         <form onSubmit={handleCreate} className="bg-white/[0.03] border border-indigo-500/30 rounded-2xl p-5 space-y-4">
           <h3 className="font-semibold text-white">Create Sprint</h3>
@@ -121,7 +120,6 @@ const SprintPlanner = ({ project, sprints, onRefresh, token, isAdmin }) => {
                     </div>
                     {sprint.goal && <p className="text-sm text-gray-400 mb-3">🎯 {sprint.goal}</p>}
 
-                    {/* Dates */}
                     {(sprint.startDate || sprint.endDate) && (
                       <p className="text-xs text-gray-600 mb-3">
                         {sprint.startDate && new Date(sprint.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -130,7 +128,6 @@ const SprintPlanner = ({ project, sprints, onRefresh, token, isAdmin }) => {
                       </p>
                     )}
 
-                    {/* Progress bar */}
                     <div className="space-y-2">
                       <div className="flex justify-between text-xs text-gray-500">
                         <span>{sprint.completedCount}/{sprint.taskCount} tasks</span>
@@ -143,7 +140,6 @@ const SprintPlanner = ({ project, sprints, onRefresh, token, isAdmin }) => {
                     </div>
                   </div>
 
-                  {/* Actions */}
                   {isAdmin && (
                     <div className="flex gap-2 flex-shrink-0">
                       {sprint.status === 'Planning' && (

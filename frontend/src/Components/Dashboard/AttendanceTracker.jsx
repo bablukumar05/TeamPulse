@@ -86,7 +86,6 @@ const AttendanceTracker = ({ onUpdate }) => {
 
   return (
     <div className={`border rounded-2xl px-5 py-4 flex items-center gap-4 flex-wrap transition-all ${statusInfo.bar}`}>
-      {/* Status dot + label */}
       <div className="flex items-center gap-2.5 flex-shrink-0">
         <div className={`w-2.5 h-2.5 rounded-full ${statusInfo.dot}`} />
         <div>
@@ -95,7 +94,6 @@ const AttendanceTracker = ({ onUpdate }) => {
         </div>
       </div>
 
-      {/* Live timer */}
       {record?.checkInTime && (
         <div className="flex-shrink-0">
           <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Work Time</p>
@@ -103,7 +101,6 @@ const AttendanceTracker = ({ onUpdate }) => {
         </div>
       )}
 
-      {/* Break count */}
       {record?.breaks?.length > 0 && (
         <div className="flex-shrink-0">
           <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Break</p>
@@ -111,7 +108,6 @@ const AttendanceTracker = ({ onUpdate }) => {
         </div>
       )}
 
-      {/* Check-in time */}
       {record?.checkInTime && (
         <div className="flex-shrink-0">
           <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">In</p>
@@ -123,10 +119,8 @@ const AttendanceTracker = ({ onUpdate }) => {
         <span className="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold flex-shrink-0">Late</span>
       )}
 
-      {/* Spacer */}
       <div className="flex-1" />
 
-      {/* Action buttons */}
       <div className="flex gap-2 flex-shrink-0 flex-wrap">
         {isNotStarted && (
           <button onClick={() => act('checkin')} disabled={acting}

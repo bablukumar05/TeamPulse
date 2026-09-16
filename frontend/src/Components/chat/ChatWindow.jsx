@@ -93,7 +93,6 @@ const ChatWindow = ({
 
   return (
     <div className="flex-1 bg-[#0d0f15] flex flex-col h-full overflow-hidden select-none">
-      {/* Room Header */}
       <div className="px-6 py-3.5 border-b border-white/[0.08] bg-[#11131a] flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
@@ -108,7 +107,6 @@ const ChatWindow = ({
         </div>
       </div>
 
-      {/* Messages Scroll Area */}
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-1">
         {messages.length === 0 ? (
           <div className="text-center py-16">
@@ -130,7 +128,6 @@ const ChatWindow = ({
           ))
         )}
 
-        {/* Typing indicator */}
         {typingUsers?.length > 0 && (
           <div className="flex items-center gap-2 text-xs text-gray-500 italic px-2 py-1">
             <span className="flex gap-1">
@@ -145,7 +142,6 @@ const ChatWindow = ({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Selected File Previews */}
       {selectedFiles.length > 0 && (
         <div className="px-6 py-2 bg-white/[0.02] border-t border-white/[0.04] flex items-center gap-2 flex-wrap">
           {selectedFiles.map((file, idx) => (
@@ -163,7 +159,6 @@ const ChatWindow = ({
         </div>
       )}
 
-      {/* Mention Auto-complete Popup */}
       {mentionSuggestions.length > 0 && (
         <div className="mx-6 mb-1 bg-[#181a24] border border-white/10 rounded-xl max-h-36 overflow-y-auto p-1 shadow-2xl z-20">
           {mentionSuggestions.map(user => (
@@ -180,9 +175,7 @@ const ChatWindow = ({
         </div>
       )}
 
-      {/* Message Input Box */}
       <form onSubmit={handleSubmit} className="p-4 border-t border-white/[0.08] bg-[#11131a] relative">
-        {/* Emoji picker popup */}
         {showEmojiPicker && (
           <div className="absolute bottom-full mb-2 left-4 bg-[#181a24] border border-white/10 rounded-2xl p-2 shadow-2xl flex gap-1 z-30">
             {EMOJIS.map(emoji => (
@@ -202,13 +195,11 @@ const ChatWindow = ({
         )}
 
         <div className="flex items-center gap-2">
-          {/* File Attachment Button */}
           <label className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white cursor-pointer transition-colors border border-white/10">
             📎
             <input type="file" multiple className="hidden" onChange={handleFileSelect} />
           </label>
 
-          {/* Emoji Toggle Button */}
           <button
             type="button"
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
@@ -217,7 +208,6 @@ const ChatWindow = ({
             😀
           </button>
 
-          {/* Text Input */}
           <input
             value={inputText}
             onChange={handleTextChange}
@@ -225,7 +215,6 @@ const ChatWindow = ({
             className="flex-1 text-xs px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 outline-none focus:border-indigo-500 transition-colors"
           />
 
-          {/* Send Button */}
           <button
             type="submit"
             disabled={!inputText.trim() && selectedFiles.length === 0}

@@ -57,7 +57,6 @@ const TaskInteractions = ({ task, onUpdate }) => {
 
   return (
     <div className="mt-4 pt-4 border-t border-white/10 relative z-10 font-sans">
-      {/* Attachments Section */}
       {task.attachments && task.attachments.length > 0 && (
         <div className="mb-3">
           <h4 className="text-[11px] font-semibold text-gray-400 mb-1 uppercase tracking-wider">Attachments</h4>
@@ -77,7 +76,6 @@ const TaskInteractions = ({ task, onUpdate }) => {
         </div>
       )}
 
-      {/* Comments Section */}
       <h4 className="text-[11px] font-semibold text-gray-400 mb-2 uppercase tracking-wider">Comments ({task.comments?.length || 0})</h4>
       <div className="max-h-28 overflow-y-auto mb-3 space-y-2 pr-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         {task.comments && task.comments.map((c, i) => (
@@ -91,7 +89,6 @@ const TaskInteractions = ({ task, onUpdate }) => {
         ))}
       </div>
 
-      {/* Inputs */}
       <React.Fragment>
       <form onSubmit={handleAddComment} className="flex gap-2 items-center mb-2">
         <input 

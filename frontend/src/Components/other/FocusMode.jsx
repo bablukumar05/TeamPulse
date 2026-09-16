@@ -72,7 +72,6 @@ const FocusMode = ({ tasks }) => {
       
       <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
           
-        {/* Timer Visualization */}
         <div className="relative flex items-center justify-center">
             <svg className="w-40 h-40 transform -rotate-90">
                 <circle cx="80" cy="80" r={radius} className="stroke-gray-700/50" strokeWidth="8" fill="none" />
@@ -92,7 +91,6 @@ const FocusMode = ({ tasks }) => {
             </div>
         </div>
 
-        {/* Controls */}
         <div className="flex-1 w-full">
             <h3 className="text-xl font-bold text-zinc-100 mb-4 flex items-center gap-2">
                 <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>

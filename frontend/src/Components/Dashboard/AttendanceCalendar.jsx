@@ -66,7 +66,6 @@ const AttendanceCalendar = ({ userId }) => {
 
   return (
     <div className="bg-[#111318] border border-white/[0.07] rounded-2xl overflow-hidden">
-      {/* Header */}
       <div className="px-5 py-4 flex items-center justify-between border-b border-white/[0.06]">
         <div>
           <h3 className="font-bold text-white">{MONTH_NAMES[month]} {year}</h3>
@@ -80,7 +79,6 @@ const AttendanceCalendar = ({ userId }) => {
         </div>
       </div>
 
-      {/* Stats row */}
       <div className="grid grid-cols-3 sm:grid-cols-6 border-b border-white/[0.06]">
         {[
           { label: 'Present', value: stats.Present, color: 'text-emerald-400' },
@@ -97,14 +95,12 @@ const AttendanceCalendar = ({ userId }) => {
         ))}
       </div>
 
-      {/* Day headers */}
       <div className="grid grid-cols-7 border-b border-white/[0.06]">
         {DAY_NAMES.map(d => (
           <div key={d} className="text-center text-[10px] font-bold text-gray-600 uppercase py-2">{d}</div>
         ))}
       </div>
 
-      {/* Calendar grid */}
       {loading ? (
         <div className="grid grid-cols-7 p-3 gap-1">
           {Array.from({ length: 35 }).map((_, i) => (
@@ -139,7 +135,6 @@ const AttendanceCalendar = ({ userId }) => {
         </div>
       )}
 
-      {/* Selected day detail */}
       {selected && (
         <div className="border-t border-white/[0.06] px-5 py-4 flex items-start gap-4 flex-wrap">
           <div>
@@ -166,7 +161,6 @@ const AttendanceCalendar = ({ userId }) => {
         </div>
       )}
 
-      {/* Legend */}
       <div className="border-t border-white/[0.06] px-5 py-3 flex flex-wrap gap-3">
         {Object.entries(STATUS_STYLES).map(([k, v]) => (
           <span key={k} className="flex items-center gap-1.5 text-[10px] text-gray-500">

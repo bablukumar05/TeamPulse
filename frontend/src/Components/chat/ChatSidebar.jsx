@@ -56,7 +56,6 @@ const ChatSidebar = ({ rooms, activeRoom, onSelectRoom, onCreateRoom, users, cur
 
   return (
     <div className="w-72 bg-[#101218] border-r border-white/[0.08] flex flex-col h-full select-none">
-      {/* Header */}
       <div className="p-4 border-b border-white/[0.08] flex items-center justify-between">
         <h2 className="font-semibold text-base text-zinc-100 tracking-tight">
           Conversations
@@ -70,7 +69,6 @@ const ChatSidebar = ({ rooms, activeRoom, onSelectRoom, onCreateRoom, users, cur
         </button>
       </div>
 
-      {/* Search */}
       <div className="px-3 py-2 border-b border-white/[0.04]">
         <input
           value={search}
@@ -80,9 +78,7 @@ const ChatSidebar = ({ rooms, activeRoom, onSelectRoom, onCreateRoom, users, cur
         />
       </div>
 
-      {/* Room categories list */}
       <div className="flex-1 overflow-y-auto px-2 py-3 space-y-4">
-        {/* Direct Messages */}
         <div>
           <div className="px-2 mb-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
             <span>Direct Messages</span>
@@ -122,7 +118,6 @@ const ChatSidebar = ({ rooms, activeRoom, onSelectRoom, onCreateRoom, users, cur
           </div>
         </div>
 
-        {/* Project Rooms */}
         {projectRooms.length > 0 && (
           <div>
             <div className="px-2 mb-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
@@ -152,7 +147,6 @@ const ChatSidebar = ({ rooms, activeRoom, onSelectRoom, onCreateRoom, users, cur
           </div>
         )}
 
-        {/* Department Rooms */}
         {deptRooms.length > 0 && (
           <div>
             <div className="px-2 mb-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
@@ -182,7 +176,6 @@ const ChatSidebar = ({ rooms, activeRoom, onSelectRoom, onCreateRoom, users, cur
           </div>
         )}
 
-        {/* Group Chats */}
         {groupRooms.length > 0 && (
           <div>
             <div className="px-2 mb-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
@@ -213,7 +206,6 @@ const ChatSidebar = ({ rooms, activeRoom, onSelectRoom, onCreateRoom, users, cur
         )}
       </div>
 
-      {/* New Room Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-[#161922] border border-white/10 rounded-2xl w-full max-w-md p-6 space-y-4 text-white">
@@ -243,7 +235,6 @@ const ChatSidebar = ({ rooms, activeRoom, onSelectRoom, onCreateRoom, users, cur
                 className="w-full text-xs px-3.5 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 outline-none focus:border-indigo-500"
               />
 
-              {/* User Selection */}
               <div>
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">
                   Add Members ({selectedUsers.length} selected)

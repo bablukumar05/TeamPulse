@@ -78,7 +78,6 @@ const CreateProject = ({ refreshTrigger }) => {
         onSubmit={submitHandler}
         className="flex w-full flex-wrap items-start justify-between relative z-10 gap-y-4"
       >
-        {/* Left Column */}
         <div className="w-full lg:w-[48%] flex flex-col gap-4">
           <div>
             <h3 className="text-xs font-bold text-gray-300 mb-2 tracking-widest uppercase">Project Name</h3>
@@ -163,7 +162,6 @@ const CreateProject = ({ refreshTrigger }) => {
           </div>
         </div>
         
-        {/* Right Column */}
         <div className="w-full lg:w-[48%] flex flex-col justify-between">
           <div>
             <h3 className="text-xs font-bold text-gray-300 mb-2 tracking-widest uppercase">Description</h3>

@@ -68,7 +68,6 @@ const MilestoneTimeline = ({ project, milestones, onRefresh, token, isAdmin }) =
         )}
       </div>
 
-      {/* Create form */}
       {showForm && (
         <form onSubmit={handleCreate} className="bg-white/[0.03] border border-amber-500/30 rounded-2xl p-5 space-y-4">
           <h3 className="font-semibold text-white">Create Milestone</h3>
@@ -108,7 +107,6 @@ const MilestoneTimeline = ({ project, milestones, onRefresh, token, isAdmin }) =
       ) : (
         /* Timeline layout */
         <div className="relative">
-          {/* Vertical line */}
           <div className="absolute left-5 top-4 bottom-4 w-0.5 bg-white/[0.07]" />
 
           <div className="space-y-4">
@@ -120,13 +118,11 @@ const MilestoneTimeline = ({ project, milestones, onRefresh, token, isAdmin }) =
 
               return (
                 <div key={ms._id} className="flex gap-5 relative">
-                  {/* Timeline dot */}
                   <div className="flex-shrink-0 w-10 h-10 rounded-full border-2 flex items-center justify-center text-base z-10 relative"
                     style={{ background: ms.color + '22', borderColor: ms.color + '66' }}>
                     {ms.status === 'Closed' ? '✅' : isOverdue ? '⚠️' : '🏁'}
                   </div>
 
-                  {/* Card */}
                   <div className={`flex-1 bg-white/[0.03] border rounded-2xl p-4 cursor-pointer transition-all ${
                     ms.status === 'Closed' ? 'border-green-500/20 opacity-60'
                     : isOverdue ? 'border-red-500/30'
@@ -145,7 +141,6 @@ const MilestoneTimeline = ({ project, milestones, onRefresh, token, isAdmin }) =
                         {due && <p className="text-xs text-gray-600">📅 {due.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>}
                       </div>
 
-                      {/* Completion ring */}
                       <div className="flex-shrink-0 flex flex-col items-center gap-1">
                         <div className="relative w-12 h-12">
                           <svg viewBox="0 0 40 40" className="w-12 h-12 -rotate-90">
@@ -159,13 +154,11 @@ const MilestoneTimeline = ({ project, milestones, onRefresh, token, isAdmin }) =
                       </div>
                     </div>
 
-                    {/* Progress bar */}
                     <div className="mt-3 w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
                       <div className="h-full rounded-full transition-all duration-700"
                         style={{ width: `${pct}%`, background: ms.color || '#f59e0b' }} />
                     </div>
 
-                    {/* Admin actions */}
                     {isAdmin && expandedId === ms._id && (
                       <div className="flex gap-2 mt-3 pt-3 border-t border-white/[0.06]" onClick={e => e.stopPropagation()}>
                         {ms.status === 'Open' && (
@@ -181,7 +174,6 @@ const MilestoneTimeline = ({ project, milestones, onRefresh, token, isAdmin }) =
                       </div>
                     )}
 
-                    {/* Expanded task list */}
                     {expandedId === ms._id && milestoneTasks[ms._id] && (
                       <div className="mt-3 pt-3 border-t border-white/[0.06] space-y-2" onClick={e => e.stopPropagation()}>
                         <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Tasks</p>

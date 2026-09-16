@@ -210,7 +210,6 @@ const KanbanBoard = ({ refreshTrigger }) => {
   return (
     <div className="w-full mt-8 bg-[#0d0f14] border border-white/10 backdrop-blur-md p-6 rounded-2xl shadow-2xl">
       
-      {/* Board Header & Controls */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6 pb-6 border-b border-white/10">
         <div>
           <div className="flex items-center gap-3 mb-1">
@@ -226,9 +225,7 @@ const KanbanBoard = ({ refreshTrigger }) => {
           </p>
         </div>
 
-        {/* Search, Filter & Sort Bar */}
         <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-          {/* Search Input */}
           <div className="relative flex-1 min-w-[160px] sm:max-w-[200px]">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">🔍</span>
             <input
@@ -240,7 +237,6 @@ const KanbanBoard = ({ refreshTrigger }) => {
             />
           </div>
 
-          {/* Priority Filter */}
           <select
             value={selectedPriority}
             onChange={(e) => setSelectedPriority(e.target.value)}
@@ -253,7 +249,6 @@ const KanbanBoard = ({ refreshTrigger }) => {
             <option value="Low">🟢 Low</option>
           </select>
 
-          {/* Project Filter */}
           <select
             value={selectedProject}
             onChange={(e) => setSelectedProject(e.target.value)}
@@ -265,7 +260,6 @@ const KanbanBoard = ({ refreshTrigger }) => {
             ))}
           </select>
 
-          {/* Sort Selector */}
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
@@ -279,7 +273,6 @@ const KanbanBoard = ({ refreshTrigger }) => {
         </div>
       </div>
 
-      {/* Drag Drop Columns Container */}
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex flex-nowrap overflow-x-auto gap-4 pb-4 pt-1 px-0.5 custom-scrollbar min-h-[600px] snap-x snap-mandatory">
           {KANBAN_COLUMNS.map((col) => {
@@ -290,7 +283,6 @@ const KanbanBoard = ({ refreshTrigger }) => {
                 key={col.key}
                 className={`snap-center min-w-[300px] w-[300px] flex-shrink-0 rounded-2xl border border-white/[0.07] bg-white/[0.025] flex flex-col shadow-lg backdrop-blur-md ${col.cssClass}`}
               >
-                {/* Column Header */}
                 <div className="px-4 pt-4 pb-3 border-b border-white/[0.07]">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
@@ -315,7 +307,6 @@ const KanbanBoard = ({ refreshTrigger }) => {
                   </div>
                 </div>
 
-                {/* Droppable Area */}
                 <Droppable droppableId={col.key}>
                   {(provided, snapshot) => (
                     <div
@@ -359,7 +350,6 @@ const KanbanBoard = ({ refreshTrigger }) => {
                                     : 'border-white/[0.08] shadow hover:bg-[#1c1f28] hover:border-white/20 hover:-translate-y-0.5 hover:shadow-md'
                                 }`}
                               >
-                                {/* Top: Labels row */}
                                 {labels.length > 0 && (
                                   <div className="flex flex-wrap gap-1 mb-2.5">
                                     {labels.slice(0, 3).map((lbl, i) => (
@@ -375,19 +365,16 @@ const KanbanBoard = ({ refreshTrigger }) => {
                                   </div>
                                 )}
 
-                                {/* Title */}
                                 <h4 className="font-semibold text-white/90 text-[13px] leading-snug mb-2.5 line-clamp-2 group-hover:text-white transition-colors">
                                   {task.title}
                                 </h4>
 
-                                {/* Priority Badge */}
                                 <div className="mb-2.5">
                                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${pri.cls}`}>
                                     {pri.text}
                                   </span>
                                 </div>
 
-                                {/* Due Date Badge */}
                                 {dueObj && (
                                   <div className="mb-2.5">
                                     <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full inline-flex items-center gap-1 ${
@@ -402,7 +389,6 @@ const KanbanBoard = ({ refreshTrigger }) => {
                                   </div>
                                 )}
 
-                                {/* Checklist Progress Bar */}
                                 {chkTotal > 0 && (
                                   <div className="mb-2.5">
                                     <div className="flex justify-between items-center text-[10px] mb-1">
@@ -423,7 +409,6 @@ const KanbanBoard = ({ refreshTrigger }) => {
                                   </div>
                                 )}
 
-                                {/* Time Progress Bar */}
                                 {est > 0 && (
                                   <div className="mb-2.5">
                                     <div className="flex justify-between items-center text-[10px] mb-1">
@@ -446,10 +431,8 @@ const KanbanBoard = ({ refreshTrigger }) => {
                                   </div>
                                 )}
 
-                                {/* Divider */}
                                 <div className="border-t border-white/[0.06] mt-2.5 pt-2.5">
                                   <div className="flex items-center justify-between">
-                                    {/* Assignee */}
                                     <div className="flex items-center gap-1.5">
                                       <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-[10px] font-bold shadow-md flex-shrink-0">
                                         {getAssigneeInitial(task)}
@@ -459,7 +442,6 @@ const KanbanBoard = ({ refreshTrigger }) => {
                                       </span>
                                     </div>
 
-                                    {/* Badges: comments, attachments, project */}
                                     <div className="flex items-center gap-1.5 font-mono text-[10px] text-gray-500">
                                       {(task.comments?.length || 0) > 0 && (
                                         <span className="flex items-center gap-0.5 bg-white/5 px-1.5 py-0.5 rounded">
@@ -474,7 +456,6 @@ const KanbanBoard = ({ refreshTrigger }) => {
                                     </div>
                                   </div>
 
-                                  {/* Project tag if exists */}
                                   {task.project?.name && (
                                     <div className="mt-1.5">
                                       <span className="text-[9px] text-purple-400 bg-purple-500/10 border border-purple-500/20 px-1.5 py-0.5 rounded font-medium">
@@ -489,7 +470,6 @@ const KanbanBoard = ({ refreshTrigger }) => {
                         );
                       })}
 
-                      {/* Empty Column Placeholder */}
                       {columnTasks.length === 0 && !snapshot.isDraggingOver && (
                         <div className="flex-1 flex flex-col items-center justify-center py-8 opacity-30">
                           <div className="text-3xl mb-2">{col.emoji}</div>
@@ -509,7 +489,6 @@ const KanbanBoard = ({ refreshTrigger }) => {
         </div>
       </DragDropContext>
 
-      {/* Task Details Slide-Over Drawer */}
       {selectedTaskForDrawer && (
         <TaskDetailsDrawer
           task={selectedTaskForDrawer}

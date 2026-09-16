@@ -122,7 +122,6 @@ const CreateTask = ({ onTaskCreated }) => {
   return (
     <div className="p-6 sm:p-8 bg-zinc-900/40 border border-zinc-800/80 mt-6 rounded-2xl relative overflow-hidden transition-all duration-300">
       <div className="relative z-10">
-        {/* Header */}
         <div className="mb-6 flex items-center justify-between pb-4 border-b border-zinc-800/80">
           <div>
             <h2 className="text-xl font-semibold text-zinc-100 tracking-tight">
@@ -133,7 +132,6 @@ const CreateTask = ({ onTaskCreated }) => {
         </div>
 
         <form onSubmit={submitHandler} className="space-y-6">
-          {/* ── Row 1: Title + Priority ── */}
           <div className="grid grid-cols-1 lg:grid-cols-[1fr,200px] gap-4">
             <div>
               <label className={labelClass}>Task Title *</label>
@@ -157,7 +155,6 @@ const CreateTask = ({ onTaskCreated }) => {
             </div>
           </div>
 
-          {/* ── Row 2: Assignee + Project ── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Assign To *</label>
@@ -192,7 +189,6 @@ const CreateTask = ({ onTaskCreated }) => {
             </div>
           </div>
 
-          {/* ── Row 3: Dates + Estimated Hours ── */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className={labelClass}>Start Date</label>
@@ -216,7 +212,6 @@ const CreateTask = ({ onTaskCreated }) => {
             </div>
           </div>
 
-          {/* ── Labels Multi-Select ── */}
           <div>
             <label className={labelClass}>
               Labels
@@ -245,7 +240,6 @@ const CreateTask = ({ onTaskCreated }) => {
             </div>
           </div>
 
-          {/* ── Description ── */}
           <div>
             <label className={labelClass}>Description *</label>
             <textarea
@@ -257,7 +251,6 @@ const CreateTask = ({ onTaskCreated }) => {
             />
           </div>
 
-          {/* ── Checklist Builder ── */}
           <div>
             <label className={labelClass}>
               Checklist
@@ -266,7 +259,6 @@ const CreateTask = ({ onTaskCreated }) => {
               )}
             </label>
             
-            {/* Existing items */}
             {checklistItems.length > 0 && (
               <div className="space-y-2 mb-3">
                 {checklistItems.map((item, i) => (
@@ -285,7 +277,6 @@ const CreateTask = ({ onTaskCreated }) => {
               </div>
             )}
 
-            {/* Add checklist item */}
             <div className="flex gap-2">
               <input
                 type="text"
@@ -305,7 +296,6 @@ const CreateTask = ({ onTaskCreated }) => {
             </div>
           </div>
 
-          {/* ── Submit / Reset ── */}
           <div className="flex gap-3 pt-2">
             <button
               type="submit"

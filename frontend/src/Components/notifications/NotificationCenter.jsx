@@ -96,7 +96,6 @@ const NotificationCenter = () => {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 transition-colors border border-white/10"
@@ -110,10 +109,8 @@ const NotificationCenter = () => {
         )}
       </button>
 
-      {/* Dropdown Menu */}
       {isOpen && (
         <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-[#12141a] border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden text-white backdrop-blur-xl">
-          {/* Header */}
           <div className="px-4 py-3 border-b border-white/[0.08] flex items-center justify-between bg-white/[0.02]">
             <div className="flex items-center gap-2">
               <h3 className="font-bold text-sm text-white">Notifications</h3>
@@ -133,7 +130,6 @@ const NotificationCenter = () => {
             )}
           </div>
 
-          {/* List */}
           <div className="max-h-96 overflow-y-auto divide-y divide-white/[0.04]">
             {notifications.length === 0 ? (
               <div className="p-8 text-center">

@@ -149,7 +149,6 @@ const ReportsPage = ({ onBack }) => {
 
   return (
     <div className="min-h-screen bg-[#0a0c11] text-white">
-      {/* Header */}
       <div className="border-b border-white/[0.07] bg-[#111318]/95 sticky top-0 z-20 px-6 py-4">
         <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
           {onBack && <button onClick={onBack} className="hover:text-white transition-colors">← Dashboard</button>}
@@ -160,7 +159,6 @@ const ReportsPage = ({ onBack }) => {
           <h1 className="text-xl font-semibold text-zinc-100 tracking-tight">
             Operational Reports & Analytics
           </h1>
-          {/* Export buttons */}
           <div className="flex items-center gap-2">
             <button onClick={exportPDF} className="text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white px-3 py-2 rounded-xl transition-colors">
               📄 PDF
@@ -174,7 +172,6 @@ const ReportsPage = ({ onBack }) => {
           </div>
         </div>
 
-        {/* Tab nav */}
         <div className="flex gap-0 mt-3 overflow-x-auto border-t border-white/[0.06] -mx-6 px-6">
           {REPORT_TABS.map(t => (
             <button
@@ -190,7 +187,6 @@ const ReportsPage = ({ onBack }) => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="p-6 max-w-6xl mx-auto space-y-6">
         {loading ? (
           <div className="flex justify-center py-20">
@@ -198,7 +194,6 @@ const ReportsPage = ({ onBack }) => {
           </div>
         ) : (
           <>
-            {/* Chart Section */}
             {activeTab === 'Productivity' && data.length > 0 && (
               <div className="bg-[#12141c] border border-white/[0.07] rounded-2xl p-5 space-y-3">
                 <h3 className="text-sm font-bold text-gray-300">Task Completion per Team Member</h3>
@@ -237,7 +232,6 @@ const ReportsPage = ({ onBack }) => {
               </div>
             )}
 
-            {/* Data Table */}
             <div className="bg-[#12141c] border border-white/[0.07] rounded-2xl overflow-hidden">
               <div className="px-5 py-3 border-b border-white/[0.06] flex justify-between items-center">
                 <h3 className="font-bold text-sm text-white">{activeTab} Details</h3>

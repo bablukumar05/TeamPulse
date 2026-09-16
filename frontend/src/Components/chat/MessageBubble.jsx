@@ -23,14 +23,11 @@ const MessageBubble = ({ message, isOwn, onReact, onReply, onEdit, onDelete }) =
 
   return (
     <div className={`group relative flex items-start gap-3 my-2 ${isOwn ? 'flex-row-reverse' : ''}`}>
-      {/* Avatar */}
       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white flex-shrink-0 mt-0.5">
         {sender.firstName?.charAt(0) || message.senderName?.charAt(0) || '?'}
       </div>
 
-      {/* Bubble Container */}
       <div className={`max-w-[75%] space-y-1 ${isOwn ? 'items-end text-right' : 'items-start text-left'}`}>
-        {/* Sender Name & Role & Time */}
         <div className="flex items-center gap-2 px-1">
           <span className="text-xs font-bold text-gray-300">
             {message.senderName || `${sender.firstName} ${sender.lastName || ''}`}
@@ -39,7 +36,6 @@ const MessageBubble = ({ message, isOwn, onReact, onReply, onEdit, onDelete }) =
           {message.isEdited && <span className="text-[9px] text-gray-600 italic">(edited)</span>}
         </div>
 
-        {/* Parent Message Preview (Thread/Reply Context) */}
         {message.parentMessage && (
           <div className="text-[11px] bg-white/[0.04] border-l-2 border-indigo-500 px-2.5 py-1 rounded text-gray-400 max-w-full truncate">
             <span className="font-bold text-indigo-400">Replying to: </span>
@@ -47,7 +43,6 @@ const MessageBubble = ({ message, isOwn, onReact, onReply, onEdit, onDelete }) =
           </div>
         )}
 
-        {/* Bubble */}
         <div
           className={`relative rounded-2xl px-4 py-2.5 text-xs leading-relaxed transition-all ${
             isOwn
@@ -70,7 +65,6 @@ const MessageBubble = ({ message, isOwn, onReact, onReply, onEdit, onDelete }) =
             <p className="whitespace-pre-wrap break-words">{message.text}</p>
           )}
 
-          {/* File Attachments */}
           {message.attachments?.length > 0 && (
             <div className="mt-2 space-y-1.5 pt-2 border-t border-white/10">
               {message.attachments.map((att, idx) => (
@@ -89,7 +83,6 @@ const MessageBubble = ({ message, isOwn, onReact, onReply, onEdit, onDelete }) =
           )}
         </div>
 
-        {/* Reactions List */}
         {message.reactions?.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-1 px-1">
             {message.reactions.map((r, idx) => (
@@ -106,12 +99,10 @@ const MessageBubble = ({ message, isOwn, onReact, onReply, onEdit, onDelete }) =
         )}
       </div>
 
-      {/* Action Toolbar on Hover */}
       {!message.isDeleted && (
         <div className={`absolute top-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-[#1a1d27] border border-white/10 rounded-xl px-2 py-1 shadow-xl z-20 ${
           isOwn ? 'right-0 -top-7' : 'left-0 -top-7'
         }`}>
-          {/* Reaction Picker Button */}
           <div className="relative">
             <button
               onClick={() => setShowReactions(!showReactions)}
@@ -121,7 +112,6 @@ const MessageBubble = ({ message, isOwn, onReact, onReply, onEdit, onDelete }) =
               😀
             </button>
 
-            {/* Popup Emoji Bar */}
             {showReactions && (
               <div className="absolute bottom-full mb-1 left-0 flex gap-1 bg-[#12141c] border border-white/10 p-1.5 rounded-xl shadow-2xl z-30 animate-in fade-in zoom-in duration-150">
                 {EMOJI_OPTIONS.map(emoji => (
@@ -140,7 +130,6 @@ const MessageBubble = ({ message, isOwn, onReact, onReply, onEdit, onDelete }) =
             )}
           </div>
 
-          {/* Reply in Thread */}
           <button
             onClick={() => onReply(message)}
             className="text-xs text-gray-400 hover:text-indigo-400 px-1"
@@ -149,7 +138,6 @@ const MessageBubble = ({ message, isOwn, onReact, onReply, onEdit, onDelete }) =
             💬
           </button>
 
-          {/* Edit (if own) */}
           {isOwn && (
             <button
               onClick={() => setIsEditing(true)}
@@ -160,7 +148,6 @@ const MessageBubble = ({ message, isOwn, onReact, onReply, onEdit, onDelete }) =
             </button>
           )}
 
-          {/* Delete (if own) */}
           {isOwn && (
             <button
               onClick={() => onDelete(message._id)}

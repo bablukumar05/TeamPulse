@@ -3,7 +3,6 @@ const Department = require('../models/Department');
 const Team       = require('../models/Team');
 const User       = require('../models/User');
 
-// ── Workspace ──────────────────────────────────────────────────────────────
 
 exports.createWorkspace = async (req, res) => {
   try {
@@ -56,7 +55,6 @@ exports.getWorkspaceMembers = async (req, res) => {
   }
 };
 
-// ── Departments ────────────────────────────────────────────────────────────
 
 exports.createDepartment = async (req, res) => {
   try {
@@ -119,7 +117,6 @@ exports.addMemberToDepartment = async (req, res) => {
   }
 };
 
-// ── Teams ──────────────────────────────────────────────────────────────────
 
 exports.createTeam = async (req, res) => {
   try {
@@ -184,7 +181,6 @@ exports.addMemberToTeam = async (req, res) => {
   }
 };
 
-// ── User Directory ─────────────────────────────────────────────────────────
 
 exports.getUserDirectory = async (req, res) => {
   try {

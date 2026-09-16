@@ -5,7 +5,6 @@ const Attendance   = require('../models/Attendance');
 const path         = require('path');
 const multer       = require('multer');
 
-// ── Performance Review (stored in-memory in User doc via a virtual field)
 // We'll use a sub-schema approach: add performanceReviews to User if needed
 // For now, we store in User.documents with type='Review'
 

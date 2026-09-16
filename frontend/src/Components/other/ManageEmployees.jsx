@@ -120,7 +120,6 @@ const ManageEmployees = ({ refreshTrigger }) => {
 
   return (
     <div className="bg-[#12141d]/90 border border-white/[0.08] p-6 rounded-3xl shadow-2xl backdrop-blur-2xl mt-4 select-none">
-      {/* Directory Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-white/[0.08]">
         <div>
           <div className="flex items-center gap-3">
@@ -136,9 +135,7 @@ const ManageEmployees = ({ refreshTrigger }) => {
           </p>
         </div>
 
-        {/* View Mode Toggle & Terminated Toggle */}
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Grid/Table Toggle */}
           <div className="bg-white/5 border border-white/10 p-1 rounded-xl flex items-center gap-1">
             <button
               onClick={() => setViewMode('grid')}
@@ -158,7 +155,6 @@ const ManageEmployees = ({ refreshTrigger }) => {
             </button>
           </div>
 
-          {/* Toggle Active / Terminated */}
           <button
             onClick={() => setViewTerminated(!viewTerminated)}
             className={`text-xs font-bold px-4 py-2 rounded-xl border transition-all ${
@@ -172,9 +168,7 @@ const ManageEmployees = ({ refreshTrigger }) => {
         </div>
       </div>
 
-      {/* Filter & Search Toolbar */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 my-5">
-        {/* Search */}
         <input
           value={search}
           onChange={e => setSearch(e.target.value)}
@@ -182,7 +176,6 @@ const ManageEmployees = ({ refreshTrigger }) => {
           className="text-xs px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 outline-none focus:border-indigo-500 transition-colors"
         />
 
-        {/* Department Filter */}
         <select
           value={departmentFilter}
           onChange={e => setDepartmentFilter(e.target.value)}
@@ -194,7 +187,6 @@ const ManageEmployees = ({ refreshTrigger }) => {
           ))}
         </select>
 
-        {/* Role Filter */}
         <select
           value={roleFilter}
           onChange={e => setRoleFilter(e.target.value)}
@@ -206,7 +198,6 @@ const ManageEmployees = ({ refreshTrigger }) => {
         </select>
       </div>
 
-      {/* Content Area */}
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 py-8">
           {[1, 2, 3, 4, 5, 6].map(i => (
@@ -229,7 +220,6 @@ const ManageEmployees = ({ refreshTrigger }) => {
                 key={emp._id}
                 className="bg-white/[0.03] border border-white/[0.08] hover:border-white/20 rounded-2xl p-5 flex flex-col justify-between transition-all hover:scale-[1.01] shadow-lg group relative overflow-hidden"
               >
-                {/* Top Row: Avatar + Name + Role */}
                 <div className="flex items-start gap-3.5">
                   <div className="relative flex-shrink-0">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center font-black text-white text-lg border border-white/20 shadow-md">
@@ -260,7 +250,6 @@ const ManageEmployees = ({ refreshTrigger }) => {
                   </div>
                 </div>
 
-                {/* Middle Info: Dept & Salary */}
                 <div className="my-4 pt-3 border-t border-white/[0.05] grid grid-cols-2 gap-2 text-xs">
                   <div>
                     <span className="text-gray-600 block text-[9px] uppercase tracking-widest font-bold">Department</span>
@@ -276,7 +265,6 @@ const ManageEmployees = ({ refreshTrigger }) => {
                   </div>
                 </div>
 
-                {/* Workload Stats Row */}
                 <div className="grid grid-cols-4 gap-1 bg-white/[0.02] border border-white/[0.05] rounded-xl p-2 text-center text-[10px] mb-4">
                   <div>
                     <span className="text-indigo-400 font-bold block">{taskStats.newTask}</span>
@@ -296,7 +284,6 @@ const ManageEmployees = ({ refreshTrigger }) => {
                   </div>
                 </div>
 
-                {/* Actions Footer */}
                 <div className="flex items-center gap-2 pt-2 border-t border-white/[0.05]">
                   <button
                     type="button"
@@ -413,11 +400,9 @@ const ManageEmployees = ({ refreshTrigger }) => {
         </div>
       )}
 
-      {/* ── FORMAL TERMINATION & RIGHTS MODAL ── */}
       {terminateUser && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="bg-[#141622] border border-rose-500/30 rounded-3xl w-full max-w-lg p-6 space-y-4 text-white shadow-2xl animate-in fade-in zoom-in duration-200">
-            {/* Header */}
             <div className="flex items-start justify-between border-b border-rose-500/20 pb-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center text-xl font-bold">
@@ -439,7 +424,6 @@ const ManageEmployees = ({ refreshTrigger }) => {
             </div>
 
             <form onSubmit={handleProcessTermination} className="space-y-4">
-              {/* Reason Dropdown */}
               <div>
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1.5">
                   Primary Reason for Termination *
@@ -457,7 +441,6 @@ const ManageEmployees = ({ refreshTrigger }) => {
                 </select>
               </div>
 
-              {/* Employee Rights & Explanation */}
               <div>
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1.5">
                   Detailed Explanation & Employee Rights Statement *
@@ -472,7 +455,6 @@ const ManageEmployees = ({ refreshTrigger }) => {
                 />
               </div>
 
-              {/* Severance & Notice Terms */}
               <div>
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1.5">
                   Severance & Notice Period Terms *
@@ -487,7 +469,6 @@ const ManageEmployees = ({ refreshTrigger }) => {
                 />
               </div>
 
-              {/* Rights Notice Info Box */}
               <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-[11px] text-rose-300 leading-relaxed">
                 📌 <strong>What will happen:</strong>
                 <ul className="list-disc pl-4 mt-1 space-y-0.5 text-gray-400">
@@ -497,7 +478,6 @@ const ManageEmployees = ({ refreshTrigger }) => {
                 </ul>
               </div>
 
-              {/* Actions */}
               <div className="flex gap-2 pt-2">
                 <button
                   type="submit"

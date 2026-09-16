@@ -191,7 +191,6 @@ const TeamChat = () => {
 
   return (
     <div className="flex h-[calc(100vh-100px)] bg-[#0A0C10] border border-white/[0.08] rounded-2xl overflow-hidden shadow-2xl">
-      {/* Rooms Sidebar */}
       <ChatSidebar
         rooms={rooms}
         activeRoom={activeRoom}
@@ -201,7 +200,6 @@ const TeamChat = () => {
         currentUserId={currentUserId}
       />
 
-      {/* Active Conversation Window */}
       <ChatWindow
         room={activeRoom}
         messages={messages}
@@ -215,7 +213,6 @@ const TeamChat = () => {
         users={users}
       />
 
-      {/* Thread Reply Panel */}
       {threadParent && (
         <ThreadPanel
           parentMessage={threadParent}

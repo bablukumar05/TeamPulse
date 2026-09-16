@@ -4,7 +4,6 @@ import toast from 'react-hot-toast';
 import { AuthContext } from '../../Context/AuthProvider';
 import SubtaskPanel from './SubtaskPanel';
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const LABEL_OPTIONS = ['Backend', 'Frontend', 'Bug', 'Feature', 'Urgent', 'Documentation', 'Testing', 'Research', 'Design', 'DevOps'];
 
@@ -64,7 +63,6 @@ const formatDate = (dateStr) => {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
 
-// ─── Component ────────────────────────────────────────────────────────────────
 
 const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
   const { token, authUser } = useContext(AuthContext);
@@ -109,7 +107,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
     ? `/api/admin/tasks/${currentTask._id}/status`
     : `/api/employee/tasks/${currentTask._id}/status`;
 
-  // ── API Helpers ──────────────────────────────────────────────────────────
 
   const patchDetails = async (payload, successMsg) => {
     try {
@@ -128,7 +125,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
     }
   };
 
-  // ── Status Change ────────────────────────────────────────────────────────
 
   const handleStatusChange = async (newStatus) => {
     try {
@@ -145,13 +141,11 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
     }
   };
 
-  // ── Priority Change ──────────────────────────────────────────────────────
 
   const handlePriorityChange = async (newPriority) => {
     await patchDetails({ priority: newPriority }, `Priority → ${newPriority}`);
   };
 
-  // ── Title Editing ────────────────────────────────────────────────────────
 
   const startEditTitle = () => {
     if (!isManagerOrAdmin) return;
@@ -166,7 +160,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
     setEditingTitle(false);
   };
 
-  // ── Description Editing ──────────────────────────────────────────────────
 
   const startEditDesc = () => {
     setDescDraft(currentTask.description || '');
@@ -179,7 +172,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
     setEditingDesc(false);
   };
 
-  // ── Label Management ─────────────────────────────────────────────────────
 
   const toggleLabel = async (label) => {
     const current = currentTask.labels || [];
@@ -189,7 +181,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
     await patchDetails({ labels: updated });
   };
 
-  // ── Checklist ────────────────────────────────────────────────────────────
 
   const handleToggleChecklist = async (index) => {
     const updated = (currentTask.checklist || []).map((item, i) =>
@@ -211,7 +202,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
     await patchDetails({ checklist: updated }, 'Item removed');
   };
 
-  // ── Time Logging ─────────────────────────────────────────────────────────
 
   const handleLogHours = async (e) => {
     e.preventDefault();
@@ -222,7 +212,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
     if (result) setLoggedHours('');
   };
 
-  // ── Comments ─────────────────────────────────────────────────────────────
 
   const handleAddComment = async (e) => {
     e.preventDefault();
@@ -242,7 +231,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
     }
   };
 
-  // ── File Upload ───────────────────────────────────────────────────────────
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
@@ -271,7 +259,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
     }
   };
 
-  // ── Calculations ──────────────────────────────────────────────────────────
 
   const checklistCount          = currentTask.checklist?.length || 0;
   const completedChecklistCount = currentTask.checklist?.filter(i => i.completed).length || 0;
@@ -287,35 +274,28 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
     : 'Unassigned';
   const assigneeInitial = currentTask.assignedTo?.firstName?.charAt(0).toUpperCase() || '?';
 
-  // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <>
-      {/* Backdrop */}
       <div
         className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm animate-in fade-in"
         onClick={onClose}
       />
 
-      {/* Drawer Panel */}
       <div className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-2xl bg-[#111318] border-l border-white/10 flex flex-col shadow-[−20px_0_60px_rgba(0,0,0,0.8)] animate-in slide-in-from-right duration-300">
 
-        {/* ── Header ──────────────────────────────────────────────────────── */}
         <div className="flex-shrink-0 border-b border-white/10 bg-[#111318]/95 backdrop-blur-md">
 
-          {/* Top bar: task ID + close */}
           <div className="flex items-center justify-between px-6 pt-5 pb-3">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[11px] font-mono text-blue-400 bg-blue-500/10 px-2.5 py-0.5 rounded-md border border-blue-500/20">
                 TASK-{currentTask._id.slice(-5).toUpperCase()}
               </span>
-              {/* Labels */}
               {(currentTask.labels || []).map((lbl, i) => (
                 <span key={i} className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getLabelColor(lbl)}`}>
                   {lbl}
                 </span>
               ))}
-              {/* Add label button */}
               <div className="relative">
                 <button
                   onClick={() => setShowLabelPicker(v => !v)}
@@ -361,7 +341,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
             </button>
           </div>
 
-          {/* Title (editable for admin/manager) */}
           <div className="px-6 pb-3">
             {editingTitle ? (
               <div className="flex items-start gap-2">
@@ -389,9 +368,7 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
             )}
           </div>
 
-          {/* Controls bar: Status, Priority, Assignee, Dates */}
           <div className="px-6 pb-4 flex flex-wrap items-end gap-4 text-xs">
-            {/* Status */}
             <div>
               <label className="text-[10px] text-gray-500 uppercase font-bold tracking-widest block mb-1">Status</label>
               <select
@@ -405,7 +382,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
               </select>
             </div>
 
-            {/* Priority */}
             <div>
               <label className="text-[10px] text-gray-500 uppercase font-bold tracking-widest block mb-1">Priority</label>
               <select
@@ -420,7 +396,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
               </select>
             </div>
 
-            {/* Assignee */}
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-md">
                 {assigneeInitial}
@@ -431,7 +406,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
               </div>
             </div>
 
-            {/* Dates */}
             <div className="ml-auto flex gap-3">
               {currentTask.startDate && (
                 <div className="text-right">
@@ -448,7 +422,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
             </div>
           </div>
 
-          {/* Tab Navigation */}
           <div className="flex border-t border-white/10 px-6 gap-0 text-xs font-semibold overflow-x-auto">
             {[
               { id: 'details',  label: 'Details & Checklist',  count: null },
@@ -477,13 +450,10 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
           </div>
         </div>
 
-        {/* ── Scrollable Body ──────────────────────────────────────────────── */}
         <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
 
-          {/* ── DETAILS TAB ─────────────────────────────────────────────── */}
           {activeTab === 'details' && (
             <>
-              {/* Description */}
               <section>
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Description</h3>
@@ -519,7 +489,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
                 )}
               </section>
 
-              {/* Progress Summary Chips */}
               <div className="flex flex-wrap gap-2">
                 {checklistCount > 0 && (
                   <div className="flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 rounded-xl px-3 py-2">
@@ -549,7 +518,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
                 )}
               </div>
 
-              {/* ── Checklist ─────────────────────────────────────────────── */}
               <section>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
@@ -560,7 +528,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
                   </h3>
                 </div>
 
-                {/* Progress bar */}
                 {checklistCount > 0 && (
                   <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden mb-3">
                     <div
@@ -608,7 +575,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
                   )}
                 </div>
 
-                {/* Add checklist item */}
                 <form onSubmit={handleAddChecklistItem} className="flex gap-2">
                   <input
                     type="text"
@@ -626,7 +592,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
                 </form>
               </section>
 
-              {/* ── Time Tracking ─────────────────────────────────────────── */}
               <section>
                 <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3">Time Tracking</h3>
                 <div className="bg-white/[0.03] border border-white/[0.07] rounded-xl p-4">
@@ -673,10 +638,8 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
             </>
           )}
 
-          {/* ── COMMENTS TAB ────────────────────────────────────────────── */}
           {activeTab === 'comments' && (
             <div className="flex flex-col gap-4">
-              {/* Comment list */}
               <div className="space-y-3">
                 {(currentTask.comments || []).length === 0 && (
                   <div className="text-center py-8">
@@ -704,7 +667,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
                 ))}
               </div>
 
-              {/* Post comment */}
               <form onSubmit={handleAddComment} className="pt-2 border-t border-white/10">
                 <div className="flex gap-3 items-start">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0">
@@ -734,10 +696,8 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
             </div>
           )}
 
-          {/* ── FILES TAB ───────────────────────────────────────────────── */}
           {activeTab === 'files' && (
             <div className="space-y-4">
-              {/* Upload button */}
               <label className={`flex items-center justify-center gap-3 w-full py-8 border-2 border-dashed rounded-2xl cursor-pointer transition-all ${
                 uploadingFile
                   ? 'border-blue-500/50 bg-blue-500/5'
@@ -758,7 +718,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
                 />
               </label>
 
-              {/* File list */}
               {(currentTask.attachments || []).length === 0 ? (
                 <p className="text-xs text-gray-600 italic text-center py-4">No files uploaded yet.</p>
               ) : (
@@ -786,7 +745,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
             </div>
           )}
 
-          {/* ── ACTIVITY TAB ────────────────────────────────────────────── */}
           {activeTab === 'activity' && (
             <div className="space-y-2">
               {(currentTask.activityLog || []).length === 0 && (
@@ -797,13 +755,10 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
               )}
               {(currentTask.activityLog || []).slice().reverse().map((act, idx, arr) => (
                 <div key={idx} className="flex items-start gap-3 relative">
-                  {/* Timeline line */}
                   {idx < arr.length - 1 && (
                     <div className="absolute left-[7px] top-5 bottom-0 w-px bg-white/[0.06]" />
                   )}
-                  {/* Dot */}
                   <div className="w-3.5 h-3.5 rounded-full bg-blue-500/30 border-2 border-blue-500/60 flex-shrink-0 mt-1 relative z-10" />
-                  {/* Content */}
                   <div className="flex-1 pb-3">
                     <p className="text-sm text-gray-200 leading-snug">{act.action}</p>
                     <p className="text-[10px] text-gray-600 mt-0.5">
@@ -817,7 +772,6 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
             </div>
           )}
 
-          {/* ── SUBTASKS TAB ─────────────────────────────────────────────── */}
           {activeTab === 'subtasks' && (
             <SubtaskPanel
               task={currentTask}
