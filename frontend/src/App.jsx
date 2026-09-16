@@ -5,6 +5,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { io } from "socket.io-client";
 
 // Lazy-loaded routes for ultra-fast initial page load
+const LandingPage       = lazy(() => import("./Pages/LandingPage"));
 const EmployeeDashboard = lazy(() => import("./Components/Dashboard/EmployeeDashboard"));
 const AdminDashboard    = lazy(() => import("./Components/Dashboard/AdminDashboard"));
 const ResetPassword     = lazy(() => import("./Components/Auth/ResetPassword"));
@@ -93,7 +94,7 @@ const App = () => {
     <>
       <Toaster position="top-right" />
       <Suspense fallback={<FastLoader />}>
-        {!authUser && <Login />}
+        {!authUser && <LandingPage />}
         {authUser && currentPage === 'culture' && <CulturePage changeUser={handleLogout} changePage={setCurrentPage} />}
         {authUser && currentPage === 'dashboard' && (authUser?.role === "admin" || authUser?.role === "manager") && <AdminDashboard changeUser={handleLogout} changePage={setCurrentPage} />}
         {authUser && currentPage === 'dashboard' && authUser?.role === "employee" && (
