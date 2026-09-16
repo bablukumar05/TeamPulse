@@ -25,4 +25,3 @@ dist/
 # Runtime Uploads
 backend/uploads/*
 !backend/uploads/.gitkeep
-
