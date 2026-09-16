@@ -68,11 +68,10 @@ const CreateProject = ({ refreshTrigger }) => {
   };
 
   return (
-    <div className="p-8 bg-white/5 backdrop-blur-xl border border-white/10 mt-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] relative overflow-hidden group transition-all duration-300">
-      <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-2xl blur opacity-10 group-hover:opacity-30 transition duration-1000"></div>
-      
-      <div className="relative z-10 mb-6">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Create New Project</h2>
+    <div className="p-6 sm:p-8 bg-zinc-900/40 border border-zinc-800/80 mt-6 rounded-2xl relative overflow-hidden transition-all duration-300">
+      <div className="relative z-10 mb-6 pb-4 border-b border-zinc-800/80">
+        <h2 className="text-xl font-semibold text-zinc-100 tracking-tight">Create Project</h2>
+        <p className="text-xs text-zinc-400 mt-0.5">Initialize a new initiative and assign team members</p>
       </div>
 
       <form
@@ -177,9 +176,9 @@ const CreateProject = ({ refreshTrigger }) => {
             ></textarea>
           </div>
 
-          <button className="w-full mt-6 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 py-3.5 px-6 rounded-xl text-sm font-bold tracking-wider text-white shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] transition-all duration-300 hover:-translate-y-1 active:translate-y-0 active:scale-95 flex items-center justify-center gap-2">
+          <button className="w-full mt-6 bg-zinc-100 hover:bg-white text-zinc-950 py-2.5 px-5 rounded-lg text-xs font-semibold tracking-wide transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer">
             <span>Create Project</span>
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
           </button>
         </div>
       </form>

@@ -45,15 +45,15 @@ const LeaveApprovals = ({ refreshTrigger }) => {
     return (
         <div className="mt-8 bg-[#161a23]/60 border border-white/10 rounded-[30px] p-6 lg:p-8 backdrop-blur-xl shadow-2xl">
             <div className="flex items-center gap-3 mb-6">
-                <div className="bg-yellow-500/20 p-2.5 rounded-xl border border-yellow-500/30">
-                    <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <div className="bg-zinc-800/80 p-2.5 rounded-xl border border-zinc-700/60">
+                    <svg className="w-5 h-5 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
                 <div>
-                    <h2 className="text-xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">Pending Leave Requests</h2>
-                    <p className="text-gray-400 text-sm">Review time-off requests from your team</p>
+                    <h2 className="text-xl font-semibold text-zinc-100 tracking-tight">Time-Off Requests</h2>
+                    <p className="text-zinc-400 text-xs mt-0.5">Review and approve employee absence applications</p>
                 </div>
-                <span className="ml-auto bg-yellow-500 text-yellow-900 text-xs font-black px-3 py-1 rounded-full shadow-[0_0_15px_rgba(234,179,8,0.5)]">
-                    {pendingRequests.length} NEW
+                <span className="ml-auto bg-zinc-800 text-zinc-200 border border-zinc-700/60 text-xs font-mono px-3 py-1 rounded-md">
+                    {pendingRequests.length} pending
                 </span>
             </div>
 

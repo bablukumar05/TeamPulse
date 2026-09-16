@@ -58,7 +58,7 @@ const ChatSidebar = ({ rooms, activeRoom, onSelectRoom, onCreateRoom, users, cur
     <div className="w-72 bg-[#101218] border-r border-white/[0.08] flex flex-col h-full select-none">
       {/* Header */}
       <div className="p-4 border-b border-white/[0.08] flex items-center justify-between">
-        <h2 className="font-black text-lg bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+        <h2 className="font-semibold text-base text-zinc-100 tracking-tight">
           Conversations
         </h2>
         <button

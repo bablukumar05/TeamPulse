@@ -73,7 +73,7 @@ const HRDashboard = ({ onBack }) => {
           <span>/</span><span className="text-white font-semibold">HR Dashboard</span>
         </div>
         <div className="flex items-center justify-between flex-wrap gap-2">
-          <h1 className="text-xl font-bold bg-gradient-to-r from-rose-400 to-pink-400 bg-clip-text text-transparent">HR Dashboard</h1>
+          <h1 className="text-xl font-semibold text-zinc-100 tracking-tight">People & Operations Portal</h1>
           {pending > 0 && (
             <span className="bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-bold px-3 py-1.5 rounded-full">{pending} pending leaves</span>
           )}

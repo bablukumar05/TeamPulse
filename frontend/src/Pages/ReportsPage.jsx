@@ -157,8 +157,8 @@ const ReportsPage = ({ onBack }) => {
           <span className="text-white font-semibold">Reports & Analytics</span>
         </div>
         <div className="flex items-center justify-between flex-wrap gap-3">
-          <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
-            Executive Reports
+          <h1 className="text-xl font-semibold text-zinc-100 tracking-tight">
+            Operational Reports & Analytics
           </h1>
           {/* Export buttons */}
           <div className="flex items-center gap-2">

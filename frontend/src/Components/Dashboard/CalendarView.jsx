@@ -76,7 +76,7 @@ const CalendarView = ({ embeddedTasks }) => {
     return (
         <div className="w-full mt-7 bg-[#161a23]/60 border border-white/10 rounded-[30px] p-6 lg:p-10 backdrop-blur-xl font-sans shadow-2xl">
             <div className="flex justify-between items-center mb-10">
-                <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500 tracking-widest uppercase shadow-black/50 drop-shadow-lg">
+                <h2 className="text-2xl font-bold text-zinc-100 tracking-wide">
                     {monthNames[month]} {year}
                 </h2>
                 <div className="flex gap-4">

@@ -70,8 +70,8 @@ const AdminDashboard = (props) => {
         {/* Left sidebar */}
         <aside className="hidden lg:flex flex-col w-52 min-h-screen border-r border-white/[0.06] bg-[#0d0f14] py-6 px-3 gap-1 flex-shrink-0">
           <div className="px-3 mb-6">
-            <span className="text-lg font-black bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">TeamPulse</span>
-            <p className="text-[10px] text-gray-600 mt-0.5 uppercase tracking-widest">Admin Panel</p>
+            <span className="text-base font-semibold text-zinc-100 tracking-tight">TeamPulse</span>
+            <p className="text-[10px] text-zinc-500 mt-0.5 uppercase tracking-wider font-mono">Administration</p>
           </div>
           {NAV_ITEMS.map(item => (
             <button
@@ -125,8 +125,8 @@ const AdminDashboard = (props) => {
             {/* ── PROJECTS ── */}
             {activeNav === 'projects' && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Projects</h2>
+                <div className="flex items-center justify-between pb-3 border-b border-zinc-800/80">
+                  <h2 className="text-xl font-semibold text-zinc-100 tracking-tight">Active Projects</h2>
                   <button
                     onClick={() => setActiveNav('dashboard')}
                     className="text-xs text-gray-500 hover:text-white bg-white/5 border border-white/10 px-3 py-2 rounded-xl transition-colors"

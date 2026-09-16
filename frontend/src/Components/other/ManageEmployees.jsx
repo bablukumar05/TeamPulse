@@ -124,15 +124,15 @@ const ManageEmployees = ({ refreshTrigger }) => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-white/[0.08]">
         <div>
           <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-black bg-gradient-to-r from-teal-400 via-indigo-400 to-cyan-400 bg-clip-text text-transparent">
-              {viewTerminated ? 'Alumni & Terminated Staff' : 'Active Employees Directory'}
+            <h2 className="text-xl font-semibold text-zinc-100 tracking-tight">
+              {viewTerminated ? 'Former Team Members' : 'Team Directory'}
             </h2>
-            <span className="text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-3 py-1 rounded-full">
+            <span className="text-xs font-mono bg-zinc-800 text-zinc-300 border border-zinc-700/60 px-2.5 py-0.5 rounded-md">
               {filteredList.length} members
             </span>
           </div>
-          <p className="text-xs text-gray-500 mt-1">
-            Manage corporate employee profiles, roles, departments, workload statistics, and access credentials.
+          <p className="text-xs text-zinc-400 mt-1">
+            Department rosters, technical roles, active assignments, and account access
           </p>
         </div>
 

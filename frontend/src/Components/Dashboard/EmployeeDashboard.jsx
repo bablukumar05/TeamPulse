@@ -63,8 +63,8 @@ const EmployeeDashboard = (props) => {
         {/* Left Sidebar */}
         <aside className="hidden lg:flex flex-col w-52 min-h-screen border-r border-white/[0.06] bg-[#0d0f14] py-6 px-3 gap-1 flex-shrink-0">
           <div className="px-3 mb-6">
-            <span className="text-lg font-black bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">TeamPulse</span>
-            <p className="text-[10px] text-gray-600 mt-0.5 uppercase tracking-widest">Employee Portal</p>
+            <span className="text-base font-semibold text-zinc-100 tracking-tight">TeamPulse</span>
+            <p className="text-[10px] text-zinc-500 mt-0.5 uppercase tracking-wider font-mono">Contributor Portal</p>
           </div>
           {EMP_NAV.map(item => (
             <button key={item.id} onClick={() => setActiveNav(item.id)}

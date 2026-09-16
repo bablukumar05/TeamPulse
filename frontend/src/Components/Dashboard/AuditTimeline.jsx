@@ -29,7 +29,7 @@ const AuditTimeline = ({ refreshTrigger }) => {
 
   return (
     <div className="w-full mt-8 bg-white/5 border border-white/10 backdrop-blur-md p-6 lg:p-8 rounded-2xl shadow-xl">
-      <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent mb-6">System Audit Timeline</h2>
+      <h2 className="text-xl font-semibold text-zinc-100 tracking-tight mb-4">Audit Timeline & Activity Logs</h2>
       
       <div className="relative border-l border-white/10 ml-3 md:ml-6 mt-4 space-y-8 pb-4 max-h-[500px] overflow-y-auto custom-scrollbar pr-4">
         {logs.map((log) => (

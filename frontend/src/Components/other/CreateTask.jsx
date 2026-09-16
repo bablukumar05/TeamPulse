@@ -120,20 +120,16 @@ const CreateTask = ({ onTaskCreated }) => {
   const labelClass = "text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest block";
 
   return (
-    <div className="p-8 bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] mt-6 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.2)] relative overflow-hidden group transition-all duration-300">
-      {/* Ambient glow */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 rounded-2xl blur-xl opacity-30 group-hover:opacity-60 transition duration-700 pointer-events-none" />
-      
+    <div className="p-6 sm:p-8 bg-zinc-900/40 border border-zinc-800/80 mt-6 rounded-2xl relative overflow-hidden transition-all duration-300">
       <div className="relative z-10">
         {/* Header */}
-        <div className="mb-7 flex items-center justify-between">
+        <div className="mb-6 flex items-center justify-between pb-4 border-b border-zinc-800/80">
           <div>
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-              Create Enterprise Task
+            <h2 className="text-xl font-semibold text-zinc-100 tracking-tight">
+              Create New Task
             </h2>
-            <p className="text-xs text-gray-500 mt-1">Assign a new task with full metadata to a team member</p>
+            <p className="text-xs text-zinc-400 mt-0.5">Assign requirements, story points, and priority to team members</p>
           </div>
-          <div className="text-3xl opacity-50">🚀</div>
         </div>
 
         <form onSubmit={submitHandler} className="space-y-6">
@@ -314,7 +310,7 @@ const CreateTask = ({ onTaskCreated }) => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed py-3.5 px-6 rounded-xl text-sm font-bold tracking-wide text-white shadow-[0_0_20px_rgba(16,185,129,0.25)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
+              className="flex-1 bg-zinc-100 hover:bg-white text-zinc-950 disabled:opacity-50 disabled:cursor-not-allowed py-2.5 px-5 rounded-lg text-xs font-semibold tracking-wide transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer"
             >
               {isSubmitting ? (
                 <>
@@ -326,17 +322,17 @@ const CreateTask = ({ onTaskCreated }) => {
                 </>
               ) : (
                 <>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
-                  Create Enterprise Task
+                  Assign Task
                 </>
               )}
             </button>
             <button
               type="button"
               onClick={handleReset}
-              className="px-6 py-3.5 rounded-xl text-sm font-bold text-gray-400 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
+              className="px-4 py-2.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-zinc-200 bg-zinc-800/60 hover:bg-zinc-800 border border-zinc-700/60 transition-colors cursor-pointer"
             >
               Reset
             </button>

@@ -42,7 +42,7 @@ const AllTask = ({ refreshTrigger }) => {
   return (
     <div id="AllTask" className="bg-white/5 border border-white/10 backdrop-blur-md p-6 rounded-2xl mt-8 shadow-xl">
       <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Employee Task Overview</h2>
+        <h2 className="text-xl font-semibold text-zinc-100 tracking-tight">Team Task Overview</h2>
       </div>
 
       <div className="bg-white/10 py-3 px-6 flex justify-between rounded-t-xl text-gray-200 border-b border-white/10 shadow-sm backdrop-blur-lg">

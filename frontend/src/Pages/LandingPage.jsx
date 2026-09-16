@@ -1,208 +1,256 @@
 import React, { useState } from 'react';
 import Login from '../Components/Auth/Login';
 
+const PRINCIPLES = [
+  {
+    number: '01',
+    title: 'Context where work happens',
+    description: 'Discussions that occur in transient chat threads rarely make it back to the task. TeamPulse keeps discussions, commit links, and status changes pinned directly to the project.'
+  },
+  {
+    number: '02',
+    title: 'Realistic velocity over optimism',
+    description: 'Projects slip when estimates ignore reality. Story points and sprint tracking reflect actual completion pace, making it easy to identify bottlenecks before deadlines pass.'
+  },
+  {
+    number: '03',
+    title: 'Focus without surveillance',
+    description: 'High-performing engineers need uninterrupted blocks of time. Built-in focus intervals and availability indicators signal when someone is in deep flow and should not be disturbed.'
+  }
+];
+
 const CAPABILITIES = [
   {
-    icon: '💬',
-    title: 'Real-Time WebSockets Engine',
-    description: 'Multi-room team chat, direct messaging, real-time typing indicators, and @username mentions powered by Socket.IO.',
-    badge: 'Socket.IO 4'
+    title: 'Sprint & Task Boards',
+    category: 'Execution',
+    description: 'Kanban boards designed for speed. Track items from backlog to production with clear assignees, priority indicators, and story points.'
   },
   {
-    icon: '📋',
-    title: 'Agile Sprints & Kanban Boards',
-    description: 'Interactive drag-and-drop task boards, story points, sprint velocity benchmarking, and milestone timelines.',
-    badge: 'Agile Workflows'
+    title: 'Real-Time Team Messaging',
+    category: 'Communication',
+    description: 'Direct messaging and department channels built on WebSockets. Fast, responsive, and tied directly into your active workspace.'
   },
   {
-    icon: '👥',
-    title: 'HR & 8 IT Departments',
-    description: 'Structured corporate hierarchy across Frontend, Backend, DevOps, QA, Data Science, CyberSecurity, Product, and HR.',
-    badge: 'Enterprise Hierarchy'
+    title: 'Attendance & Time Records',
+    category: 'Operations',
+    description: 'Frictionless daily check-in, break tracking, and automated work logs. Accurate time records without micromanagement.'
   },
   {
-    icon: '⏱️',
-    title: 'Attendance & Work Timers',
-    description: 'Daily check-in/check-out, break logging, overtime tracking, and automated interactive attendance calendars.',
-    badge: 'Time Tracking'
+    title: 'Role-Based Access Control',
+    category: 'Security',
+    description: 'Strict separation of concerns. Developers focus on their deliverables, leads oversee sprints, and HR manages personnel records securely.'
   },
   {
-    icon: '📊',
-    title: 'Analytics & PDF/Excel Exports',
-    description: 'Interactive Recharts productivity dashboards with 1-click automated PDF and Excel report downloads.',
-    badge: 'Data Intelligence'
+    title: 'Audit Logs & Timeline',
+    category: 'Governance',
+    description: 'A transparent timeline of task status transitions, join requests, and administrative approvals for complete operational clarity.'
   },
   {
-    icon: '🤖',
-    title: 'AI Workforce Assistant',
-    description: 'Embedded AI assistant drawer for task breakdown, daily work summaries, and intelligent priority advice.',
-    badge: 'AI Powered'
+    title: 'Structured Reporting',
+    category: 'Analytics',
+    description: 'Export sprint velocity, attendance summaries, and department metrics to PDF or Excel for team retrospectives and planning.'
+  }
+];
+
+const ROLES = [
+  {
+    role: 'Software Engineers',
+    highlight: 'Build with uninterrupted clarity',
+    points: [
+      'Personal task queue organized by priority',
+      'One-click Focus Mode for Pomodoro intervals',
+      'Fast inline status updates and clear acceptance criteria'
+    ]
+  },
+  {
+    role: 'Engineering Leads',
+    highlight: 'See sprint health in real time',
+    points: [
+      'Sprint backlog grooming and story point allocation',
+      'Team workload distribution at a single glance',
+      'Immediate visibility into blockers and overdue items'
+    ]
+  },
+  {
+    role: 'Operations & HR',
+    highlight: 'Manage requests without paperwork',
+    points: [
+      'Centralized leave approvals and balance tracking',
+      'Candidate screening, verification, and document vault',
+      'Clean directory segmented by 8 technical departments'
+    ]
   }
 ];
 
 const METRICS = [
-  { label: 'Active Team Members', value: '150+', change: '+12% this month' },
-  { label: 'Completed Sprints', value: '22 Sprints', change: '100% velocity tracked' },
-  { label: 'Corporate IT Departments', value: '8 Specializations', change: 'Full workforce coverage' },
-  { label: 'Cloud API Uptime', value: '99.99%', change: 'Production deployment' }
-];
-
-const WORKFLOWS = [
-  {
-    role: 'Software Engineers & Developers',
-    description: 'Manage personal task queues, track daily work hours, drag task cards on Kanban boards, and collaborate via Socket.IO chat.',
-    color: 'from-blue-500/20 to-cyan-500/20 border-blue-500/30'
-  },
-  {
-    role: 'Project Managers & Tech Leads',
-    description: 'Create tasks, assign story points, track sprint velocity charts, manage milestone timelines, and monitor team productivity.',
-    color: 'from-purple-500/20 to-indigo-500/20 border-purple-500/30'
-  },
-  {
-    role: 'HR Directors & Administrators',
-    description: 'Approve leave requests, manage employee onboarding/exit records, access document vaults, and view company-wide audit logs.',
-    color: 'from-emerald-500/20 to-teal-500/20 border-emerald-500/30'
-  }
+  { label: 'Technical Departments', value: '8 Fields', subtext: 'Frontend to DevOps & Security' },
+  { label: 'Sprint Delivery', value: 'Bi-Weekly', subtext: 'Continuous sprint cadence' },
+  { label: 'WebSocket Sync', value: '< 30ms', subtext: 'Real-time event synchronization' },
+  { label: 'Core Architecture', value: 'MERN Stack', subtext: 'React 19, Express 5, MongoDB' }
 ];
 
 const LandingPage = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [activeTab, setActiveTab] = useState('capabilities');
 
   return (
-    <div className="min-h-screen bg-[#11141c] text-white flex flex-col selection:bg-indigo-500 selection:text-white relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-[#0c0d0e] text-zinc-100 flex flex-col font-sans selection:bg-zinc-800 selection:text-white">
       
-      {/* Background Ambient Glows */}
-      <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute top-1/3 right-10 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none" />
-
-      {/* Navigation Header */}
-      <header className="sticky top-0 z-40 bg-[#11141c]/80 backdrop-blur-xl border-b border-white/5 px-6 lg:px-12 py-4 flex items-center justify-between">
+      {/* Top Header */}
+      <header className="sticky top-0 z-40 bg-[#0c0d0e]/90 backdrop-blur-md border-b border-zinc-800/80 px-6 lg:px-12 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-cyan-400 p-[1px] shadow-lg shadow-indigo-500/20">
-            <div className="w-full h-full bg-[#11141c] rounded-[15px] flex items-center justify-center">
-              <span className="text-lg font-black tracking-wider text-cyan-400">TP</span>
-            </div>
+          <div className="w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700/80 flex items-center justify-center font-bold text-xs text-zinc-200">
+            TP
           </div>
-          <div>
-            <span className="text-lg font-black tracking-tight bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm font-semibold tracking-tight text-zinc-100">
               TeamPulse
             </span>
-            <span className="hidden sm:inline-block ml-2 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-              Enterprise v2.0
+            <span className="text-[11px] font-mono text-zinc-500">
+              v2.0
             </span>
           </div>
         </div>
 
         {/* Navigation Links */}
-        <nav className="hidden md:flex items-center gap-8 text-xs font-semibold text-gray-400">
-          <a href="#overview" className="hover:text-white transition-colors">Overview</a>
-          <a href="#capabilities" className="hover:text-white transition-colors">Capabilities</a>
-          <a href="#workflows" className="hover:text-white transition-colors">Workflows</a>
-          <a href="#metrics" className="hover:text-white transition-colors">Live Stats</a>
+        <nav className="hidden md:flex items-center gap-7 text-xs font-medium text-zinc-400">
+          <a href="#overview" className="hover:text-zinc-100 transition-colors">Overview</a>
+          <a href="#principles" className="hover:text-zinc-100 transition-colors">Principles</a>
+          <a href="#capabilities" className="hover:text-zinc-100 transition-colors">Capabilities</a>
+          <a href="#roles" className="hover:text-zinc-100 transition-colors">Workflows</a>
         </nav>
 
         {/* Action Controls */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowAuthModal(true)}
-            className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-xs font-semibold text-gray-200 transition-all cursor-pointer"
+            className="px-4 py-2 rounded-lg bg-transparent hover:bg-zinc-800/60 text-xs font-medium text-zinc-300 transition-colors cursor-pointer"
           >
             Sign In
           </button>
           <button
             onClick={() => setShowAuthModal(true)}
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-xs font-bold text-white shadow-lg shadow-indigo-500/25 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
+            className="px-4 py-2 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-medium transition-colors shadow-sm cursor-pointer"
           >
-            Get Started →
+            Open Workspace
           </button>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section id="overview" className="relative z-10 px-6 lg:px-12 pt-16 pb-20 max-w-7xl mx-auto text-center flex flex-col items-center">
+      <section id="overview" className="px-6 lg:px-12 pt-20 pb-16 max-w-5xl mx-auto text-center flex flex-col items-center">
         
-        {/* Release Pill */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold mb-8 animate-in fade-in duration-500">
-          <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span>Full-Stack MERN Workforce & Project Management Platform</span>
+        {/* Subtle Pill */}
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-xs font-medium mb-8">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          <span>Internal engineering and operations workspace</span>
         </div>
 
-        {/* Main Headline */}
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight max-w-5xl leading-[1.1] mb-6">
-          Unifying Team Operations, Sprints & HR into One{' '}
-          <span className="bg-gradient-to-r from-indigo-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
-            Intelligent Platform
-          </span>
+        {/* Headline */}
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight max-w-4xl leading-[1.15] mb-6 text-zinc-100">
+          A calm workspace for teams who take execution seriously.
         </h1>
 
-        {/* Subtitle */}
-        <p className="text-base sm:text-lg text-gray-400 max-w-3xl leading-relaxed mb-10">
-          TeamPulse centralizes real-time Socket.IO multi-room team chat, drag-and-drop Kanban task boards, sprint velocity metrics, automated attendance tracking, and AI assistance for modern engineering teams.
+        {/* Grounded narrative */}
+        <p className="text-base sm:text-lg text-zinc-400 max-w-2xl leading-relaxed mb-10">
+          When projects grow, context fractures across different chat tools, issue trackers, and spreadsheets. TeamPulse keeps the thread intact: sprint planning, daily execution, team availability, and direct communication in one coherent system.
         </p>
 
-        {/* Hero CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 mb-16 w-full sm:w-auto">
+        {/* Primary CTA */}
+        <div className="flex flex-col sm:flex-row items-center gap-3 mb-16 w-full sm:w-auto">
           <button
             onClick={() => setShowAuthModal(true)}
-            className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-500 via-indigo-600 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-sm font-bold text-white shadow-xl shadow-indigo-500/30 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer flex items-center justify-center gap-3"
+            className="w-full sm:w-auto px-6 py-3 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 text-sm font-medium transition-colors shadow-sm cursor-pointer"
           >
-            <span>Launch Platform Dashboard</span>
-            <span>→</span>
+            Enter Platform Dashboard
           </button>
           <a
             href="#capabilities"
-            className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-sm font-semibold text-gray-300 transition-all text-center"
+            className="w-full sm:w-auto px-6 py-3 rounded-lg bg-zinc-900 hover:bg-zinc-800/80 border border-zinc-800 text-sm font-medium text-zinc-300 transition-colors text-center"
           >
-            Explore Capabilities
+            View Architecture & Features
           </a>
         </div>
 
-        {/* Live Metrics Grid */}
-        <div id="metrics" className="w-full grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-3xl bg-white/[0.02] border border-white/5 backdrop-blur-md">
+        {/* Operational Overview Grid */}
+        <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 p-3 rounded-xl bg-zinc-900/40 border border-zinc-800/80 text-left">
           {METRICS.map((m, idx) => (
-            <div key={idx} className="p-4 rounded-2xl bg-white/5 border border-white/5 text-left">
-              <span className="text-2xl sm:text-3xl font-black text-white block mb-1">{m.value}</span>
-              <span className="text-xs font-bold text-gray-300 block">{m.label}</span>
-              <span className="text-[10px] font-semibold text-emerald-400 mt-1 block">{m.change}</span>
+            <div key={idx} className="p-4 rounded-lg bg-zinc-900/60 border border-zinc-800/60">
+              <span className="text-xl sm:text-2xl font-semibold text-zinc-100 block mb-0.5 tracking-tight">{m.value}</span>
+              <span className="text-xs font-medium text-zinc-300 block">{m.label}</span>
+              <span className="text-[11px] text-zinc-500 mt-1 block">{m.subtext}</span>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Capabilities Section */}
-      <section id="capabilities" className="relative z-10 px-6 lg:px-12 py-20 border-t border-white/5 bg-[#0e1017]">
-        <div className="max-w-7xl mx-auto">
-          
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-bold uppercase tracking-widest text-indigo-400 block mb-2">
-              Platform Features
+      {/* Core Principles Section */}
+      <section id="principles" className="px-6 lg:px-12 py-16 border-t border-zinc-800/80 bg-zinc-950/40">
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-12">
+            <span className="text-xs font-mono uppercase tracking-wider text-zinc-500 block mb-1">
+              Design Philosophy
             </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-white">
-              Everything Your Team Needs to Build & Scale
+            <h2 className="text-2xl sm:text-3xl font-semibold text-zinc-100 tracking-tight">
+              Built on how high-performing teams actually work
             </h2>
-            <p className="text-sm text-gray-400 mt-3">
-              Engineered with full-stack performance, role-based security, and real-time synchronization across all corporate roles.
+            <p className="text-sm text-zinc-400 mt-2 max-w-xl">
+              Most productivity tools create more busywork than they eliminate. We structured TeamPulse around three fundamental tenets.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {PRINCIPLES.map((p, idx) => (
+              <div
+                key={idx}
+                className="p-6 rounded-xl bg-zinc-900/40 border border-zinc-800/80 flex flex-col justify-between"
+              >
+                <div>
+                  <span className="text-xs font-mono text-zinc-500 block mb-4">
+                    {p.number}
+                  </span>
+                  <h3 className="text-base font-medium text-zinc-100 mb-2.5">
+                    {p.title}
+                  </h3>
+                  <p className="text-xs text-zinc-400 leading-relaxed">
+                    {p.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Capabilities Section */}
+      <section id="capabilities" className="px-6 lg:px-12 py-16 border-t border-zinc-800/80">
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-12">
+            <span className="text-xs font-mono uppercase tracking-wider text-zinc-500 block mb-1">
+              Platform Features
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-semibold text-zinc-100 tracking-tight">
+              Essential tools, tightly integrated
+            </h2>
+            <p className="text-sm text-zinc-400 mt-2 max-w-xl">
+              Every feature serves a direct purpose in the development and delivery lifecycle without superfluous layers.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {CAPABILITIES.map((cap, idx) => (
               <div
                 key={idx}
-                className="p-6 rounded-3xl bg-white/[0.03] border border-white/5 hover:border-indigo-500/40 transition-all group hover:-translate-y-1"
+                className="p-5 rounded-xl bg-zinc-900/30 border border-zinc-800/70 hover:border-zinc-700/80 transition-colors"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-3xl">{cap.icon}</span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                    {cap.badge}
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[11px] font-mono text-zinc-400 bg-zinc-800/60 border border-zinc-700/50 px-2 py-0.5 rounded">
+                    {cap.category}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors mb-2">
+                <h3 className="text-sm font-medium text-zinc-100 mb-1.5">
                   {cap.title}
                 </h3>
-                <p className="text-xs text-gray-400 leading-relaxed">
+                <p className="text-xs text-zinc-400 leading-relaxed">
                   {cap.description}
                 </p>
               </div>
@@ -211,47 +259,51 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Workflows & Roles Section */}
-      <section id="workflows" className="relative z-10 px-6 lg:px-12 py-20 border-t border-white/5">
-        <div className="max-w-7xl mx-auto">
-          
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-bold uppercase tracking-widest text-cyan-400 block mb-2">
-              Corporate Hierarchy
+      {/* Role Workflows Section */}
+      <section id="roles" className="px-6 lg:px-12 py-16 border-t border-zinc-800/80 bg-zinc-950/40">
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-12">
+            <span className="text-xs font-mono uppercase tracking-wider text-zinc-500 block mb-1">
+              Role Separation
             </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-white">
-              Tailored Experiences for Every Role
+            <h2 className="text-2xl sm:text-3xl font-semibold text-zinc-100 tracking-tight">
+              Clear responsibilities for every team member
             </h2>
-            <p className="text-sm text-gray-400 mt-3">
-              Granular Role-Based Access Control (RBAC) ensures Engineers, Managers, and Directors have exact privileges.
+            <p className="text-sm text-zinc-400 mt-2 max-w-xl">
+              Granular access controls ensure engineers, technical managers, and people operations have the exact views they need to do their jobs.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {WORKFLOWS.map((wf, idx) => (
+            {ROLES.map((r, idx) => (
               <div
                 key={idx}
-                className={`p-8 rounded-3xl bg-gradient-to-b ${wf.color} border backdrop-blur-md flex flex-col justify-between`}
+                className="p-6 rounded-xl bg-zinc-900/40 border border-zinc-800/80 flex flex-col justify-between"
               >
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-widest text-gray-400 block mb-3">
-                    Role Workspace {idx + 1}
-                  </span>
-                  <h3 className="text-xl font-bold text-white mb-3">
-                    {wf.role}
+                  <h3 className="text-base font-semibold text-zinc-100 mb-1">
+                    {r.role}
                   </h3>
-                  <p className="text-xs text-gray-300 leading-relaxed">
-                    {wf.description}
+                  <p className="text-xs text-zinc-400 mb-5">
+                    {r.highlight}
                   </p>
+                  <ul className="space-y-2.5">
+                    {r.points.map((pt, pIdx) => (
+                      <li key={pIdx} className="text-xs text-zinc-300 flex items-start gap-2">
+                        <span className="text-zinc-500 mt-0.5 select-none">—</span>
+                        <span>{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
-                <div className="pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
-                  <span className="text-xs font-semibold text-gray-400">Custom Dashboard</span>
+                <div className="pt-5 mt-6 border-t border-zinc-800/70">
                   <button
                     onClick={() => setShowAuthModal(true)}
-                    className="text-xs font-bold text-indigo-300 hover:text-white transition-colors"
+                    className="text-xs font-medium text-zinc-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
                   >
-                    Explore Role →
+                    <span>Sign in as {r.role.split(' ')[0]}</span>
+                    <span>→</span>
                   </button>
                 </div>
               </div>
@@ -260,36 +312,45 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* CTA Footer Section */}
-      <section className="relative z-10 px-6 lg:px-12 py-16 border-t border-white/5 bg-gradient-to-b from-[#11141c] to-[#0a0c14] text-center">
-        <div className="max-w-4xl mx-auto p-10 rounded-3xl bg-gradient-to-r from-indigo-900/40 via-purple-900/30 to-cyan-900/40 border border-white/10 shadow-2xl">
-          <h2 className="text-3xl font-black text-white mb-4">
-            Ready to Streamline Your Team Operations?
-          </h2>
-          <p className="text-sm text-gray-300 max-w-xl mx-auto mb-8">
-            Access your personalized workspace dashboard or register your employee account in under 30 seconds.
+      {/* Quote / Thought Section */}
+      <section className="px-6 lg:px-12 py-16 border-t border-zinc-800/80 text-center">
+        <div className="max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-zinc-300 italic font-serif leading-relaxed mb-4">
+            "Engineering teams don't need more notifications. They need fewer interruptions, clear agreements on what ships next, and an honest record of velocity."
           </p>
-          <button
-            onClick={() => setShowAuthModal(true)}
-            className="px-8 py-4 rounded-2xl bg-white text-gray-900 hover:bg-gray-100 text-sm font-black shadow-xl transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
-          >
-            Sign In / Create Account Now
-          </button>
+          <span className="text-xs font-mono text-zinc-500">
+            TeamPulse Core Operating Principle
+          </span>
+          <div className="mt-8">
+            <button
+              onClick={() => setShowAuthModal(true)}
+              className="px-6 py-3 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-medium transition-colors shadow-sm cursor-pointer"
+            >
+              Sign In to Your Account
+            </button>
+          </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="px-6 lg:px-12 py-8 border-t border-white/5 text-center text-xs text-gray-500">
-        <p>© 2026 TeamPulse Platform. Built with React 19, Express 5, Node.js & MongoDB Atlas.</p>
+      {/* Quiet Footer */}
+      <footer className="px-6 lg:px-12 py-8 border-t border-zinc-800/80 text-xs text-zinc-500 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-5xl mx-auto w-full">
+        <div>
+          <span>TeamPulse Workspace</span>
+          <span className="mx-2">·</span>
+          <span>React 19, Express 5, Node.js & MongoDB Atlas</span>
+        </div>
+        <div className="text-zinc-600">
+          Crafted for calm, reliable engineering operations.
+        </div>
       </footer>
 
       {/* Auth Modal Backdrop */}
       {showAuthModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="relative w-full max-w-md">
             <button
               onClick={() => setShowAuthModal(false)}
-              className="absolute -top-10 right-0 text-white/70 hover:text-white font-bold text-sm bg-white/10 px-3 py-1 rounded-full transition-colors z-50"
+              className="absolute -top-9 right-0 text-zinc-400 hover:text-zinc-100 font-medium text-xs bg-zinc-900 border border-zinc-800 px-3 py-1 rounded-md transition-colors z-50 cursor-pointer"
             >
               ✕ Close
             </button>

@@ -214,15 +214,15 @@ const KanbanBoard = ({ refreshTrigger }) => {
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6 pb-6 border-b border-white/10">
         <div>
           <div className="flex items-center gap-3 mb-1">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              Enterprise Product Board
+            <h2 className="text-xl font-semibold text-zinc-100 tracking-tight">
+              Sprint Board
             </h2>
-            <span className="text-[11px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-0.5 rounded-full">
-              {totalCount} tasks
+            <span className="text-[11px] font-mono bg-zinc-800 text-zinc-300 border border-zinc-700/60 px-2.5 py-0.5 rounded-md">
+              {totalCount} active items
             </span>
           </div>
-          <p className="text-xs text-gray-500">
-            Jira · Linear · ClickUp style workspace · Drag cards across stages to update status
+          <p className="text-xs text-zinc-400">
+            Drag cards across columns to update lifecycle state and track sprint velocity
           </p>
         </div>
 

@@ -45,7 +45,7 @@ const JoinRequests = ({ refreshTrigger }) => {
 
     return (
         <div className="bg-[#161a23]/60 border border-white/10 p-6 rounded-[20px] shadow-2xl backdrop-blur-xl mt-4">
-            <h2 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500 mb-4 tracking-wider uppercase">Pending Join Requests</h2>
+            <h2 className="text-base font-semibold text-zinc-100 mb-4 tracking-tight">Pending Join Applications</h2>
             <div className="space-y-3">
                 {requests.map(req => (
                     <div key={req._id} className="bg-black/20 border border-white/5 p-4 rounded-xl flex flex-wrap justify-between items-center gap-4 transition-all hover:bg-white/5">

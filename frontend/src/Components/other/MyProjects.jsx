@@ -51,8 +51,8 @@ const MyProjects = () => {
 
   return (
     <div className="w-full mt-8 bg-white/5 border border-white/10 backdrop-blur-md p-6 lg:p-8 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300">
-      <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent mb-6">
-        My Assigned Projects
+      <h2 className="text-xl font-semibold text-zinc-100 tracking-tight mb-6">
+        Assigned Projects
       </h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

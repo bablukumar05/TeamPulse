@@ -19,8 +19,8 @@ const PersonalAnalytics = ({ taskCount }) => {
     return (
         <div className="w-full mt-6 bg-[#161a23]/60 border border-white/10 rounded-[30px] p-6 lg:p-10 backdrop-blur-xl shadow-2xl flex flex-col md:flex-row gap-8 items-center">
             <div className="flex-1 w-full text-center md:text-left">
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent mb-2">My Productivity Overview</h3>
-                <p className="text-gray-400 text-sm mb-6">A visual breakdown of your current task distribution and historical completion rate.</p>
+                <h3 className="text-xl font-semibold text-zinc-100 tracking-tight mb-1">Productivity Breakdown</h3>
+                <p className="text-zinc-400 text-xs mb-6">Task distribution and sprint delivery metrics for your assigned items.</p>
                 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl text-center shadow-inner hover:bg-emerald-500/20 transition-colors">

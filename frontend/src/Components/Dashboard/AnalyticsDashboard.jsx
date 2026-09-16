@@ -196,8 +196,8 @@ const AnalyticsDashboard = ({ refreshTrigger }) => {
   return (
     <div className="w-full mt-8 bg-white/5 border border-white/10 backdrop-blur-md p-6 lg:p-8 rounded-2xl shadow-xl">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-          Intelligence & Analytics
+        <h2 className="text-xl font-semibold text-zinc-100 tracking-tight">
+          Executive Analytics
         </h2>
         <button 
           onClick={generatePDFReport}
