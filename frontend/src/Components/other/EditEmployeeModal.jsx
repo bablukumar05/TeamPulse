@@ -19,7 +19,7 @@ const EditEmployeeModal = ({ employee, onClose, onSuccess }) => {
       );
       toast.success('Employee updated!');
       onSuccess();
-    } catch (err) {
+    } catch {
       toast.error('Failed to update employee');
     } finally {
       setIsSubmitting(false);

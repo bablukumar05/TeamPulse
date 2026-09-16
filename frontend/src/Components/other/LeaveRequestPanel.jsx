@@ -18,7 +18,7 @@ const LeaveRequestPanel = ({ onClose }) => {
           headers: { Authorization: `Bearer ${token}` }
         });
         setPastRequests(res.data);
-      } catch (error) {
+      } catch {
         console.error("Failed to fetch past requests");
       }
     };
@@ -39,7 +39,7 @@ const LeaveRequestPanel = ({ onClose }) => {
       setStartDate('');
       setEndDate('');
       setReason('');
-    } catch (err) {
+    } catch {
       toast.error('Failed to submit leave request');
     } finally {
       setIsSubmitting(false);

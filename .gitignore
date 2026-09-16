@@ -1,29 +1,28 @@
 # Logs
-logs
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Dependencies
+node_modules/
+
+# Production Builds
+dist/
+
+# Environment Variables
+.env
+.env.*
 *.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# System & Editor Files
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+.idea/
+.vscode/
+!.vscode/extensions.json
 
-# Sensitive Environment Configurations (Prevent uploading secrets to GitHub)
-.env
+# Cloud Deployments
+.vercel/
 
-.vercel
+# Runtime Uploads
+backend/uploads/*
+!backend/uploads/.gitkeep
+

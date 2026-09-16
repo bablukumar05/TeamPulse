@@ -57,7 +57,7 @@ const ProjectWorkspace = ({ project, onBack }) => {
         const memberIds = project.members.map(m => m._id || m);
         setMembers(usersRes.data.filter(u => memberIds.includes(u._id)));
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to load project data');
     } finally {
       setLoading(false);
@@ -69,10 +69,6 @@ const ProjectWorkspace = ({ project, onBack }) => {
   // Backlog = tasks with no sprint
   const backlogTasks = tasks.filter(t => !t.sprint).filter(t =>
     !backlogFilter || t.title.toLowerCase().includes(backlogFilter.toLowerCase())
-  );
-
-  const sprintTasksForActive = tasks.filter(t =>
-    activeSprint && (t.sprint === activeSprint._id || t.sprint?._id === activeSprint._id)
   );
 
   return (

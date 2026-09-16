@@ -60,7 +60,7 @@ const CalendarView = ({ embeddedTasks }) => {
                 const taskDate = new Date(t.date);
                 const localTaskDate = new Date(taskDate.getTime() - (taskDate.getTimezoneOffset() * 60000));
                 return localTaskDate.toISOString().split('T')[0] === dateStr;
-             } catch(e) {
+             } catch {
                 return false;
              }
         });

@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-require('dotenv').config();
-const User = require('./models/User');
-const Task = require('./models/Task');
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+const User = require('../models/User');
+const Task = require('../models/Task');
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/employee-management';
 

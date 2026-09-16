@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import Header from '../other/Header';
-import TaskListNumbers from '../other/TaskListNumbers';
 import TaskList from '../TaskList/TaskList';
 import GamificationBanner from '../other/GamificationBanner';
 import PersonalAnalytics from '../other/PersonalAnalytics';
-import AnnouncementsFeed from '../other/AnnouncementsFeed';
+import Announcements from '../other/Announcements';
 import MyProjects from '../other/MyProjects';
 import FocusMode from '../other/FocusMode';
 import CalendarView from './CalendarView';
@@ -28,6 +27,31 @@ const EMP_NAV = [
   { id: 'leave',       label: '🌴 Leave'        },
   { id: 'reports',     label: '📈 Reports'      },
 ];
+
+const TaskListNumbers = ({ taskCount }) => (
+  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6 w-full cursor-default">
+    <div className="rounded-xl p-5 bg-zinc-900/40 border border-zinc-800/80 transition-colors hover:border-zinc-700/80">
+      <span className="text-xs font-mono uppercase tracking-wider text-zinc-500 block mb-1">Backlog & Inbound</span>
+      <h2 className="text-3xl font-semibold text-zinc-100 tracking-tight">{taskCount?.newTask || 0}</h2>
+      <span className="text-xs font-medium text-zinc-400 mt-1 block">New Tasks</span>
+    </div>
+    <div className="rounded-xl p-5 bg-zinc-900/40 border border-zinc-800/80 transition-colors hover:border-zinc-700/80">
+      <span className="text-xs font-mono uppercase tracking-wider text-zinc-500 block mb-1">In Progress</span>
+      <h2 className="text-3xl font-semibold text-zinc-100 tracking-tight">{taskCount?.active || 0}</h2>
+      <span className="text-xs font-medium text-zinc-400 mt-1 block">Active Tasks</span>
+    </div>
+    <div className="rounded-xl p-5 bg-zinc-900/40 border border-zinc-800/80 transition-colors hover:border-zinc-700/80">
+      <span className="text-xs font-mono uppercase tracking-wider text-zinc-500 block mb-1">Delivered</span>
+      <h2 className="text-3xl font-semibold text-zinc-100 tracking-tight">{taskCount?.completed || 0}</h2>
+      <span className="text-xs font-medium text-zinc-400 mt-1 block">Completed Tasks</span>
+    </div>
+    <div className="rounded-xl p-5 bg-zinc-900/40 border border-zinc-800/80 transition-colors hover:border-zinc-700/80">
+      <span className="text-xs font-mono uppercase tracking-wider text-zinc-500 block mb-1">Attention Required</span>
+      <h2 className="text-3xl font-semibold text-zinc-100 tracking-tight">{taskCount?.failed || 0}</h2>
+      <span className="text-xs font-medium text-zinc-400 mt-1 block">Blocked / Overdue</span>
+    </div>
+  </div>
+);
 
 const EmployeeDashboard = (props) => {
   const [tasksData, setTasksData]       = useState(null);
@@ -95,7 +119,7 @@ const EmployeeDashboard = (props) => {
             {activeNav === 'dashboard' && tasksData && (
               <div className="flex flex-col gap-5">
                 <GamificationBanner xp={tasksData.xp} badges={tasksData.badges} />
-                <AnnouncementsFeed />
+                <Announcements />
                 <PersonalAnalytics taskCount={tasksData.taskCount} />
                 <MyProjects />
                 <FocusMode tasks={tasksData.tasks} />

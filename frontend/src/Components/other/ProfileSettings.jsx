@@ -29,7 +29,7 @@ const ProfileSettings = ({ onClose }) => {
       setAuthUser({ ...authUser, data: res.data });
       toast.success('Profile updated successfully!');
       onClose();
-    } catch (err) {
+    } catch {
       toast.error('Failed to update profile');
     } finally {
       setIsSubmitting(false);

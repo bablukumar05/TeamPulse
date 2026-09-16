@@ -2,8 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import Header from "../other/Header";
 import CreateTask from "../other/CreateTask";
 import CreateProject from "../other/CreateProject";
-import CreateAnnouncement from "../other/CreateAnnouncement";
-import AnnouncementsFeed from "../other/AnnouncementsFeed";
+import Announcements from "../other/Announcements";
 import ManageEmployees from "../other/ManageEmployees";
 import AllTask from "../other/AllTask";
 import KanbanBoard from "./KanbanBoard";
@@ -107,8 +106,7 @@ const AdminDashboard = (props) => {
             {activeNav === 'dashboard' && (
               <>
                 <AnalyticsDashboard refreshTrigger={refreshTasks} />
-                <AnnouncementsFeed key={refreshTasks} />
-                <CreateAnnouncement refreshTrigger={() => setRefreshTasks(!refreshTasks)} />
+                <Announcements allowCreate={true} refreshTrigger={() => setRefreshTasks(!refreshTasks)} />
                 <ManageEmployees refreshTrigger={refreshTasks} />
                 <JoinRequests refreshTrigger={refreshTasks} />
                 <LeaveApprovals refreshTrigger={refreshTasks} />

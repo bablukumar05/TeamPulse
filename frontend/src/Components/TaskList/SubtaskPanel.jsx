@@ -14,25 +14,11 @@ const SubtaskPanel = ({ task, token, onUpdate, isAdmin }) => {
   const [adding, setAdding]     = useState(false);
   const headers = { Authorization: `Bearer ${token}` };
 
-  const endpoint = isAdmin
-    ? `/api/admin/tasks/${task._id}/details`
-    : `/api/employee/tasks/${task._id}/details`;
-
-  const patchTask = async (body) => {
-    const res = await axios.put(endpoint, body, { headers });
-    if (onUpdate) onUpdate(res.data.task);
-    return res.data.task;
-  };
-
   const handleAddSubtask = async (e) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
     setAdding(true);
     try {
-      // We store subtasks as checklist items with a prefix, or as separate task IDs
-      // For simplicity: add as a lightweight checklist-style subtask via checklist field
-      const updated = [...(task.checklist || [])];
-      // Post to subtasks endpoint
       await axios.post(`/api/admin/tasks`, {
         title: newTitle.trim(),
         description: `Subtask of: ${task.title}`,

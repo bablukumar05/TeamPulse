@@ -20,7 +20,7 @@ const CulturePage = (props) => {
       ]);
       setKudos(kudosRes.data);
       setLeaderboard(leaderRes.data);
-    } catch (error) {
+    } catch {
       toast.error('Failed to load culture data');
     } finally {
       setLoading(false);

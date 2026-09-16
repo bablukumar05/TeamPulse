@@ -40,7 +40,7 @@ const EmployeeProfile = ({ userId, onBack }) => {
         ]);
         setProfile(profileRes.data);
         setTasks(tasksRes.data.filter(t => t.assignedTo?._id === userId || t.assignedTo === userId));
-      } catch (err) {
+      } catch {
         toast.error('Failed to load profile');
       } finally { setLoading(false); }
     };

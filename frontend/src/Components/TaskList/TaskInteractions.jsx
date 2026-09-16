@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { AuthContext } from "../../Context/AuthProvider";
 
 const TaskInteractions = ({ task, onUpdate }) => {
-  const { token, authUser } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
   const [commentText, setCommentText] = useState('');
   const [isUploading, setIsUploading] = useState(false);
 

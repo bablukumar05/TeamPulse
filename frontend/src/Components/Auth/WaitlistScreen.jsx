@@ -7,7 +7,7 @@ const WaitlistScreen = ({ changeUser }) => {
 
   useEffect(() => {
     if (socket) {
-      socket.on('joinRequestApproved', (data) => {
+      socket.on('joinRequestApproved', () => {
         // Optimistically update the authUser state to approved 
         // which will trigger App.jsx to unmount this screen and mount EmployeeDashboard
         if (authUser && authUser.data) {

@@ -31,7 +31,7 @@ const LeaveApprovals = ({ refreshTrigger }) => {
             });
             toast.success(`Leave request ${status}`);
             setRequests(requests.map(req => req._id === id ? { ...req, status } : req));
-        } catch (err) {
+        } catch {
             toast.error(`Failed to ${status.toLowerCase()} request`);
         }
     };

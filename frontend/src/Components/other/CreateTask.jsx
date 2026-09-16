@@ -43,7 +43,7 @@ const CreateTask = ({ onTaskCreated }) => {
         ]);
         setProjects(projRes.data);
         setEmployees(empRes.data);
-      } catch (error) {
+      } catch {
         console.error("Failed to fetch projects or employees");
       }
     };

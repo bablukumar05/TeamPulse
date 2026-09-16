@@ -61,7 +61,7 @@ const TeamChat = () => {
       setMessages(prev => prev.map(m => m._id === message._id ? message : m));
     });
 
-    socket.on('userTyping', ({ userId, userName }) => {
+    socket.on('userTyping', ({ userName }) => {
       setTypingUsers(prev => prev.includes(userName) ? prev : [...prev, userName]);
     });
 

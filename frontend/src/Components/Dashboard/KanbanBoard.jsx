@@ -75,7 +75,7 @@ const KanbanBoard = ({ refreshTrigger }) => {
           headers: { Authorization: `Bearer ${token}` }
         });
         setProjectsList(res.data);
-      } catch (err) {
+      } catch {
         console.error('Failed to fetch projects for filter');
       }
     };
@@ -129,7 +129,7 @@ const KanbanBoard = ({ refreshTrigger }) => {
 
       window.dispatchEvent(new Event('adminDataRefetch'));
       window.dispatchEvent(new Event('newTaskRefetch'));
-    } catch (error) {
+    } catch {
       toast.error('Failed to update task status');
       fetchAllTasks();
     }

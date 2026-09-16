@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { AuthContext } from '../../Context/AuthProvider';
@@ -226,7 +226,7 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
         style: { background: '#1e293b', color: '#f8fafc', border: '1px solid #334155' }
       });
       if (onUpdate) onUpdate();
-    } catch (err) {
+    } catch {
       toast.error('Failed to post comment');
     }
   };
@@ -252,7 +252,7 @@ const TaskDetailsDrawer = ({ task, isOpen, onClose, onUpdate }) => {
         style: { background: '#1e293b', color: '#f8fafc', border: '1px solid #334155' }
       });
       if (onUpdate) onUpdate();
-    } catch (err) {
+    } catch {
       toast.error('Failed to upload file');
     } finally {
       setUploadingFile(false);

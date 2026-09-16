@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { AuthContext } from '../../Context/AuthProvider';
 
 const SPRINT_STATUS_COLORS = {
   Planning:  'bg-slate-500/20 text-slate-400 border-slate-500/30',
@@ -105,7 +104,6 @@ const SprintPlanner = ({ project, sprints, onRefresh, token, isAdmin }) => {
       ) : (
         <div className="space-y-3">
           {sprints.map(sprint => {
-            const progress = sprint.totalPoints > 0 ? Math.round((sprint.donePoints / sprint.totalPoints) * 100) : 0;
             const taskProgress = sprint.taskCount > 0 ? Math.round((sprint.completedCount / sprint.taskCount) * 100) : 0;
             return (
               <div key={sprint._id} className={`bg-white/[0.03] border rounded-2xl p-5 transition-all ${sprint.status === 'Active' ? 'border-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.08)]' : 'border-white/[0.07]'}`}>

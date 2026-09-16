@@ -105,12 +105,11 @@ const MilestoneTimeline = ({ project, milestones, onRefresh, token, isAdmin }) =
           <p className="text-gray-600 text-sm mt-1">Add milestones to track key delivery checkpoints.</p>
         </div>
       ) : (
-        /* Timeline layout */
         <div className="relative">
           <div className="absolute left-5 top-4 bottom-4 w-0.5 bg-white/[0.07]" />
 
           <div className="space-y-4">
-            {milestones.map((ms, idx) => {
+            {milestones.map((ms) => {
               const due = ms.dueDate ? new Date(ms.dueDate) : null;
               const isOverdue = due && ms.status === 'Open' && due < today;
               const isDueSoon = due && ms.status === 'Open' && !isOverdue && (due - today) < 7 * 86400000;

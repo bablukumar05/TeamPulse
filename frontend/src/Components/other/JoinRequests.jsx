@@ -13,7 +13,7 @@ const JoinRequests = ({ refreshTrigger }) => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setRequests(res.data);
-        } catch (error) {
+        } catch {
             console.error("Failed to fetch join requests");
         }
     };
@@ -36,7 +36,7 @@ const JoinRequests = ({ refreshTrigger }) => {
             });
             toast.success(`Request ${action}d successfully`);
             fetchRequests();
-        } catch (error) {
+        } catch {
             toast.error(`Failed to ${action} request`);
         }
     };

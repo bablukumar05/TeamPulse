@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -17,7 +17,7 @@ const COLUMNS = [
 const PRIORITY_DOT  = { Critical: '🔴', High: '🟠', Medium: '🟡', Low: '🟢' };
 const PRIORITY_RING = { Critical: 'border-red-500/50', High: 'border-orange-500/50', Medium: 'border-yellow-500/30', Low: 'border-green-500/30' };
 
-const SprintBoard = ({ project, tasks, sprints, activeSprint, setActiveSprint, onRefresh, token }) => {
+const SprintBoard = ({ tasks, sprints, activeSprint, setActiveSprint, onRefresh, token }) => {
   const headers = { Authorization: `Bearer ${token}` };
 
   // Filter tasks by selected sprint (or show all if no sprint selected)
@@ -44,7 +44,6 @@ const SprintBoard = ({ project, tasks, sprints, activeSprint, setActiveSprint, o
 
     const newStatus = destination.droppableId;
     try {
-      const isAdmin = true; // SprintBoard only shown to admin/manager
       const endpoint = `/api/admin/tasks/${draggableId}/status`;
       await axios.put(endpoint, { status: newStatus }, { headers });
       toast.success(`→ ${newStatus}`, { style: { background: '#1e293b', color: '#f8fafc', border: '1px solid #334155' }, duration: 1500 });
