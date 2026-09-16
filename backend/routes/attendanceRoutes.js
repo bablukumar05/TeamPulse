@@ -8,6 +8,7 @@ router.post('/break',     protect, ac.handleBreak);
 router.post('/checkout',  protect, ac.checkOut);
 router.get('/today',      protect, ac.getTodayAttendance);
 router.get('/calendar',   protect, ac.getCalendar);
+router.get('/yearly',     protect, ac.getYearlyAttendance);
 router.get('/team',       protect, authorizeRoles('Admin', 'Manager'), ac.getTeamAttendance);
 
 module.exports = router;

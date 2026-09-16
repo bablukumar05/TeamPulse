@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const Task = require('../models/Task');
+const Team = require('../models/Team');
+const Department = require('../models/Department');
 const AuditLog = require('../models/AuditLog');
 const JoinRequest = require('../models/JoinRequest');
 const { sendTaskAssignedEmail } = require('../utils/emailService');
@@ -7,11 +9,15 @@ const { sendTaskAssignedEmail } = require('../utils/emailService');
 
 exports.getEmployees = async (req, res) => {
   try {
-    let query = { role: 'Employee', employmentStatus: { $ne: 'Terminated' } };
+    let query = { role: { $in: ['Employee', 'Manager'] }, employmentStatus: { $ne: 'Terminated' } };
     if (req.user.role === 'Manager') {
-      query.team = req.user.team;
+      query.$or = [{ team: req.user.team }, { teamId: req.user.teamId }];
     }
-    const employees = await User.find(query).select('-password').lean();
+    const employees = await User.find(query)
+      .select('-password')
+      .populate('teamId', 'name color')
+      .populate('departmentId', 'name color')
+      .lean();
     const empIds = employees.map(e => e._id);
 
     // Single aggregation query for all employees
@@ -45,67 +51,133 @@ exports.getEmployees = async (req, res) => {
 
 exports.createTask = async (req, res) => {
   try {
-    const { title, description, date, dueDate, category, assignTo, projectId, priority, labels, estimatedHours, checklist } = req.body;
-
-    let query = { firstName: assignTo, role: 'Employee' };
-    if (req.user.role === 'Manager') {
-      query.team = req.user.team;
-    }
-
-    const employee = await User.findOne(query);
-
-    if (!employee) {
-      return res.status(404).json({ message: `Employee ${assignTo} not found in your allowed scope` });
-    }
-
-    const task = new Task({
+    const {
       title,
       description,
-      date: date || (dueDate ? new Date(dueDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]),
-      dueDate: dueDate ? new Date(dueDate) : undefined,
-      category: category || 'General',
-      priority: priority || 'Medium',
-      labels: labels || (category ? [category] : []),
-      estimatedHours: Number(estimatedHours) || 0,
-      checklist: checklist || [],
-      assignedTo: employee._id,
-      createdBy: req.user._id,
-      department: req.user.team || 'General',
-      project: projectId || undefined,
-      status: 'To Do',
-      activityLog: [{
-        action: `Task created and assigned to ${employee.firstName}`,
-        performedBy: req.user._id,
-        performedByName: req.user.firstName,
-        timestamp: new Date()
-      }]
-    });
+      date,
+      dueDate,
+      category,
+      assignTo,
+      assigneeId,
+      assigneeIds,
+      teamId,
+      mode = 'single',
+      projectId,
+      priority,
+      labels,
+      estimatedHours,
+      checklist
+    } = req.body;
 
-    await task.save();
+    const Team = require('../models/Team');
+    let targetEmployees = [];
+    let assignedTeam = null;
+
+    if (mode === 'team' && teamId) {
+      assignedTeam = await Team.findById(teamId).populate('members');
+      if (!assignedTeam) {
+        return res.status(404).json({ message: 'Selected team not found' });
+      }
+      targetEmployees = (assignedTeam.members || []).filter(m => m.status !== 'Deleted' && m.employmentStatus !== 'Terminated');
+      if (targetEmployees.length === 0) {
+        return res.status(400).json({ message: 'The selected squad has no active members' });
+      }
+    } else if (mode === 'multiple' && Array.isArray(assigneeIds) && assigneeIds.length > 0) {
+      targetEmployees = await User.find({
+        _id: { $in: assigneeIds },
+        status: { $ne: 'Deleted' }
+      });
+    } else {
+      let query = { status: { $ne: 'Deleted' } };
+      if (assigneeId) {
+        query._id = assigneeId;
+      } else if (assignTo) {
+        if (typeof assignTo === 'string' && assignTo.match(/^[0-9a-fA-F]{24}$/)) {
+          query._id = assignTo;
+        } else {
+          query.firstName = assignTo;
+        }
+      }
+      if (req.user.role === 'Manager' && req.user.team) {
+        query.team = req.user.team;
+      }
+      const singleEmp = await User.findOne(query);
+      if (singleEmp) {
+        targetEmployees = [singleEmp];
+      }
+    }
+
+    if (targetEmployees.length === 0) {
+      return res.status(404).json({ message: 'No valid employees found for task assignment' });
+    }
+
+    const io = req.app.get('io');
+    const userSockets = req.app.get('userSockets');
+    const createdTasks = [];
+
+    for (const employee of targetEmployees) {
+      const task = new Task({
+        title,
+        description,
+        date: date || (dueDate ? new Date(dueDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]),
+        dueDate: dueDate ? new Date(dueDate) : undefined,
+        category: category || 'General',
+        priority: priority || 'Medium',
+        labels: labels || (category ? [category] : []),
+        estimatedHours: Number(estimatedHours) || 0,
+        checklist: checklist || [],
+        assignedTo: employee._id,
+        createdBy: req.user._id,
+        department: employee.department || req.user.team || 'General',
+        departmentId: employee.departmentId || (assignedTeam ? assignedTeam.department : undefined),
+        teamId: assignedTeam ? assignedTeam._id : employee.teamId,
+        project: projectId || undefined,
+        status: 'To Do',
+        activityLog: [{
+          action: `Task created and assigned to ${employee.firstName}`,
+          performedBy: req.user._id,
+          performedByName: req.user.firstName,
+          timestamp: new Date()
+        }]
+      });
+
+      await task.save();
+      createdTasks.push(task);
+
+      if (io && userSockets) {
+        const socketId = userSockets.get(employee._id.toString());
+        if (socketId) {
+          io.to(socketId).emit('newTaskAssigned', { message: `New Task: ${title}`, task });
+        }
+      }
+
+      try {
+        sendTaskAssignedEmail(employee.email, employee.firstName, title);
+      } catch (mailErr) {
+        // non-blocking
+      }
+    }
 
     await AuditLog.create({
       action: 'TASK_CREATED',
       performedBy: req.user._id,
       performedByName: req.user.firstName,
-      details: `Created task "${title}" assigned to ${assignTo}`
+      details: `Created task "${title}" assigned to ${targetEmployees.length} employee(s) [Mode: ${mode}]`
     });
 
-    const io = req.app.get('io');
-    const userSockets = req.app.get('userSockets');
-    
-    if (io && userSockets) {
-      const socketId = userSockets.get(employee._id.toString());
-      if (socketId) {
-        io.to(socketId).emit('newTaskAssigned', { message: `New Task: ${title}`, task });
-      }
-    }
+    const successMessage = createdTasks.length === 1
+      ? `Task assigned to ${targetEmployees[0].firstName} successfully`
+      : `Task successfully distributed to ${createdTasks.length} team members! 🚀`;
 
-    sendTaskAssignedEmail(employee.email, employee.firstName, title);
-
-    res.status(201).json({ message: 'Task created successfully', task });
+    res.status(201).json({
+      message: successMessage,
+      task: createdTasks[0],
+      tasks: createdTasks,
+      assignedCount: createdTasks.length
+    });
   } catch (error) {
     console.error('CreateTask Admin Error:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -294,7 +366,7 @@ exports.getAuditLogs = async (req, res) => {
 exports.updateEmployee = async (req, res) => {
   try {
     const { id } = req.params;
-    const { team, role } = req.body;
+    const { team, role, designation, teamId, departmentId } = req.body;
 
     const employee = await User.findById(id);
     if (!employee) return res.status(404).json({ message: "Employee not found" });
@@ -304,8 +376,11 @@ exports.updateEmployee = async (req, res) => {
        return res.status(403).json({ message: "Only full Admins can modify employee records." });
     }
 
-    if (team) employee.team = team;
+    if (team !== undefined) employee.team = team;
     if (role && ['Admin', 'Manager', 'Employee'].includes(role)) employee.role = role;
+    if (designation !== undefined) employee.designation = designation;
+    if (teamId !== undefined) employee.teamId = teamId || null;
+    if (departmentId !== undefined) employee.departmentId = departmentId || null;
 
     await employee.save();
 
@@ -313,7 +388,7 @@ exports.updateEmployee = async (req, res) => {
       action: 'EMPLOYEE_UPDATED',
       performedBy: req.user._id,
       performedByName: req.user.firstName,
-      details: `Updated employee ${employee.firstName} (Team: ${employee.team}, Role: ${employee.role})`
+      details: `Updated employee ${employee.firstName} (Team: ${employee.team}, Role: ${employee.role}, Designation: ${employee.designation || 'N/A'})`
     });
 
     res.status(200).json({ message: "Employee updated successfully", employee });

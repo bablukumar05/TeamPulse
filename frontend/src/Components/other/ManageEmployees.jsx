@@ -25,14 +25,14 @@ const ManageEmployees = ({ refreshTrigger }) => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [activeRes, termRes] = await Promise.all([
+      const [activeRes, termRes] = await Promise.allSettled([
         axios.get('/api/admin/employees', { headers: { Authorization: `Bearer ${token}` } }),
         axios.get('/api/admin/employees/terminated', { headers: { Authorization: `Bearer ${token}` } })
       ]);
-      setActiveEmployees(activeRes.data || []);
-      setTerminatedEmployees(termRes.data || []);
-    } catch {
-      toast.error('Failed to fetch employee records');
+      if (activeRes.status === 'fulfilled') setActiveEmployees(activeRes.value.data || []);
+      if (termRes.status === 'fulfilled') setTerminatedEmployees(termRes.value.data || []);
+    } catch (err) {
+      console.error('Failed to fetch employee records', err);
     } finally {
       setLoading(false);
     }
@@ -241,6 +241,16 @@ const ManageEmployees = ({ refreshTrigger }) => {
                       <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${ROLE_COLORS[emp.role] || ROLE_COLORS.Employee}`}>
                         {emp.role}
                       </span>
+                      {emp.designation && (
+                        <span className="text-[10px] font-semibold text-purple-300 bg-purple-500/15 px-2 py-0.5 rounded border border-purple-500/25">
+                          💼 {emp.designation}
+                        </span>
+                      )}
+                      {emp.teamId?.name && (
+                        <span className="text-[10px] text-cyan-300 bg-cyan-500/15 px-2 py-0.5 rounded border border-cyan-500/25">
+                          🛡️ {emp.teamId.name}
+                        </span>
+                      )}
                       {emp.employeeId && (
                         <span className="text-[10px] text-gray-400 font-mono bg-white/5 px-2 py-0.5 rounded border border-white/5">
                           {emp.employeeId}
@@ -342,7 +352,14 @@ const ManageEmployees = ({ refreshTrigger }) => {
                           {emp.firstName?.charAt(0)}
                         </div>
                         <div>
-                          <p className="font-bold text-white text-xs">{emp.firstName} {emp.lastName || ''}</p>
+                          <div className="flex items-center gap-1.5">
+                            <p className="font-bold text-white text-xs">{emp.firstName} {emp.lastName || ''}</p>
+                            {emp.designation && (
+                              <span className="text-[9px] font-semibold text-purple-300 bg-purple-500/15 px-1.5 py-0.2 rounded border border-purple-500/25">
+                                {emp.designation}
+                              </span>
+                            )}
+                          </div>
                           <p className="text-[10px] text-gray-500">{emp.email}</p>
                         </div>
                       </div>

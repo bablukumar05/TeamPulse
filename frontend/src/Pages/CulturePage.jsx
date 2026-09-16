@@ -46,7 +46,7 @@ const CulturePage = (props) => {
   };
 
   return (
-    <div className='p-8 min-h-screen w-full bg-gradient-to-br from-[#0B0B0B] via-[#151515] to-[#1A1A1A] text-white selection:bg-emerald-500/30 flex flex-col'>
+    <div className='p-8 min-h-screen w-full bg-gradient-to-br from-[#0B0F19] via-[#0D1322] to-[#111827] text-white selection:bg-indigo-500/30 flex flex-col'>
       <div className='max-w-7xl mx-auto w-full flex flex-col gap-4 flex-1'>
         <Header changeUser={props.changeUser} changePage={props.changePage} />
 

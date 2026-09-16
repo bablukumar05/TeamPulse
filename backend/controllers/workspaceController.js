@@ -137,20 +137,104 @@ exports.createTeam = async (req, res) => {
 
 exports.getTeams = async (req, res) => {
   try {
-    const teams = await Team.find({ isActive: true })
-      .populate('manager', 'firstName lastName email avatar')
-      .populate('members', 'firstName lastName email avatar role')
-      .populate('department', 'name color');
-    res.json(teams);
+    let teams = await Team.find({ isActive: true })
+      .populate('manager', 'firstName lastName email avatar role designation')
+      .populate('members', 'firstName lastName email avatar role designation department isOnline skills')
+      .populate('department', 'name color description');
+
+    // If no teams exist, automatically seed the 4 standard enterprise squads
+    if (teams.length === 0) {
+      const defaultDepts = [
+        { name: "Engineering & Technology", color: "#3b82f6", description: "Software Architecture, Full-Stack & Core Platform" },
+        { name: "AI & Data Intelligence", color: "#8b5cf6", description: "Machine Learning, LLMs, AI Agents & Analytics" },
+        { name: "Quality Assurance", color: "#10b981", description: "Automation Testing, Performance & Quality Standards" },
+        { name: "Product & Design", color: "#ec4899", description: "UI/UX, Product Roadmaps & User Research" },
+        { name: "Operations & HR", color: "#f59e0b", description: "People Operations, Talent Acquisition & Culture" }
+      ];
+
+      const createdDepts = {};
+      for (const d of defaultDepts) {
+        let dept = await Department.findOne({ name: d.name, isActive: true });
+        if (!dept) {
+          dept = await Department.create(d);
+        }
+        createdDepts[d.name] = dept._id;
+      }
+
+      const defaultTeams = [
+        {
+          name: "AI & Machine Learning Squad",
+          department: createdDepts["AI & Data Intelligence"],
+          color: "#8b5cf6",
+          description: "LLMs, Computer Vision, RAG Pipelines & Data Science"
+        },
+        {
+          name: "Product Development Squad",
+          department: createdDepts["Engineering & Technology"],
+          color: "#3b82f6",
+          description: "Full-Stack Web & Mobile App Architecture"
+        },
+        {
+          name: "Database & Cloud Operations",
+          department: createdDepts["Engineering & Technology"],
+          color: "#06b6d4",
+          description: "Database Administration (DBA), Cloud Infra & DevOps"
+        },
+        {
+          name: "Quality Assurance & Testing (QA)",
+          department: createdDepts["Quality Assurance"],
+          color: "#10b981",
+          description: "Automated & Manual End-to-End Quality Engineering"
+        }
+      ];
+
+      for (const t of defaultTeams) {
+        const exists = await Team.findOne({ name: t.name, isActive: true });
+        if (!exists) {
+          await Team.create(t);
+        }
+      }
+
+      teams = await Team.find({ isActive: true })
+        .populate('manager', 'firstName lastName email avatar role designation')
+        .populate('members', 'firstName lastName email avatar role designation department isOnline skills')
+        .populate('department', 'name color description');
+    }
+
+    const Task = require('../models/Task');
+    const teamsWithStats = await Promise.all(teams.map(async (team) => {
+      const memberIds = (team.members || []).map(m => m._id);
+      const activeTasks = await Task.countDocuments({
+        $or: [
+          { teamId: team._id },
+          { assignedTo: { $in: memberIds } }
+        ],
+        status: { $nin: ['Completed', 'Archived', 'Failed'] }
+      });
+      return {
+        ...team.toObject(),
+        activeTasks
+      };
+    }));
+
+    res.json(teamsWithStats);
   } catch (err) {
+    console.error('getTeams error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
 exports.updateTeam = async (req, res) => {
   try {
+    const { manager } = req.body;
     const team = await Team.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!team) return res.status(404).json({ message: 'Team not found' });
+
+    // If manager was assigned, ensure their role is Manager
+    if (manager) {
+      await User.findByIdAndUpdate(manager, { role: 'Manager', teamId: team._id });
+    }
+
     res.json(team);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -175,6 +259,21 @@ exports.addMemberToTeam = async (req, res) => {
       { new: true }
     );
     await User.findByIdAndUpdate(userId, { teamId: req.params.id });
+    res.json(team);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+exports.removeMemberFromTeam = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const team = await Team.findByIdAndUpdate(
+      req.params.id,
+      { $pull: { members: userId } },
+      { new: true }
+    );
+    await User.findByIdAndUpdate(userId, { teamId: null });
     res.json(team);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });

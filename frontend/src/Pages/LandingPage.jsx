@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Login from '../Components/Auth/Login';
 
 const PRINCIPLES = [
@@ -92,10 +92,26 @@ const METRICS = [
 const LandingPage = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
 
+  useEffect(() => {
+    const handleClose = () => setShowAuthModal(false);
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setShowAuthModal(false);
+    };
+
+    window.addEventListener('closeAuthModal', handleClose);
+    if (showAuthModal) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener('closeAuthModal', handleClose);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showAuthModal]);
+
   return (
-    <div className="min-h-screen bg-[#0c0d0e] text-zinc-100 flex flex-col font-sans selection:bg-zinc-800 selection:text-white">
+    <div className="min-h-screen bg-[#0B0F19] text-zinc-100 flex flex-col font-sans selection:bg-indigo-900 selection:text-white">
       
-      <header className="sticky top-0 z-40 bg-[#0c0d0e]/90 backdrop-blur-md border-b border-zinc-800/80 px-6 lg:px-12 py-3.5 flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-[#0B0F19]/90 backdrop-blur-md border-b border-zinc-800/80 px-6 lg:px-12 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700/80 flex items-center justify-center font-bold text-xs text-zinc-200">
             TP
@@ -330,15 +346,12 @@ const LandingPage = () => {
       </footer>
 
       {showAuthModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md">
-            <button
-              onClick={() => setShowAuthModal(false)}
-              className="absolute -top-9 right-0 text-zinc-400 hover:text-zinc-100 font-medium text-xs bg-zinc-900 border border-zinc-800 px-3 py-1 rounded-md transition-colors z-50 cursor-pointer"
-            >
-              ✕ Close
-            </button>
-            <Login />
+        <div 
+          onClick={() => setShowAuthModal(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200 overflow-y-auto"
+        >
+          <div onClick={(e) => e.stopPropagation()} className="w-full flex justify-center py-4">
+            <Login onClose={() => setShowAuthModal(false)} />
           </div>
         </div>
       )}

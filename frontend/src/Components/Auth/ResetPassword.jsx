@@ -30,7 +30,7 @@ const ResetPassword = ({ token }) => {
 
   if (isSuccess) {
     return (
-      <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#11141c] font-sans">
+      <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#0B0F19] font-sans">
         <div className="relative z-10 w-full max-w-[500px] px-6 py-10">
           <div className="rounded-[40px] border border-white/10 bg-[#161a23]/40 px-10 py-16 text-center shadow-[0_20px_60px_0_rgba(0,0,0,0.6)] backdrop-blur-[24px]">
             <div className="w-20 h-20 mx-auto bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(34,197,94,0.3)]">
@@ -51,7 +51,7 @@ const ResetPassword = ({ token }) => {
   }
 
   return (
-    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#11141c] font-sans">
+    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#0B0F19] font-sans">
       <div className="relative z-10 w-full max-w-[500px] px-6 py-10">
         <div className="rounded-[40px] border border-white/10 bg-[#161a23]/40 px-10 py-12 shadow-[0_20px_60px_0_rgba(0,0,0,0.6)] backdrop-blur-[24px]">
           <div className="mb-10 text-center">

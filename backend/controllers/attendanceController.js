@@ -1,13 +1,45 @@
 const Attendance = require('../models/Attendance');
 
-// Helper: get today's date at midnight UTC+5:30
+// Helper: get today's date at midnight in IST (UTC+5:30)
 const todayIST = () => {
   const now = new Date();
+  const istTime = new Date(now.getTime() + (330 * 60 * 1000));
   return new Date(Date.UTC(
-    now.getUTCFullYear(),
-    now.getUTCMonth(),
-    now.getUTCDate()
+    istTime.getUTCFullYear(),
+    istTime.getUTCMonth(),
+    istTime.getUTCDate()
   ));
+};
+
+// Helper: calculate IST hours, minutes, and whether check-in is after 9:30 AM IST
+const getISTDetails = (date = new Date()) => {
+  const totalUtcMinutes = date.getUTCHours() * 60 + date.getUTCMinutes();
+  const totalIstMinutes = (totalUtcMinutes + 330) % (24 * 60);
+  const istHour24 = Math.floor(totalIstMinutes / 60);
+  const istMinutes = totalIstMinutes % 60;
+
+  const period = istHour24 >= 12 ? 'PM' : 'AM';
+  const istHour12 = istHour24 % 12 || 12;
+  const timeFormatted = `${String(istHour12).padStart(2, '0')}:${String(istMinutes).padStart(2, '0')} ${period}`;
+
+  // Office start time: 9:30 AM IST (9 * 60 + 30 = 570 minutes from midnight)
+  const officeStartMinutes = 9 * 60 + 30; // 570
+  const isLate = totalIstMinutes > officeStartMinutes;
+  const lateMinutes = isLate ? (totalIstMinutes - officeStartMinutes) : 0;
+
+  const lateDurationFormatted = lateMinutes >= 60
+    ? `${Math.floor(lateMinutes / 60)}h ${lateMinutes % 60}m`
+    : `${lateMinutes}m`;
+
+  return {
+    totalIstMinutes,
+    istHour24,
+    istMinutes,
+    timeFormatted,
+    isLate,
+    lateMinutes,
+    lateDurationFormatted
+  };
 };
 
 // POST /api/attendance/checkin
@@ -19,26 +51,39 @@ exports.checkIn = async (req, res) => {
       return res.status(400).json({ message: 'Already checked in for today' });
     }
 
-    // Determine if late (after 9:30 AM IST)
     const now = new Date();
-    const istHour   = (now.getUTCHours() + 5) % 24;
-    const istMinute = (now.getUTCMinutes() + 30) % 60;
-    const isLate = istHour > 9 || (istHour === 9 && istMinute > 30);
+    const timing = getISTDetails(now);
+
+    const lateNote = timing.isLate
+      ? `Late check-in at ${timing.timeFormatted} (${timing.lateDurationFormatted} late)`
+      : `On-time check-in at ${timing.timeFormatted}`;
 
     const record = await Attendance.findOneAndUpdate(
       { user: req.user._id, date: today },
       {
         $set: {
           checkInTime: now,
-          status: isLate ? 'Late' : 'Present',
-          isLate,
+          status: timing.isLate ? 'Late' : 'Present',
+          isLate: timing.isLate,
+          lateMinutes: timing.lateMinutes,
+          notes: lateNote,
         }
       },
       { upsert: true, new: true }
     );
 
-    console.log(`Check-in: ${req.user.firstName} at ${now.toISOString()} isLate=${isLate}`);
-    res.json({ message: `Checked in${isLate ? ' (Late)' : ''}`, record });
+    const message = timing.isLate
+      ? `Checked in (Late by ${timing.lateDurationFormatted} at ${timing.timeFormatted})`
+      : `Checked in on-time at ${timing.timeFormatted} ✅`;
+
+    console.log(`Check-in: ${req.user.firstName} at ${now.toISOString()} [${timing.timeFormatted}], isLate=${timing.isLate}, lateMinutes=${timing.lateMinutes}`);
+    res.json({
+      message,
+      record,
+      checkInTimeFormatted: timing.timeFormatted,
+      isLate: timing.isLate,
+      lateMinutes: timing.lateMinutes
+    });
   } catch (err) {
     console.error('checkIn error:', err);
     res.status(500).json({ message: 'Failed to check in', error: err.message });
@@ -124,11 +169,22 @@ exports.getTodayAttendance = async (req, res) => {
 exports.getCalendar = async (req, res) => {
   try {
     const userId = req.query.userId || req.user._id;
-    const month  = parseInt(req.query.month) || new Date().getMonth();
-    const year   = parseInt(req.query.year)  || new Date().getFullYear();
+    const isAllMonths = req.query.month === 'all';
+    const month = req.query.month !== undefined && req.query.month !== '' && !isAllMonths
+      ? parseInt(req.query.month, 10)
+      : new Date().getMonth();
+    const year = req.query.year !== undefined && req.query.year !== ''
+      ? parseInt(req.query.year, 10)
+      : new Date().getFullYear();
 
-    const startDate = new Date(Date.UTC(year, month, 1));
-    const endDate   = new Date(Date.UTC(year, month + 1, 0));
+    let startDate, endDate;
+    if (isAllMonths) {
+      startDate = new Date(Date.UTC(year, 0, 1));
+      endDate   = new Date(Date.UTC(year, 11, 31, 23, 59, 59, 999));
+    } else {
+      startDate = new Date(Date.UTC(year, month, 1));
+      endDate   = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999));
+    }
 
     const records = await Attendance.find({
       user: userId,
@@ -137,7 +193,65 @@ exports.getCalendar = async (req, res) => {
 
     res.json(records);
   } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// GET /api/attendance/yearly?userId=&year=
+exports.getYearlyAttendance = async (req, res) => {
+  try {
+    const userId = req.query.userId || req.user._id;
+    const year = req.query.year !== undefined && req.query.year !== ''
+      ? parseInt(req.query.year, 10)
+      : new Date().getFullYear();
+
+    const startDate = new Date(Date.UTC(year, 0, 1));
+    const endDate   = new Date(Date.UTC(year, 11, 31, 23, 59, 59, 999));
+
+    const records = await Attendance.find({
+      user: userId,
+      date: { $gte: startDate, $lte: endDate }
+    }).sort({ date: 1 });
+
+    const monthlySummary = Array.from({ length: 12 }, (_, m) => ({
+      month: m,
+      totalRecords: 0,
+      present: 0,
+      late: 0,
+      absent: 0,
+      wfh: 0,
+      leave: 0,
+      halfDay: 0,
+      holiday: 0,
+      totalWorkMinutes: 0,
+      records: []
+    }));
+
+    records.forEach(r => {
+      const d = new Date(r.date);
+      const m = d.getUTCMonth();
+      if (m >= 0 && m < 12) {
+        monthlySummary[m].totalRecords += 1;
+        monthlySummary[m].records.push(r);
+        if (r.status === 'Present') monthlySummary[m].present += 1;
+        if (r.isLate) monthlySummary[m].late += 1;
+        if (r.status === 'Absent') monthlySummary[m].absent += 1;
+        if (r.status === 'WFH') monthlySummary[m].wfh += 1;
+        if (r.status === 'On Leave') monthlySummary[m].leave += 1;
+        if (r.status === 'Half-Day') monthlySummary[m].halfDay += 1;
+        if (r.status === 'Holiday') monthlySummary[m].holiday += 1;
+        monthlySummary[m].totalWorkMinutes += (r.totalWorkMinutes || 0);
+      }
+    });
+
+    res.json({
+      year,
+      records,
+      monthlySummary,
+    });
+  } catch (err) {
+    console.error('getYearlyAttendance error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 

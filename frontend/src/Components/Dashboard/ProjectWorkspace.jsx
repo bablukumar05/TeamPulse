@@ -72,7 +72,7 @@ const ProjectWorkspace = ({ project, onBack }) => {
   );
 
   return (
-    <div className="min-h-screen bg-[#0a0c11] text-white">
+    <div className="min-h-screen bg-[#0B0F19] text-white">
       <div className="border-b border-white/10 bg-[#111318]/95 backdrop-blur-md sticky top-0 z-30">
         <div className="px-6 py-4">
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">

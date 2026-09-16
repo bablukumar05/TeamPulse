@@ -131,7 +131,10 @@ exports.login = async (req, res) => {
 
 exports.getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findById(req.user.id)
+      .select('-password')
+      .populate('teamId', 'name color')
+      .populate('departmentId', 'name color');
     res.status(200).json(user);
   } catch (error) {
     console.error('GetMe Error:', error);

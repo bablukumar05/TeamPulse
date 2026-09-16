@@ -77,6 +77,7 @@ const userSchema = new mongoose.Schema({
   managerId:    { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 
   // Professional
+  designation: { type: String, default: 'Full Stack Developer' },
   skills:     [String],
   experience: [{
     title:   String,

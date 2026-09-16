@@ -148,7 +148,7 @@ const ReportsPage = ({ onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0c11] text-white">
+    <div className="min-h-screen bg-[#0B0F19] text-white">
       <div className="border-b border-white/[0.07] bg-[#111318]/95 sticky top-0 z-20 px-6 py-4">
         <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
           {onBack && <button onClick={onBack} className="hover:text-white transition-colors">← Dashboard</button>}

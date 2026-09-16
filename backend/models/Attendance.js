@@ -19,10 +19,11 @@ const attendanceSchema = new mongoose.Schema({
     enum: ['Present', 'Absent', 'Late', 'Half-Day', 'WFH', 'Holiday', 'On Leave'],
     default: 'Absent'
   },
-  isLate:     { type: Boolean, default: false },
-  isOvertime: { type: Boolean, default: false },
-  notes:      { type: String, default: '' },
-  location:   { type: String, default: '' },
+  isLate:      { type: Boolean, default: false },
+  lateMinutes: { type: Number, default: 0 },
+  isOvertime:  { type: Boolean, default: false },
+  notes:       { type: String, default: '' },
+  location:    { type: String, default: '' },
 }, { timestamps: true });
 
 // One record per user per day

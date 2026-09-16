@@ -18,7 +18,8 @@ router.post('/teams',             protect, authorizeRoles('Admin', 'Manager'), w
 router.get('/teams/all',          protect, wc.getTeams);
 router.put('/teams/:id',          protect, authorizeRoles('Admin', 'Manager'), wc.updateTeam);
 router.delete('/teams/:id',       protect, authorizeRoles('Admin'), wc.deleteTeam);
-router.post('/teams/:id/members', protect, authorizeRoles('Admin', 'Manager'), wc.addMemberToTeam);
+router.post('/teams/:id/members',        protect, authorizeRoles('Admin', 'Manager'), wc.addMemberToTeam);
+router.post('/teams/:id/members/remove', protect, authorizeRoles('Admin', 'Manager'), wc.removeMemberFromTeam);
 
 router.get('/users/directory',  protect, wc.getUserDirectory);
 router.get('/users/:id',        protect, wc.getUserProfile);

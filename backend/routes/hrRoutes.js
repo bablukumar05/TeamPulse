@@ -15,5 +15,6 @@ router.delete('/employees/:id/documents/:docIndex', protect, authorizeRoles(...a
 router.get('/leave-requests',                  protect, authorizeRoles(...adminManager), hr.getLeaveRequests);
 router.put('/leave-requests/:id',              protect, authorizeRoles(...adminManager), hr.updateLeaveStatus);
 router.get('/attendance/report',               protect, authorizeRoles(...adminManager), hr.getAttendanceReport);
+router.get('/attendance/yearly-report',        protect, authorizeRoles(...adminManager), hr.getYearlyAttendanceReport);
 
 module.exports = router;

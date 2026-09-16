@@ -43,13 +43,17 @@ const AttendanceTracker = ({ onUpdate }) => {
   const act = async (endpoint, payload = {}) => {
     setActing(true);
     try {
-      await axios.post(`/api/attendance/${endpoint}`, payload, { headers });
+      const res = await axios.post(`/api/attendance/${endpoint}`, payload, { headers });
       await fetchToday();
       if (onUpdate) onUpdate();
+
+      const defaultMsg = endpoint === 'checkin'
+        ? (res.data?.isLate ? `Checked in (Late entry recorded)` : '✅ Checked in on-time!')
+        : endpoint === 'checkout' ? '👋 Checked out!'
+        : payload.action === 'start' ? '☕ Break started' : '▶ Break ended';
+
       toast.success(
-        endpoint === 'checkin'  ? '✅ Checked in!'    :
-        endpoint === 'checkout' ? '👋 Checked out!'   :
-        payload.action === 'start' ? '☕ Break started' : '▶ Break ended',
+        res.data?.message || defaultMsg,
         { style: { background: '#1e293b', color: '#f8fafc', border: '1px solid #334155' } }
       );
     } catch (err) {
@@ -110,21 +114,37 @@ const AttendanceTracker = ({ onUpdate }) => {
 
       {record?.checkInTime && (
         <div className="flex-shrink-0">
-          <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">In</p>
-          <p className="text-sm font-bold text-white">{new Date(record.checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+          <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Check-In</p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-sm font-bold text-white">
+              {new Date(record.checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+            </p>
+            {record?.isLate ? (
+              <span className="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold flex items-center gap-1" title="Office start time is 9:30 AM">
+                <span>⚠️</span>
+                <span>Late {record.lateMinutes ? `(+${record.lateMinutes}m)` : ''}</span>
+              </span>
+            ) : (
+              <span className="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded-full font-semibold">
+                On-Time
+              </span>
+            )}
+          </div>
         </div>
-      )}
-
-      {record?.isLate && (
-        <span className="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold flex-shrink-0">Late</span>
       )}
 
       <div className="flex-1" />
 
-      <div className="flex gap-2 flex-shrink-0 flex-wrap">
+      <div className="flex items-center gap-2.5 flex-shrink-0 flex-wrap">
+        {isNotStarted && (
+          <div className="text-[11px] text-amber-400/90 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
+            <span>⏰</span>
+            <span>Office start: <strong>9:30 AM</strong></span>
+          </div>
+        )}
         {isNotStarted && (
           <button onClick={() => act('checkin')} disabled={acting}
-            className="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-bold px-5 py-2 rounded-xl flex items-center gap-2 transition-colors shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+            className="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-bold px-5 py-2 rounded-xl flex items-center gap-2 transition-colors shadow-[0_0_15px_rgba(16,185,129,0.3)] cursor-pointer">
             {acting ? '…' : '▶ Check In'}
           </button>
         )}

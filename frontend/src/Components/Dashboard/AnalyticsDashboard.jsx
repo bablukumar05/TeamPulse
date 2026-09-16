@@ -18,25 +18,29 @@ const AnalyticsDashboard = ({ refreshTrigger }) => {
           headers: { Authorization: `Bearer ${token}` }
         });
         
-        const employees = res.data;
+        const employees = Array.isArray(res.data) ? res.data : [];
         // Transform for Bar Chart
-        const barData = employees.map(emp => ({
-          name: emp.firstName,
-          Completed: emp.taskCount.completed,
-          Active: emp.taskCount.active,
-          Failed: emp.taskCount.failed,
-          New: emp.taskCount.newTask,
-        })).sort((a, b) => b.Completed - a.Completed); 
+        const barData = employees.map(emp => {
+          const tc = emp.taskCount || {};
+          return {
+            name: emp.firstName || 'Employee',
+            Completed: Number(tc.completed) || 0,
+            Active: Number(tc.active) || 0,
+            Failed: Number(tc.failed) || 0,
+            New: Number(tc.newTask) || 0,
+          };
+        }).sort((a, b) => b.Completed - a.Completed); 
         
         setEmployeesData(barData);
 
         // Calculate Global Totals
         let totals = { Completed: 0, Failed: 0, Active: 0, New: 0 };
         employees.forEach(emp => {
-          totals.Completed += emp.taskCount.completed;
-          totals.Failed += emp.taskCount.failed;
-          totals.Active += emp.taskCount.active;
-          totals.New += emp.taskCount.newTask;
+          const tc = emp.taskCount || {};
+          totals.Completed += (Number(tc.completed) || 0);
+          totals.Failed += (Number(tc.failed) || 0);
+          totals.Active += (Number(tc.active) || 0);
+          totals.New += (Number(tc.newTask) || 0);
         });
 
         const pieData = Object.keys(totals).map(key => ({

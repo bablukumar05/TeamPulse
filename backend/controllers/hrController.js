@@ -134,10 +134,34 @@ exports.updateLeaveStatus = async (req, res) => {
       .populate('employeeId', 'firstName lastName email');
     if (!lr) return res.status(404).json({ message: 'Leave request not found' });
 
+    if (status === 'Approved') {
+      try {
+        const cur = new Date(lr.startDate);
+        const end = new Date(lr.endDate);
+        cur.setUTCHours(0, 0, 0, 0);
+        end.setUTCHours(0, 0, 0, 0);
+        const empId = lr.employeeId._id || lr.employeeId;
+        while (cur <= end) {
+          const dayOfWeek = cur.getUTCDay();
+          if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+            const leaveDate = new Date(Date.UTC(cur.getUTCFullYear(), cur.getUTCMonth(), cur.getUTCDate()));
+            await Attendance.findOneAndUpdate(
+              { user: empId, date: leaveDate },
+              { $set: { status: 'On Leave', notes: lr.reason || 'Approved Leave' } },
+              { upsert: true }
+            );
+          }
+          cur.setUTCDate(cur.getUTCDate() + 1);
+        }
+      } catch (attErr) {
+        console.warn('Could not sync attendance for approved leave:', attErr);
+      }
+    }
+
     // Socket notification to employee
     const { io, userSockets } = require('../server').getSocketData?.() || {};
     if (io && userSockets) {
-      const socketId = userSockets.get(lr.employeeId._id.toString());
+      const socketId = userSockets.get((lr.employeeId._id || lr.employeeId).toString());
       if (socketId) {
         io.to(socketId).emit('leaveRequestUpdate', {
           message: `Your leave request has been ${status.toLowerCase()}`,
@@ -165,26 +189,180 @@ exports.getAttendanceReport = async (req, res) => {
       if (from) query.date.$gte = new Date(from);
       if (to)   query.date.$lte = new Date(to);
     }
-
     const records = await Attendance.find(query)
-      .populate('user', 'firstName lastName department avatar')
-      .sort({ date: 1 });
+      .populate('user', 'firstName lastName department role')
+      .sort({ date: -1 });
 
-    // Summary stats
     const summary = {
-      total:    records.length,
-      present:  records.filter(r => r.status === 'Present').length,
-      late:     records.filter(r => r.isLate).length,
-      absent:   records.filter(r => r.status === 'Absent').length,
-      wfh:      records.filter(r => r.status === 'WFH').length,
-      avgWorkMinutes: records.length > 0
-        ? Math.round(records.reduce((a, r) => a + r.totalWorkMinutes, 0) / records.length)
-        : 0,
+      total:   records.length,
+      present: records.filter(r => r.status === 'Present').length,
+      late:    records.filter(r => r.status === 'Late').length,
+      absent:  records.filter(r => r.status === 'Absent').length,
+      wfh:     records.filter(r => r.status === 'WFH').length,
+      leaves:  records.filter(r => r.status === 'On Leave').length,
+      avgWorkMinutes: records.length ? Math.round(records.reduce((a, r) => a + (r.totalWorkMinutes || 0), 0) / records.length) : 0,
     };
 
     res.json({ records, summary });
   } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// GET /api/hr/attendance/yearly-report?year=&department=
+exports.getYearlyAttendanceReport = async (req, res) => {
+  try {
+    const year = req.query.year !== undefined && req.query.year !== '' 
+      ? parseInt(req.query.year, 10) 
+      : new Date().getFullYear();
+    const department = req.query.department;
+
+    const userQuery = { employmentStatus: 'Active', status: { $ne: 'Deleted' } };
+    if (department && department !== 'All') {
+      userQuery.department = department;
+    }
+
+    const employees = await User.find(userQuery)
+      .select('firstName lastName avatar department role employeeId')
+      .sort({ firstName: 1 });
+
+    const startDate = new Date(Date.UTC(year, 0, 1));
+    const endDate   = new Date(Date.UTC(year, 11, 31, 23, 59, 59, 999));
+
+    const employeeIds = employees.map(e => e._id);
+    const [attendanceRecords, approvedLeaves] = await Promise.all([
+      Attendance.find({
+        user: { $in: employeeIds },
+        date: { $gte: startDate, $lte: endDate }
+      }),
+      LeaveRequest.find({
+        employeeId: { $in: employeeIds },
+        status: 'Approved',
+        startDate: { $lte: endDate },
+        endDate: { $gte: startDate }
+      })
+    ]);
+
+    const attendanceMap = {};
+    employees.forEach(emp => {
+      const id = emp._id.toString();
+      attendanceMap[id] = {
+        employee: emp,
+        leaveDates: new Set(),
+        months: Array.from({ length: 12 }, (_, m) => ({
+          month: m,
+          present: 0,
+          late: 0,
+          absent: 0,
+          wfh: 0,
+          leaves: 0,
+          halfDay: 0,
+          totalWorkMinutes: 0,
+          totalLoggedDays: 0
+        })),
+        totalPresent: 0,
+        totalLeaves: 0,
+        totalWFH: 0,
+        totalLate: 0,
+        totalAbsent: 0,
+        totalHours: 0,
+        annualAttendanceRate: 0
+      };
+    });
+
+    attendanceRecords.forEach(r => {
+      const uId = r.user.toString();
+      if (!attendanceMap[uId]) return;
+
+      const d = new Date(r.date);
+      const m = d.getUTCMonth();
+      if (m < 0 || m > 11) return;
+
+      const monthData = attendanceMap[uId].months[m];
+      monthData.totalLoggedDays += 1;
+      const dateKey = `${d.getUTCFullYear()}-${d.getUTCMonth()}-${d.getUTCDate()}`;
+
+      if (r.status === 'Present') {
+        if (r.isLate) {
+          monthData.late += 1;
+          attendanceMap[uId].totalLate += 1;
+        }
+        monthData.present += 1;
+        attendanceMap[uId].totalPresent += 1;
+      } else if (r.status === 'Late') {
+        monthData.late += 1;
+        monthData.present += 1;
+        attendanceMap[uId].totalPresent += 1;
+        attendanceMap[uId].totalLate += 1;
+      } else if (r.status === 'On Leave') {
+        if (!attendanceMap[uId].leaveDates.has(dateKey)) {
+          attendanceMap[uId].leaveDates.add(dateKey);
+          monthData.leaves += 1;
+          attendanceMap[uId].totalLeaves += 1;
+        }
+      } else if (r.status === 'WFH') {
+        monthData.wfh += 1;
+        attendanceMap[uId].totalWFH += 1;
+      } else if (r.status === 'Half-Day') {
+        monthData.halfDay += 1;
+        monthData.present += 0.5;
+        attendanceMap[uId].totalPresent += 0.5;
+        if (!attendanceMap[uId].leaveDates.has(dateKey)) {
+          attendanceMap[uId].leaveDates.add(dateKey);
+          monthData.leaves += 0.5;
+          attendanceMap[uId].totalLeaves += 0.5;
+        }
+      } else if (r.status === 'Absent') {
+        monthData.absent += 1;
+        attendanceMap[uId].totalAbsent += 1;
+      }
+
+      const mins = r.totalWorkMinutes || 0;
+      monthData.totalWorkMinutes += mins;
+      attendanceMap[uId].totalHours += Math.round(mins / 60);
+    });
+
+    approvedLeaves.forEach(lr => {
+      const uId = (lr.employeeId._id || lr.employeeId).toString();
+      if (!attendanceMap[uId]) return;
+
+      const cur = new Date(Math.max(new Date(lr.startDate).getTime(), startDate.getTime()));
+      const end = new Date(Math.min(new Date(lr.endDate).getTime(), endDate.getTime()));
+      cur.setUTCHours(0, 0, 0, 0);
+      end.setUTCHours(0, 0, 0, 0);
+
+      while (cur <= end) {
+        const dayOfWeek = cur.getUTCDay();
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          const m = cur.getUTCMonth();
+          const dateKey = `${cur.getUTCFullYear()}-${cur.getUTCMonth()}-${cur.getUTCDate()}`;
+          if (!attendanceMap[uId].leaveDates.has(dateKey)) {
+            attendanceMap[uId].leaveDates.add(dateKey);
+            attendanceMap[uId].months[m].leaves += 1;
+            attendanceMap[uId].totalLeaves += 1;
+          }
+        }
+        cur.setUTCDate(cur.getUTCDate() + 1);
+      }
+    });
+
+    const reportList = Object.values(attendanceMap).map(item => {
+      delete item.leaveDates;
+      const activeDays = item.totalPresent + item.totalLeaves + item.totalAbsent + item.totalWFH;
+      item.annualAttendanceRate = activeDays > 0 
+        ? Math.round(((item.totalPresent + item.totalWFH) / activeDays) * 100) 
+        : 0;
+      return item;
+    });
+
+    res.json({
+      year,
+      totalEmployees: employees.length,
+      report: reportList
+    });
+  } catch (err) {
+    console.error('getYearlyAttendanceReport error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 

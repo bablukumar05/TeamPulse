@@ -70,6 +70,14 @@ const taskSchema = new mongoose.Schema({
   department: {
     type: String,
   },
+  departmentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Department'
+  },
+  teamId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Team'
+  },
   checklist: [{
     title: { type: String, required: true },
     completed: { type: Boolean, default: false }

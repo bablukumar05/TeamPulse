@@ -225,7 +225,7 @@ app.use('/api/chat',          chatRoutes);
 app.use('/api/projects',      projectRoutes);
 app.use('/api/timelogs',      timeLogRoutes);
 app.use('/api/culture',       cultureRoutes);
-app.use('/api/workspace',     workspaceRoutes);
+app.use(['/api/workspace', '/api/workspaces'], workspaceRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/attendance',    attendanceRoutes);
 app.use('/api/sprints',       sprintRoutes);

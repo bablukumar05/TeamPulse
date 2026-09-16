@@ -13,6 +13,7 @@ import LeaveApprovals from "../other/LeaveApprovals";
 import JoinRequests from "../other/JoinRequests";
 import ProjectWorkspace from "./ProjectWorkspace";
 import HRDashboard from "./HRDashboard";
+import TeamsManagement from "./TeamsManagement";
 import TeamChat from "../other/TeamChat";
 import ReportsPage from "../../Pages/ReportsPage";
 import AIAssistant from "../ai/AIAssistant";
@@ -21,6 +22,7 @@ import { AuthContext } from "../../Context/AuthProvider";
 
 const NAV_ITEMS = [
   { id: 'dashboard', label: '🏠 Dashboard' },
+  { id: 'teams',     label: '🛡️ Teams & Squads' },
   { id: 'projects',  label: '📁 Projects'  },
   { id: 'kanban',    label: '📋 Kanban'    },
   { id: 'calendar',  label: '📅 Calendar'  },
@@ -63,9 +65,9 @@ const AdminDashboard = (props) => {
   }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-[#0B0B0B] via-[#151515] to-[#1A1A1A] text-white selection:bg-emerald-500/30">
+    <div className="min-h-screen w-full bg-gradient-to-br from-[#0B0F19] via-[#0D1322] to-[#111827] text-white selection:bg-indigo-500/30">
       <div className="flex">
-        <aside className="hidden lg:flex flex-col w-52 min-h-screen border-r border-white/[0.06] bg-[#0d0f14] py-6 px-3 gap-1 flex-shrink-0">
+        <aside className="hidden lg:flex flex-col w-52 min-h-screen border-r border-white/[0.06] bg-[#0B0F19] py-6 px-3 gap-1 flex-shrink-0">
           <div className="px-3 mb-6">
             <span className="text-base font-semibold text-zinc-100 tracking-tight">TeamPulse</span>
             <p className="text-[10px] text-zinc-500 mt-0.5 uppercase tracking-wider font-mono">Administration</p>
@@ -181,6 +183,7 @@ const AdminDashboard = (props) => {
               </div>
             )}
 
+            {activeNav === 'teams' && <TeamsManagement />}
             {activeNav === 'kanban' && <KanbanBoard refreshTrigger={refreshTasks} />}
             {activeNav === 'calendar' && <CalendarView key={refreshTasks} />}
             {activeNav === 'tasks' && <AllTask refreshTrigger={refreshTasks} />}

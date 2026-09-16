@@ -21,7 +21,7 @@ const WaitlistScreen = ({ changeUser }) => {
   }, [authUser, setAuthUser]);
 
   return (
-    <div className="min-h-screen bg-[#11141c] flex flex-col justify-center items-center text-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-[#0B0F19] flex flex-col justify-center items-center text-center p-6 relative overflow-hidden">
       <div className="absolute top-[20%] left-[20%] w-[250px] h-[250px] bg-blue-500/10 rounded-full blur-[80px] animate-pulse"></div>
       <div className="absolute bottom-[20%] right-[20%] w-[300px] h-[300px] bg-emerald-500/10 rounded-full blur-[100px] animate-pulse delay-700"></div>
       

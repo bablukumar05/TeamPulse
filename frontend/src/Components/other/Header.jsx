@@ -18,10 +18,27 @@ const Header = (props) => {
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 pb-4 z-40 relative border-b border-zinc-800/80">
       <div>
-        <span className="text-xs font-mono uppercase tracking-wider text-zinc-500 block">Workspace</span>
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-100 mt-0.5">
-          {props.data?.firstName ? `Welcome, ${props.data.firstName}` : "TeamPulse Console"}
-        </h1>
+        {/* <span className="text-xs font-mono uppercase tracking-wider text-zinc-500 block">Workspace</span> */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <h1 className="text-2xl font-semibold tracking-tight text-zinc-100 mt-0.5">
+            {props.data?.firstName ? `Welcome, ${props.data.firstName}` : "Mr. Admin"}
+          </h1>
+          {props.data?.designation && (
+            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+              💼 {props.data.designation}
+            </span>
+          )}
+          {(props.data?.teamId?.name || (props.data?.team && props.data.team !== 'General')) && (
+            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30">
+              🛡️ {props.data.teamId?.name || props.data.team}
+            </span>
+          )}
+        </div>
+        {props.data?.departmentId?.name && (
+          <p className="text-[11px] text-zinc-400 mt-0.5">
+            🏢 {props.data.departmentId.name} {props.data.employeeId ? `• ID: ${props.data.employeeId}` : ''}
+          </p>
+        )}
       </div>
       <div className="flex flex-wrap items-center gap-2.5">
         {props.changePage && (

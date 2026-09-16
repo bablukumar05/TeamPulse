@@ -75,7 +75,7 @@ const EmployeeProfile = ({ userId, onBack }) => {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-[#0a0c11] flex items-center justify-center">
+    <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
         <div className="w-10 h-10 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
         <p className="text-gray-500 text-sm">Loading profile…</p>
@@ -84,7 +84,7 @@ const EmployeeProfile = ({ userId, onBack }) => {
   );
 
   if (!profile) return (
-    <div className="min-h-screen bg-[#0a0c11] flex items-center justify-center">
+    <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center">
       <p className="text-gray-400">Profile not found.</p>
     </div>
   );
@@ -96,8 +96,8 @@ const EmployeeProfile = ({ userId, onBack }) => {
   const initials = `${profile.firstName?.charAt(0) || ''}${profile.lastName?.charAt(0) || ''}`.toUpperCase() || '?';
 
   return (
-    <div className="min-h-screen bg-[#0a0c11] text-white">
-      <div className="bg-gradient-to-b from-indigo-900/20 to-[#0a0c11] border-b border-white/[0.07] px-6 py-8">
+    <div className="min-h-screen bg-[#0B0F19] text-white">
+      <div className="bg-gradient-to-b from-indigo-900/20 to-[#0B0F19] border-b border-white/[0.07] px-6 py-8">
         <button onClick={onBack} className="text-xs text-gray-500 hover:text-white mb-6 flex items-center gap-1 transition-colors">
           ← Back
         </button>
@@ -110,13 +110,18 @@ const EmployeeProfile = ({ userId, onBack }) => {
                 {initials}
               </div>
             )}
-            <div className={`absolute -bottom-1.5 -right-1.5 w-4 h-4 rounded-full border-2 border-[#0a0c11] ${profile.isOnline ? 'bg-green-400' : 'bg-gray-600'}`} />
+            <div className={`absolute -bottom-1.5 -right-1.5 w-4 h-4 rounded-full border-2 border-[#0B0F19] ${profile.isOnline ? 'bg-green-400' : 'bg-gray-600'}`} />
           </div>
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-1">
               <h1 className="text-2xl font-black text-white">{profile.firstName} {profile.lastName}</h1>
               <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${ROLE_COLOR[profile.role] || ROLE_COLOR.Employee}`}>{profile.role}</span>
+              {profile.designation && (
+                <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full border bg-indigo-500/20 text-indigo-300 border-indigo-500/30">
+                  💼 {profile.designation}
+                </span>
+              )}
               {profile.employeeId && <span className="text-[11px] text-gray-500 font-mono">{profile.employeeId}</span>}
             </div>
 

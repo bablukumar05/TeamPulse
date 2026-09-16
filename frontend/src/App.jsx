@@ -15,9 +15,9 @@ const CulturePage       = lazy(() => import("./Pages/CulturePage"));
 export let socket;
 
 const FastLoader = () => (
-  <div className="flex h-screen w-full items-center justify-center bg-[#0c0d0e]">
+  <div className="flex h-screen w-full items-center justify-center bg-[#0B0F19]">
     <div className="flex flex-col items-center gap-3">
-      <div className="w-8 h-8 border-2 border-zinc-800 border-t-zinc-200 rounded-full animate-spin" />
+      <div className="w-8 h-8 border-2 border-slate-800 border-t-zinc-200 rounded-full animate-spin" />
       <span className="text-xs font-mono tracking-wider text-zinc-500">Loading workspace…</span>
     </div>
   </div>
