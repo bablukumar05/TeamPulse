@@ -8,6 +8,8 @@ const { upload } = require('../middleware/uploadMiddleware');
 router.get('/employees', protect, adminController.getEmployees);
 router.post('/tasks', protect, authorizeRoles('Admin', 'Manager'), adminController.createTask);
 router.get('/tasks/all', protect, authorizeRoles('Admin', 'Manager'), adminController.getAllTasks);
+router.get('/tasks/review-queue', protect, authorizeRoles('Admin', 'Manager'), adminController.getReviewQueue);
+router.put('/tasks/:taskId/review', protect, authorizeRoles('Admin', 'Manager'), adminController.reviewTaskSubmission);
 router.put('/tasks/:taskId/status', protect, authorizeRoles('Admin', 'Manager'), adminController.updateTaskStatusAdmin);
 router.put('/tasks/:taskId/details', protect, authorizeRoles('Admin', 'Manager'), adminController.updateTaskDetailsAdmin);
 // Admin can also comment on and upload attachments to any task

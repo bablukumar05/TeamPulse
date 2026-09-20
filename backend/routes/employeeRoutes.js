@@ -6,6 +6,7 @@ const { upload } = require('../middleware/uploadMiddleware');
 
 router.get('/tasks', protect, employeeController.getTasks);
 router.put('/tasks/:taskId/status', protect, employeeController.updateTaskStatus);
+router.post('/tasks/:taskId/submit-review', protect, employeeController.submitTaskForReview);
 router.put('/tasks/:taskId/details', protect, employeeController.updateTaskDetails);
 router.post('/tasks/:taskId/comment', protect, employeeController.addComment);
 router.post('/tasks/:taskId/upload', protect, upload.single('file'), employeeController.uploadAttachment);

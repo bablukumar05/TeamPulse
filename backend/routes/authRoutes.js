@@ -18,6 +18,11 @@ const handleRegisterUpload = (req, res, next) => {
 
 router.post('/register', handleRegisterUpload, validateBody(registerSchema), authController.register);
 router.post('/login', validateBody(loginSchema), authController.login);
+router.post('/2fa/login-verify', authController.loginVerify2FA);
+router.get('/2fa/status', protect, authController.get2FAStatus);
+router.post('/2fa/setup', protect, authController.setup2FA);
+router.post('/2fa/confirm', protect, authController.confirm2FA);
+router.post('/2fa/disable', protect, authController.disable2FA);
 router.post('/forgotpassword', authController.forgotPassword);
 router.put('/resetpassword/:resettoken', authController.resetPassword);
 router.get('/me', protect, authController.getMe);

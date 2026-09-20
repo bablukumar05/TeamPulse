@@ -4,6 +4,8 @@ const wc = require('../controllers/workspaceController');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 
 router.post('/',              protect, authorizeRoles('Admin'), wc.createWorkspace);
+router.get('/current',        protect, wc.getCurrentWorkspace);
+router.put('/current',        protect, authorizeRoles('Admin'), wc.updateCurrentWorkspace);
 router.get('/:id',            protect, wc.getWorkspace);
 router.put('/:id',            protect, authorizeRoles('Admin'), wc.updateWorkspace);
 router.get('/:id/members',    protect, wc.getWorkspaceMembers);

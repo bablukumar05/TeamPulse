@@ -1,4 +1,5 @@
 const Task = require('../models/Task');
+const Project = require('../models/Project');
 const AuditLog = require('../models/AuditLog');
 const { sendTaskStatusEmail } = require('../utils/emailService');
 
@@ -40,6 +41,7 @@ exports.updateTaskStatus = async (req, res) => {
       'Backlog',
       'To Do',
       'In Progress',
+      'In Review',
       'Code Review',
       'Testing / QA',
       'Ready for Deployment',
@@ -290,8 +292,6 @@ exports.getMyLeaveRequests = async (req, res) => {
   }
 };
 
-const Project = require('../models/Project');
-
 exports.getMyProjects = async (req, res) => {
   try {
     const projects = await Project.find({ members: req.user._id });
@@ -300,3 +300,64 @@ exports.getMyProjects = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+exports.submitTaskForReview = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const { submissionNotes, deliverableLink, actualHours } = req.body;
+
+    const task = await Task.findOne({ _id: taskId, assignedTo: req.user._id });
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found or not assigned to you' });
+    }
+
+    const previousStatus = task.status;
+    task.status = 'In Review';
+    task.reviewDetails = {
+      submittedAt: new Date(),
+      submissionNotes: submissionNotes || '',
+      deliverableLink: deliverableLink || '',
+      reviewDecision: 'Pending'
+    };
+
+    if (actualHours && Number(actualHours) > 0) {
+      task.actualHours = (task.actualHours || 0) + Number(actualHours);
+    }
+
+    task.activityLog.push({
+      action: `Task submitted for Squad Review with deliverable: ${deliverableLink || 'Direct submission'}`,
+      performedBy: req.user._id,
+      performedByName: `${req.user.firstName || ''} ${req.user.lastName || ''}`.trim() || 'Employee',
+      timestamp: new Date()
+    });
+
+    await task.save();
+
+    await AuditLog.create({
+      action: 'TASK_SUBMITTED_FOR_REVIEW',
+      performedBy: req.user._id,
+      performedByName: `${req.user.firstName || ''} ${req.user.lastName || ''}`.trim() || 'Employee',
+      details: `Submitted task "${task.title}" for review with deliverable: ${deliverableLink || 'N/A'}`
+    });
+
+    const io = req.app.get('io');
+    if (io) {
+      io.to('admins').emit('adminTaskNotification', {
+        message: `⚡ ${req.user.firstName || 'Employee'} submitted "${task.title}" for Squad Quality Review.`,
+        status: 'In Review',
+        taskId: task._id
+      });
+      io.emit('taskReviewQueueUpdate', { taskId: task._id, status: 'In Review' });
+    }
+
+    res.json({
+      success: true,
+      message: 'Task submitted for Team Leader review successfully',
+      task
+    });
+  } catch (err) {
+    console.error('submitTaskForReview error:', err);
+    res.status(500).json({ message: 'Failed to submit task for review', error: err.message });
+  }
+};
+

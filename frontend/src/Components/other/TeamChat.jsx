@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 import toast from 'react-hot-toast';
 import { AuthContext } from '../../Context/AuthProvider';
+import { getApiBaseUrl } from '../../utils/apiConfig';
 import ChatSidebar from '../chat/ChatSidebar';
 import ChatWindow from '../chat/ChatWindow';
 import ThreadPanel from '../chat/ThreadPanel';
-import { io } from 'socket.io-client';
 
 const TeamChat = () => {
   const { token, authUser } = useContext(AuthContext);
@@ -44,8 +45,8 @@ const TeamChat = () => {
   // Socket.IO Connection & Room Event Handlers
   useEffect(() => {
     if (!token) return;
-    const socketUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app') ? 'https://teampulse-gx6p.onrender.com' : (typeof window !== 'undefined' && (['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.hostname.startsWith('192.168.')) ? 'http://localhost:5000' : window.location.origin));
-    const socket = io(socketUrl, { transports: ['polling', 'websocket'], withCredentials: true });
+    const socketUrl = getApiBaseUrl();
+    const socket = io(socketUrl, { transports: ['websocket', 'polling'], withCredentials: true, timeout: 10000 });
     socketRef.current = socket;
 
     socket.emit('authenticate', currentUserId);

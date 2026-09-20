@@ -3,16 +3,19 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { AuthContext } from '../../Context/AuthProvider';
 import TaskInteractions from './TaskInteractions';
+import SubmitReviewModal from '../other/SubmitReviewModal';
 
 const TaskCard = ({ data, onTaskUpdate }) => {
   const { authUser, token } = useContext(AuthContext);
   const [isRunning, setIsRunning] = useState(false);
   const [timeSpent, setTimeSpent] = useState(0);
   const [currentLogId, setCurrentLogId] = useState(null);
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   const isCompleted = data.status === 'Completed';
   const isFailed = data.status === 'Failed' || data.status === 'Blocked';
   const isNew = data.status === 'To Do' || data.status === 'New';
+  const isInReview = data.status === 'In Review' || data.status === 'Code Review';
   const isOverdue = new Date(data.date) < new Date();
 
   useEffect(() => {
@@ -111,6 +114,9 @@ const TaskCard = ({ data, onTaskUpdate }) => {
     if (isCompleted) {
       return 'border-emerald-500/30 opacity-85 hover:opacity-100 shadow-[0_8px_30px_rgba(16,185,129,0.08)]';
     }
+    if (isInReview) {
+      return 'border-purple-500/40 shadow-[0_8px_30px_rgba(168,85,247,0.15)] bg-purple-950/10';
+    }
     if (isFailed) {
       return 'border-red-500/30 opacity-90 shadow-[0_8px_30px_rgba(239,68,68,0.08)]';
     }
@@ -122,6 +128,7 @@ const TaskCard = ({ data, onTaskUpdate }) => {
 
   const getBadgeStyle = () => {
     if (isCompleted) return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
+    if (isInReview) return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
     if (isFailed) return 'bg-red-500/20 text-red-400 border-red-500/30';
     if (isNew) return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
     return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
@@ -154,7 +161,18 @@ const TaskCard = ({ data, onTaskUpdate }) => {
         }`}>
           {data.title}
         </h2>
-        <p className="text-sm text-gray-300 leading-relaxed mb-6 line-clamp-4">{data.description}</p>
+        <p className="text-sm text-gray-300 leading-relaxed mb-4 line-clamp-4">{data.description}</p>
+
+        {data.reviewDetails?.reviewDecision === 'Changes Requested' && (
+          <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-xs text-red-300 space-y-1">
+            <span className="font-bold flex items-center gap-1.5 text-red-200">
+              <span>⚠️</span> Team Lead Requested Rework:
+            </span>
+            <p className="text-[11px] text-zinc-300 italic pl-5 leading-relaxed">
+              "{data.reviewDetails.reviewFeedback}"
+            </p>
+          </div>
+        )}
       </div>
 
       <TaskInteractions task={data} onUpdate={onTaskUpdate} />
@@ -178,6 +196,29 @@ const TaskCard = ({ data, onTaskUpdate }) => {
           </div>
         )}
 
+        {isInReview && (
+          <div className="w-full flex flex-col items-center justify-center gap-2 bg-purple-500/10 border border-purple-500/30 py-3.5 px-3 rounded-xl text-xs text-purple-300 text-center">
+            <div className="flex items-center gap-2 font-bold text-white">
+              <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+              <span>Under Squad Lead Review</span>
+            </div>
+            <p className="text-[11px] text-zinc-400 leading-relaxed">
+              Deliverable submitted. Awaiting QA sign-off from Team Leader.
+            </p>
+            {data.reviewDetails?.deliverableLink && (
+              <a
+                href={data.reviewDetails.deliverableLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-[11px] text-indigo-400 hover:text-indigo-300 font-semibold underline mt-1"
+              >
+                <span>View Deliverable Output</span>
+                <span>↗</span>
+              </a>
+            )}
+          </div>
+        )}
+
         {isNew && (
           <button
             onClick={handleAcceptTask}
@@ -187,7 +228,7 @@ const TaskCard = ({ data, onTaskUpdate }) => {
           </button>
         )}
 
-        {!isCompleted && !isFailed && !isNew && (
+        {!isCompleted && !isFailed && !isNew && !isInReview && (
           <>
             <div className="flex bg-black/40 rounded-xl mb-4 border border-white/5 relative z-10 overflow-hidden shadow-inner">
               <div className="flex-1 flex flex-col justify-center items-center py-2 border-r border-white/10">
@@ -216,14 +257,18 @@ const TaskCard = ({ data, onTaskUpdate }) => {
 
             <div className="flex justify-between gap-3 mt-auto relative z-10">
               <button
-                onClick={(e) => handleUpdateStatus('Completed', e)}
-                className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 py-3 rounded-xl text-xs font-bold tracking-wide text-white shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 active:scale-[0.98]"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowReviewModal(true);
+                }}
+                className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 py-3 rounded-xl text-xs font-bold tracking-wide text-white shadow-lg hover:shadow-indigo-500/30 transition-all duration-300 active:scale-[0.98]"
               >
-                Complete
+                Submit for Review 🚀
               </button>
               <button
                 onClick={(e) => handleUpdateStatus('Failed', e)}
-                className="flex-1 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-400 hover:to-rose-500 py-3 rounded-xl text-xs font-bold tracking-wide text-white shadow-lg hover:shadow-red-500/30 transition-all duration-300 active:scale-[0.98]"
+                className="px-4 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-400 hover:to-rose-500 py-3 rounded-xl text-xs font-bold tracking-wide text-white shadow-lg hover:shadow-red-500/30 transition-all duration-300 active:scale-[0.98]"
+                title="Report Blocked / Failed"
               >
                 Failed
               </button>
@@ -231,6 +276,15 @@ const TaskCard = ({ data, onTaskUpdate }) => {
           </>
         )}
       </div>
+
+      <SubmitReviewModal
+        task={data}
+        isOpen={showReviewModal}
+        onClose={() => setShowReviewModal(false)}
+        onSuccess={() => {
+          if (onTaskUpdate) onTaskUpdate();
+        }}
+      />
     </div>
   );
 };

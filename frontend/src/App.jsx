@@ -3,6 +3,7 @@ import Login from "./Components/Auth/Login";
 import { AuthContext } from "./Context/AuthProvider";
 import toast, { Toaster } from "react-hot-toast";
 import { io } from "socket.io-client";
+import { getApiBaseUrl } from "./utils/apiConfig";
 
 // Lazy-loaded routes for ultra-fast initial page load
 const LandingPage       = lazy(() => import("./Pages/LandingPage"));
@@ -32,11 +33,12 @@ const App = () => {
 
   useEffect(() => {
     if (authUser) {
-      const socketUrl = import.meta.env.VITE_API_URL || (window.location.hostname.includes('vercel.app') ? "https://teampulse-gx6p.onrender.com" : (['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.hostname.startsWith('192.168.') ? "http://localhost:5000" : window.location.origin));
+      const socketUrl = getApiBaseUrl();
       socket = io(socketUrl, {
-        transports: ['polling', 'websocket'],
+        transports: ['websocket', 'polling'],
         withCredentials: true,
-        reconnectionAttempts: 10,
+        reconnectionAttempts: 5,
+        timeout: 10000,
       });
 
       if (authUser.role === 'employee') {

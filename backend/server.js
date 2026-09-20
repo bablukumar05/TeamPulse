@@ -36,6 +36,8 @@ const milestoneRoutes   = require('./routes/milestoneRoutes');
 const hrRoutes          = require('./routes/hrRoutes');
 const aiRoutes          = require('./routes/aiRoutes');
 const reportRoutes      = require('./routes/reportRoutes');
+const integrationRoutes = require('./routes/integrationRoutes');
+const systemRoutes      = require('./routes/systemRoutes');
 const Message = require('./models/Message');
 
 const app = express();
@@ -79,7 +81,7 @@ app.get(['/healthz', '/api/health', '/api/ping'], (req, res) => {
 
 app.use((req, res, next) => {
   try {
-    ['body', 'params', 'headers'].forEach((key) => {
+    ['body', 'params', 'query'].forEach((key) => {
       if (req[key]) {
         req[key] = mongoSanitize.sanitize(req[key], { replaceWith: '_', allowDots: true });
       }
@@ -94,6 +96,7 @@ app.use((req, res, next) => {
   try {
     if (req.body) req.body = xssLib.clean(req.body);
     if (req.params) req.params = xssLib.clean(req.params);
+    if (req.query) req.query = xssLib.clean(req.query);
   } catch (err) {
     console.error('Error during XSS sanitization:', err);
   }
@@ -233,6 +236,18 @@ app.use('/api/milestones',    milestoneRoutes);
 app.use('/api/hr',            hrRoutes);
 app.use('/api/ai',            aiRoutes);
 app.use('/api/reports',       reportRoutes);
+app.use('/api/integrations',  integrationRoutes);
+app.use('/api/system',        systemRoutes);
+
+const { protect: authProtect } = require('./middleware/authMiddleware');
+const adminCtrl = require('./controllers/adminController');
+const employeeCtrl = require('./controllers/employeeController');
+app.get(['/api/tasks', '/api/tasks/all'], authProtect, (req, res, next) => {
+  if (req.user.role === 'Admin' || req.user.role === 'Manager') {
+    return adminCtrl.getAllTasks(req, res, next);
+  }
+  return employeeCtrl.getTasks(req, res, next);
+});
 
 app.use((req, res, next) => {
   if (req.originalUrl.startsWith('/api/') || req.originalUrl.startsWith('/TeamPulse/api/')) {

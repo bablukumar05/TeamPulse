@@ -13,34 +13,67 @@ const Header = (props) => {
    if (props.changeUser) props.changeUser();
   };
 
-  const isEmployee = authUser?.data?.role === 'Employee' || props.data;
+  const isAdmin = authUser?.role === 'admin' || authUser?.data?.role === 'Admin' || (!props.data && authUser?.role === 'admin');
+  const isManager = !isAdmin && (authUser?.role === 'manager' || authUser?.data?.role === 'Manager');
+  const isEmployee = !isAdmin && !isManager && (authUser?.data?.role === 'Employee' || props.data);
+
+  const user = props.data || authUser?.data;
+  const displayName = user?.firstName ? `Welcome, ${user.firstName}` : (isAdmin ? 'Workspace Admin' : 'Welcome');
 
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 pb-4 z-40 relative border-b border-zinc-800/80">
       <div>
-        {/* <span className="text-xs font-mono uppercase tracking-wider text-zinc-500 block">Workspace</span> */}
         <div className="flex items-center gap-2 flex-wrap">
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-100 mt-0.5">
-            {props.data?.firstName ? `Welcome, ${props.data.firstName}` : "Mr. Admin"}
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-zinc-100 mt-0.5">
+            {displayName}
           </h1>
-          {props.data?.designation && (
-            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-              💼 {props.data.designation}
+          {isAdmin ? (
+            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-amber-500/15 text-amber-300 border border-amber-500/30 inline-flex items-center gap-1.5 shadow-sm">
+              👑 Workspace Administrator
             </span>
+          ) : isManager ? (
+            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-sky-500/15 text-sky-300 border border-sky-500/30 inline-flex items-center gap-1.5 shadow-sm">
+              🛡️ Team Manager
+            </span>
+          ) : (
+            user?.designation && (
+              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 inline-flex items-center gap-1.5">
+                💼 {user.designation}
+              </span>
+            )
           )}
-          {(props.data?.teamId?.name || (props.data?.team && props.data.team !== 'General')) && (
+          {!isAdmin && (user?.teamId?.name || (user?.team && user.team !== 'General')) && (
             <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30">
-              🛡️ {props.data.teamId?.name || props.data.team}
+              🛡️ {user.teamId?.name || user.team}
             </span>
           )}
         </div>
-        {props.data?.departmentId?.name && (
-          <p className="text-[11px] text-zinc-400 mt-0.5">
-            🏢 {props.data.departmentId.name} {props.data.employeeId ? `• ID: ${props.data.employeeId}` : ''}
+        {isAdmin ? (
+          <p className="text-[11px] text-zinc-400 mt-0.5 flex items-center gap-1.5 font-medium">
+            <span>🛡️ Central Organization & System Oversight</span>
           </p>
+        ) : (
+          (user?.departmentId?.name || (user?.department && user.department !== 'General')) && (
+            <p className="text-[11px] text-zinc-400 mt-0.5">
+              🏢 {user.departmentId?.name || user.department} {user.employeeId ? `• ID: ${user.employeeId}` : ''}
+            </p>
+          )
         )}
       </div>
       <div className="flex flex-wrap items-center gap-2.5">
+        <button
+          onClick={() => window.dispatchEvent(new CustomEvent('openCommandPalette'))}
+          className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 transition-colors bg-zinc-900/60 hover:bg-zinc-800 border border-zinc-800 rounded-lg cursor-pointer"
+          title="Spotlight Search (Ctrl + K)"
+        >
+          <svg className="w-3.5 h-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <span>Search...</span>
+          <kbd className="text-[10px] font-mono px-1.5 py-0.5 bg-white/5 border border-white/10 rounded text-zinc-400">
+            Ctrl K
+          </kbd>
+        </button>
         {props.changePage && (
           <>
             <button

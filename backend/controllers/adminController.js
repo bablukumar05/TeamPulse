@@ -4,11 +4,19 @@ const Team = require('../models/Team');
 const Department = require('../models/Department');
 const AuditLog = require('../models/AuditLog');
 const JoinRequest = require('../models/JoinRequest');
+const Project = require('../models/Project');
 const { sendTaskAssignedEmail } = require('../utils/emailService');
+const cache = require('../utils/cache');
 
 
 exports.getEmployees = async (req, res) => {
   try {
+    const cacheKey = `employees_${req.user.role}_${req.user.teamId || ''}_${req.user.team || ''}`;
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      return res.status(200).json(cached);
+    }
+
     let query = { role: { $in: ['Employee', 'Manager'] }, employmentStatus: { $ne: 'Terminated' } };
     if (req.user.role === 'Manager') {
       query.$or = [{ team: req.user.team }, { teamId: req.user.teamId }];
@@ -41,6 +49,8 @@ exports.getEmployees = async (req, res) => {
       ...emp,
       taskCount: countMap[emp._id.toString()] || { active: 0, newTask: 0, completed: 0, failed: 0 }
     }));
+
+    cache.set(cacheKey, employeesWithTasks, 20);
 
     res.status(200).json(employeesWithTasks);
   } catch (error) {
@@ -597,3 +607,165 @@ exports.approveJoinRequest = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+exports.getReviewQueue = async (req, res) => {
+  try {
+    const { teamId, departmentId, search } = req.query;
+    const query = { status: 'In Review' };
+
+    if (teamId) query.teamId = teamId;
+    if (departmentId) query.departmentId = departmentId;
+
+    let tasks = await Task.find(query)
+      .populate('assignedTo', 'firstName lastName email avatar designation department role')
+      .populate('teamId', 'name color manager')
+      .populate('departmentId', 'name color')
+      .populate('project', 'name color')
+      .sort({ 'reviewDetails.submittedAt': -1, updatedAt: -1 });
+
+    if (search) {
+      const s = search.toLowerCase();
+      tasks = tasks.filter(t => 
+        t.title.toLowerCase().includes(s) ||
+        t.assignedTo?.firstName?.toLowerCase().includes(s) ||
+        t.assignedTo?.lastName?.toLowerCase().includes(s) ||
+        t.teamId?.name?.toLowerCase().includes(s)
+      );
+    }
+
+    res.json(tasks);
+  } catch (err) {
+    console.error('getReviewQueue error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+exports.reviewTaskSubmission = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const { decision, feedback } = req.body;
+
+    if (!['approve', 'request_changes'].includes(decision)) {
+      return res.status(400).json({ message: 'Invalid decision. Must be approve or request_changes' });
+    }
+
+    const task = await Task.findById(taskId);
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    const reviewerName = req.user.firstName ? `${req.user.firstName} ${req.user.lastName || ''}`.trim() : 'Squad Lead';
+    const assigneeId = task.assignedTo;
+
+    if (decision === 'approve') {
+      task.status = 'Completed';
+      task.completedAt = new Date();
+      task.reviewDetails = {
+        ...task.reviewDetails,
+        reviewedBy: req.user._id,
+        reviewedByName: reviewerName,
+        reviewedAt: new Date(),
+        reviewDecision: 'Approved',
+        reviewFeedback: feedback || 'Deliverable passed quality verification.'
+      };
+
+      task.activityLog.push({
+        action: `Task approved by ${reviewerName}. Marked as Completed.`,
+        performedBy: req.user._id,
+        performedByName: reviewerName,
+        timestamp: new Date()
+      });
+
+      await task.save();
+
+      if (assigneeId) {
+        const employee = await User.findById(assigneeId);
+        if (employee) {
+          employee.xp = (employee.xp || 0) + 50;
+          const uniqueBadges = new Set(employee.badges || ['Rookie']);
+          if (employee.xp >= 200) uniqueBadges.add('Bronze Challenger');
+          if (employee.xp >= 500) uniqueBadges.add('Silver Specialist');
+          if (employee.xp >= 1000) uniqueBadges.add('Gold Elite');
+          if (employee.xp >= 5000) uniqueBadges.add('Platinum Master');
+          employee.badges = Array.from(uniqueBadges);
+          await employee.save();
+        }
+      }
+
+      await AuditLog.create({
+        action: 'TASK_APPROVED',
+        performedBy: req.user._id,
+        performedByName: reviewerName,
+        details: `Approved task "${task.title}"`
+      });
+
+      const io = req.app.get('io');
+      if (io) {
+        io.emit('taskReviewDecision', {
+          taskId: task._id,
+          decision: 'Approved',
+          message: `🎉 Great work! Task "${task.title}" was approved by ${reviewerName}. (+50 XP)`
+        });
+      }
+
+      return res.json({
+        success: true,
+        message: 'Task approved and marked as Completed',
+        task
+      });
+    } else {
+      task.status = 'In Progress';
+      task.reviewDetails = {
+        ...task.reviewDetails,
+        reviewedBy: req.user._id,
+        reviewedByName: reviewerName,
+        reviewedAt: new Date(),
+        reviewDecision: 'Changes Requested',
+        reviewFeedback: feedback || 'Please address quality review comments before resubmitting.'
+      };
+
+      task.comments.push({
+        user: req.user._id,
+        userName: reviewerName,
+        userAvatar: req.user.avatar || '',
+        text: `⚠️ Quality Review Feedback: ${feedback || 'Rework requested.'}`,
+        date: new Date()
+      });
+
+      task.activityLog.push({
+        action: `Changes requested by ${reviewerName}: "${feedback || 'Please review guidelines and resubmit.'}"`,
+        performedBy: req.user._id,
+        performedByName: reviewerName,
+        timestamp: new Date()
+      });
+
+      await task.save();
+
+      await AuditLog.create({
+        action: 'TASK_REWORK_REQUESTED',
+        performedBy: req.user._id,
+        performedByName: reviewerName,
+        details: `Requested changes on task "${task.title}": ${feedback || 'No comments'}`
+      });
+
+      const io = req.app.get('io');
+      if (io) {
+        io.emit('taskReviewDecision', {
+          taskId: task._id,
+          decision: 'Changes Requested',
+          message: `⚠️ Changes requested on "${task.title}": ${feedback || 'Please check comments and revise.'}`
+        });
+      }
+
+      return res.json({
+        success: true,
+        message: 'Changes requested and task returned to In Progress',
+        task
+      });
+    }
+  } catch (err) {
+    console.error('reviewTaskSubmission error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+

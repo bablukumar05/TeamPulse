@@ -4,21 +4,7 @@ import "./index.css";
 import App from "./App.jsx";
 import AuthProvider from "./Context/AuthProvider";
 import axios from "axios";
-
-const getApiBaseUrl = () => {
-  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
-  if (typeof window !== 'undefined') {
-    const host = window.location.hostname;
-    if (host === 'localhost' || host === '127.0.0.1' || host.startsWith('192.168.') || host.startsWith('10.')) {
-      return 'http://localhost:5000';
-    }
-    if (host.includes('vercel.app')) {
-      return 'https://teampulse-gx6p.onrender.com';
-    }
-    return window.location.origin;
-  }
-  return 'http://localhost:5000';
-};
+import { getApiBaseUrl } from "./utils/apiConfig";
 
 axios.defaults.baseURL = getApiBaseUrl();
 

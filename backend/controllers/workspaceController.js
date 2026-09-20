@@ -337,3 +337,133 @@ exports.updateUserProfile = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
+
+exports.getCurrentWorkspace = async (req, res) => {
+  try {
+    let workspace = null;
+    if (req.user.workspace) {
+      workspace = await Workspace.findById(req.user.workspace).populate('owner', 'firstName lastName email avatar');
+    }
+
+    if (!workspace) {
+      workspace = await Workspace.findOne({ owner: req.user._id }).populate('owner', 'firstName lastName email avatar');
+    }
+
+    if (!workspace) {
+      workspace = await Workspace.findOne({ isActive: true }).populate('owner', 'firstName lastName email avatar');
+    }
+
+    if (!workspace) {
+      const generatedSlug = 'teampulse-workspace';
+      workspace = await Workspace.create({
+        name: 'TeamPulse Enterprise',
+        slug: generatedSlug,
+        owner: req.user._id,
+        plan: 'Pro',
+        seats: 50,
+        billingCycle: 'monthly',
+        subscriptionStatus: 'Active',
+        currency: 'USD',
+        security: {
+          enforce2FA: false,
+          sessionTimeoutMinutes: 120,
+          allowPublicJoin: false,
+          requireAdminApproval: true
+        },
+        settings: {
+          timezone: 'Asia/Kolkata',
+          workingHours: '09:00 - 18:00',
+          defaultRole: 'Employee'
+        },
+        invoices: [
+          {
+            invoiceNumber: `INV-${Date.now().toString().slice(-6)}-1001`,
+            amount: 400,
+            currency: 'USD',
+            status: 'Paid',
+            date: new Date(),
+            plan: 'Pro',
+            seats: 50
+          }
+        ]
+      });
+      workspace = await Workspace.findById(workspace._id).populate('owner', 'firstName lastName email avatar');
+    }
+
+    if (!req.user.workspace) {
+      await User.findByIdAndUpdate(req.user._id, { workspace: workspace._id });
+    }
+
+    const usedSeats = await User.countDocuments({
+      status: { $ne: 'Deleted' },
+      employmentStatus: 'Active'
+    });
+
+    const totalSeats = workspace.seats || 50;
+    const availableSeats = Math.max(0, totalSeats - usedSeats);
+    const utilizationPercent = Math.min(100, Math.round((usedSeats / totalSeats) * 100));
+
+    res.json({
+      workspace,
+      stats: {
+        totalSeats,
+        usedSeats,
+        availableSeats,
+        utilizationPercent
+      }
+    });
+  } catch (err) {
+    console.error('getCurrentWorkspace error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+exports.updateCurrentWorkspace = async (req, res) => {
+  try {
+    let workspace = null;
+    if (req.user.workspace) {
+      workspace = await Workspace.findById(req.user.workspace);
+    }
+    if (!workspace) {
+      workspace = await Workspace.findOne({ owner: req.user._id });
+    }
+    if (!workspace) {
+      workspace = await Workspace.findOne({ isActive: true });
+    }
+
+    if (!workspace) {
+      return res.status(404).json({ message: 'Workspace not found' });
+    }
+
+    const { name, logo, currency, settings, security } = req.body;
+
+    if (name) workspace.name = name.trim();
+    if (logo !== undefined) workspace.logo = logo;
+    if (currency) workspace.currency = currency;
+    if (settings) {
+      workspace.settings = {
+        ...workspace.settings,
+        ...settings
+      };
+    }
+    if (security) {
+      workspace.security = {
+        ...workspace.security,
+        ...security
+      };
+    }
+
+    await workspace.save();
+    const updated = await Workspace.findById(workspace._id).populate('owner', 'firstName lastName email avatar');
+
+    res.json({
+      success: true,
+      message: 'Workspace settings updated successfully',
+      workspace: updated
+    });
+  } catch (err) {
+    console.error('updateCurrentWorkspace error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+

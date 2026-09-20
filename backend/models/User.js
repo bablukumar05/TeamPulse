@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    lowercase: true,
+    trim: true,
   },
   password: {
     type: String,
@@ -77,7 +79,14 @@ const userSchema = new mongoose.Schema({
   managerId:    { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 
   // Professional
-  designation: { type: String, default: 'Full Stack Developer' },
+  designation: {
+    type: String,
+    default: function() {
+      if (this.role === 'Admin') return 'Workspace Administrator';
+      if (this.role === 'Manager') return 'Team Manager';
+      return 'Software Engineer';
+    }
+  },
   skills:     [String],
   experience: [{
     title:   String,
@@ -105,6 +114,13 @@ const userSchema = new mongoose.Schema({
   severanceNotice:    { type: String, default: '' },
   terminatedAt:       { type: Date },
   terminatedBy:       { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+
+  // Multi-Factor Authentication (2FA)
+  twoFactor: {
+    enabled:       { type: Boolean, default: false },
+    secret:        { type: String, select: false },
+    recoveryCodes: [{ type: String, select: false }]
+  },
 
 }, { timestamps: true });
 

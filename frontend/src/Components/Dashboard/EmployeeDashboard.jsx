@@ -101,7 +101,7 @@ const EmployeeDashboard = (props) => {
           ))}
         </aside>
 
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-auto p-3.5 sm:p-5 lg:p-6">
           <div className="max-w-7xl mx-auto flex flex-col gap-5">
             <Header changeUser={props.changeUser} data={props.data} changePage={props.changePage} />
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { getApiBaseUrl } from '../../utils/apiConfig';
 import { AuthContext } from "../../Context/AuthProvider";
 
 const JoinRequests = ({ refreshTrigger }) => {
@@ -63,7 +64,7 @@ const JoinRequests = ({ refreshTrigger }) => {
                                 </div>
                             )}
                             {req.resumeUrl && (
-                                <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${req.resumeUrl}`} target="_blank" rel="noreferrer" className="text-xs text-emerald-400 hover:text-emerald-300 font-bold tracking-wider hover:underline mb-2 block">
+                                <a href={req.resumeUrl.startsWith('http') ? req.resumeUrl : `${getApiBaseUrl()}${req.resumeUrl}`} target="_blank" rel="noreferrer" className="text-xs text-emerald-400 hover:text-emerald-300 font-bold tracking-wider hover:underline mb-2 block">
                                     📄 VIEW RESUME
                                 </a>
                             )}

@@ -36,6 +36,7 @@ const taskSchema = new mongoose.Schema({
       'Backlog',
       'To Do',
       'In Progress',
+      'In Review',
       'Code Review',
       'Testing / QA',
       'Ready for Deployment',
@@ -108,6 +109,16 @@ const taskSchema = new mongoose.Schema({
     performedByName: String,
     timestamp: { type: Date, default: Date.now }
   }],
+  reviewDetails: {
+    submittedAt: { type: Date },
+    submissionNotes: { type: String, trim: true },
+    deliverableLink: { type: String, trim: true },
+    reviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    reviewedByName: { type: String },
+    reviewedAt: { type: Date },
+    reviewDecision: { type: String, enum: ['Pending', 'Approved', 'Changes Requested'], default: 'Pending' },
+    reviewFeedback: { type: String, trim: true }
+  },
 
   sprint:      { type: mongoose.Schema.Types.ObjectId, ref: 'Sprint' },
   milestone:   { type: mongoose.Schema.Types.ObjectId, ref: 'Milestone' },

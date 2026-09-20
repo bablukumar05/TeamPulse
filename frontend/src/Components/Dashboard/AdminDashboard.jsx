@@ -17,20 +17,29 @@ import TeamsManagement from "./TeamsManagement";
 import TeamChat from "../other/TeamChat";
 import ReportsPage from "../../Pages/ReportsPage";
 import AIAssistant from "../ai/AIAssistant";
+import WorkspaceSettings from "./WorkspaceSettings";
+import OnboardingChecklist from "./OnboardingChecklist";
+import TaskReviewHub from "./TaskReviewHub";
+import IntegrationsHub from "./IntegrationsHub";
+import GuidedTourModal from "../other/GuidedTourModal";
+import CommandPalette from "../other/CommandPalette";
 import axios from "axios";
 import { AuthContext } from "../../Context/AuthProvider";
 
 const NAV_ITEMS = [
-  { id: 'dashboard', label: '🏠 Dashboard' },
-  { id: 'teams',     label: '🛡️ Teams & Squads' },
-  { id: 'projects',  label: '📁 Projects'  },
-  { id: 'kanban',    label: '📋 Kanban'    },
-  { id: 'calendar',  label: '📅 Calendar'  },
-  { id: 'tasks',     label: '✅ All Tasks' },
-  { id: 'chat',      label: '💬 Chat'      },
-  { id: 'hr',        label: '👥 HR'        },
-  { id: 'reports',   label: '📈 Reports'   },
-  { id: 'audit',     label: '📊 Audit'     },
+  { id: 'dashboard',    label: '🏠 Dashboard' },
+  { id: 'reviews',      label: '🔍 Squad Reviews' },
+  { id: 'integrations', label: '🔌 Integrations' },
+  { id: 'teams',        label: '🛡️ Teams & Squads' },
+  { id: 'settings',     label: '⚙️ Workspace Settings' },
+  { id: 'projects',     label: '📁 Projects'  },
+  { id: 'kanban',       label: '📋 Kanban'    },
+  { id: 'calendar',     label: '📅 Calendar'  },
+  { id: 'tasks',        label: '✅ All Tasks' },
+  { id: 'chat',         label: '💬 Chat'      },
+  { id: 'hr',           label: '👥 HR'        },
+  { id: 'reports',      label: '📈 Reports'   },
+  { id: 'audit',        label: '📊 Audit'     },
 ];
 
 const AdminDashboard = (props) => {
@@ -39,6 +48,15 @@ const AdminDashboard = (props) => {
   const [activeNav, setActiveNav]       = useState('dashboard');
   const [projects, setProjects]         = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [commandOpen, setCommandOpen]   = useState(false);
+  const [tourOpen, setTourOpen]         = useState(false);
+
+  useEffect(() => {
+    if (!localStorage.getItem('teampulse_tour_completed')) {
+      const timer = setTimeout(() => setTourOpen(true), 1200);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   useEffect(() => {
     const handleAdminRefetch = () => setRefreshTasks(prev => !prev);
@@ -71,6 +89,12 @@ const AdminDashboard = (props) => {
           <div className="px-3 mb-6">
             <span className="text-base font-semibold text-zinc-100 tracking-tight">TeamPulse</span>
             <p className="text-[10px] text-zinc-500 mt-0.5 uppercase tracking-wider font-mono">Administration</p>
+            <button
+              onClick={() => setTourOpen(true)}
+              className="mt-2.5 w-full text-[11px] font-semibold text-indigo-300 hover:text-white bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 rounded-lg py-1 px-2 transition-colors flex items-center justify-center gap-1.5"
+            >
+              <span>🚀 Take Product Tour</span>
+            </button>
           </div>
           {NAV_ITEMS.map(item => (
             <button
@@ -88,7 +112,7 @@ const AdminDashboard = (props) => {
         </aside>
 
         <main className="flex-1 overflow-auto">
-          <div className="max-w-7xl mx-auto p-6 flex flex-col gap-6">
+          <div className="max-w-7xl mx-auto p-3.5 sm:p-5 lg:p-6 flex flex-col gap-6">
             <Header changeUser={props.changeUser} changePage={props.changePage} />
 
             <div className="flex lg:hidden gap-2 overflow-x-auto pb-1">
@@ -107,6 +131,7 @@ const AdminDashboard = (props) => {
 
             {activeNav === 'dashboard' && (
               <>
+                <OnboardingChecklist setActiveNav={setActiveNav} />
                 <AnalyticsDashboard refreshTrigger={refreshTasks} />
                 <Announcements allowCreate={true} refreshTrigger={() => setRefreshTasks(!refreshTasks)} />
                 <ManageEmployees refreshTrigger={refreshTasks} />
@@ -183,7 +208,10 @@ const AdminDashboard = (props) => {
               </div>
             )}
 
+            {activeNav === 'reviews' && <TaskReviewHub />}
+            {activeNav === 'integrations' && <IntegrationsHub />}
             {activeNav === 'teams' && <TeamsManagement />}
+            {activeNav === 'settings' && <WorkspaceSettings />}
             {activeNav === 'kanban' && <KanbanBoard refreshTrigger={refreshTasks} />}
             {activeNav === 'calendar' && <CalendarView key={refreshTasks} />}
             {activeNav === 'tasks' && <AllTask refreshTrigger={refreshTasks} />}
@@ -199,6 +227,16 @@ const AdminDashboard = (props) => {
         </main>
       </div>
       <AIAssistant />
+      <CommandPalette
+        isOpen={commandOpen}
+        setIsOpen={setCommandOpen}
+        setActiveNav={setActiveNav}
+      />
+      <GuidedTourModal
+        isOpen={tourOpen}
+        onClose={() => setTourOpen(false)}
+        onNavigateTab={setActiveNav}
+      />
     </div>
   );
 };
