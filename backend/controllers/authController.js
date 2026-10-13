@@ -173,9 +173,16 @@ exports.login = async (req, res) => {
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id)
-      .select('-password')
+      .select('-password -twoFactor.secret -twoFactor.recoveryCodes')
       .populate('teamId', 'name color')
-      .populate('departmentId', 'name color');
+      .populate('departmentId', 'name color')
+      .maxTimeMS(4000)
+      .lean();
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
     res.status(200).json(user);
   } catch (error) {
     console.error('GetMe Error:', error);

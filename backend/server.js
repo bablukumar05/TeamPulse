@@ -278,14 +278,16 @@ const DEFAULT_MONGO_URI = 'mongodb+srv://kumarbablu74824_db_user:wMooohJWCuUW8Qk
 const MONGO_URI = process.env.MONGO_URI || DEFAULT_MONGO_URI;
 
 const mongooseOptions = {
-  maxPoolSize: 10,
+  maxPoolSize: 20,
+  minPoolSize: 2,
   serverSelectionTimeoutMS: 5000,
-  socketTimeoutMS: 45000,
+  socketTimeoutMS: 30000,
+  heartbeatFrequencyMS: 10000,
 };
 
 mongoose.connect(MONGO_URI, mongooseOptions)
   .then(async () => {
-    console.log('Connected to MongoDB Atlas with connection pooling enabled');
+    console.log('Connected to MongoDB Atlas with optimized connection pooling (20 max / 2 min)');
 
     let port = Number(PORT) || 0;
     const maxAttempts = 10;
@@ -304,7 +306,7 @@ mongoose.connect(MONGO_URI, mongooseOptions)
             }).on('error', (e) => {
               console.warn('Keep-alive ping error:', e.message);
             });
-          }, 10 * 60 * 1000);
+          }, 8 * 60 * 1000); // 8 minutes to prevent Render 15-minute idle sleep
         }
 
         return;

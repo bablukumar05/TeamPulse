@@ -98,6 +98,7 @@ const Login = ({ onClose, prefill }) => {
 
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("authUser", JSON.stringify(userObj));
+        axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
         setToken(res.data.token);
         setAuthUser(userObj);
 
@@ -150,6 +151,7 @@ const Login = ({ onClose, prefill }) => {
 
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("authUser", JSON.stringify(userObj));
+        axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
         setToken(response.data.token);
         setAuthUser(userObj);
 
