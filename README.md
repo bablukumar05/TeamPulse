@@ -104,39 +104,4 @@ npm run dev
 
 * **Frontend Client:** `http://localhost:5173`
 * **Backend API:** `http://localhost:5000`
-
----
-
-## 📁 Repository Structure
-
-```
-TeamPulse/
-├── backend/
-│   ├── controllers/      # Express controllers (auth, tasks, admin, hr, chat, etc.)
-│   ├── middleware/       # Auth guards, role authorization, rate limiting, validation
-│   ├── models/           # Mongoose schemas (User, Task, Workspace, Attendance, etc.)
-│   ├── routes/           # REST endpoint routers
-│   ├── utils/            # Email templates, cache helpers, API helpers
-│   └── server.js         # HTTP & Socket.io server entry point
-├── frontend/
-│   ├── src/
-│   │   ├── Components/   # UI modules (Dashboard, Kanban, Chat, Auth, Settings, Modals)
-│   │   ├── Context/      # AuthContext and state providers
-│   │   ├── Pages/        # LandingPage, CulturePage, ReportsPage
-│   │   ├── utils/        # API client configuration
-│   │   ├── App.jsx       # Route manager and lazy loaders
-│   │   └── main.jsx      # React 18 DOM mount point
-│   ├── package.json      # Frontend dependencies (React 18.3.1)
-│   └── vite.config.js    # Vite configuration & proxy settings
-├── package.json          # Root orchestration scripts
-└── README.md             # Project documentation
-```
-
----
-
-## 📜 License
-Distributed under the **MIT License**. Free for educational and commercial review.
-
----
-
 **Designed & Built with ❤️ by Bablu Kumar**
